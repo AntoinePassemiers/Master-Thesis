@@ -1,0 +1,155 @@
+\documentclass[11pt,a4paper,oneside]{book}
+\usepackage[hmargin={1.25in,1.25in},vmargin={1.25in,1.25in}]{geometry}
+
+\usepackage{ifxetex}
+\ifxetex
+  \usepackage{fontspec}
+\else
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{lmodern}
+\fi
+
+\makeindex
+\usepackage{textcomp}
+\usepackage{fancyhdr}
+\usepackage{makeidx}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{verbatim}
+\usepackage{algorithm}
+\usepackage[nomain,acronym,xindy,toc]{glossaries}
+\usepackage[noend]{algpseudocode}
+\pagestyle{myheadings}
+\fancyhf{}
+\rhead[\leftmark]{thepage}
+
+% \usepackage[latin1]{inputenc}
+\usepackage{url}
+
+
+% Custom commands
+\newcommand{\naatypes}{22}
+\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
+\newcommand{\xor}{\mathbin{\oplus}}
+\renewcommand{\exp}[1]{\text{ exp}\Big(#1\Big)}
+\newcommand{\smallexp}[1]{\text{ exp}(#1)}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+% Custom operators
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\trace}{Tr}
+
+\parindent0em
+\parskip1.5ex
+
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
+% Glossary entries
+\newacronym{apc}{APC}{Average Product Correction}
+\newacronym{dca}{DCA}{Direct Coupling Analysis}
+\newacronym{eca}{ECA}{Evolutionary Coupling Analysis}
+\newacronym{msa}{MSA}{Multiple Sequence Alignment}
+\newacronym{mi}{MI}{Mutual Information}
+\newacronym{nmi}{NMI}{Normalized Mutual Information}
+\newacronym{pcm}{PCM}{Protein Contact Map}
+\newacronym{pcn}{PCN}{Protein Contact Network}
+\newacronym{pcp}{PCP}{Protein Contact Prediction}
+\newacronym{pssm}{PSSM}{Position-Specific Scoring Matrix}
+\newacronym{sap}{SAP}{Solvent Accessibility Prediction}
+\newacronym{ssp}{SSP}{Secondary Structure Prediction}
+\makeglossaries
+
+
+\begin{document}
+
+\frontmatter
+\begin{titlepage}
+\begin{center}
+\textbf{UNIVERSIT\'E LIBRE DE BRUXELLES}\\
+\textbf{Facult\'{e} des Sciences}\\
+\textbf{D\'{e}partement d'Informatique}
+\vfill{}\vfill{}
+
+{\LARGE  MEMO-F-524 - Master thesis:
+ \vspace*{2cm}
+ \linebreak[4] Towards Generative Adversarial Networks \vspace*{.2cm}  \linebreak[4]  for Protein Contact Prediction
+ \vspace*{.2cm}  \linebreak[4] using Low-level Sequence Alignment Features}
+
+{\Huge \par}
+\begin{center}{\Large Antoine Passemiers}\end{center}{\Huge \par}
+\vfill{}\vfill{}
+\large Under the supervision of : \\
+\begin{flushleft}
+% \noindent\hrulefill \\
+\vspace{0.2cm}
+\textbf{Dr. Daniele Raimondi} \\
+\large Daily advisor \\
+% \noindent\hrulefill \\
+\vspace{0.5cm}
+\textbf{Prof. Tom Lenaerts} \\
+\large Supervisor of the thesis \\
+% \noindent\hrulefill \\
+{\large }\hfill{}{}
+\end{flushleft}
+{\large\par}\vfill{}\vfill{}\enlargethispage{3cm}
+\textbf{Academic year 2018~-~2019}
+\end{center}
+\end{titlepage}
+
+%\newpage
+
+\thispagestyle{empty} 
+\null
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\newenvironment{vcenterpage}
+{\newpage\thispagestyle{empty} 
+\vspace*{\fill}}
+{\vspace*{\fill}\par\pagebreak}
+
+\newcommand{\pdbid}[1] {(PDB: #1)}
+
+\thispagestyle{empty} 
+\setcounter{page}{0}
+\tableofcontents
+\mainmatter 
+
+
+\include{chapters/introduction}
+\include{chapters/sota/definitions}
+\include{chapters/sota/dca}
+\include{chapters/sota/psicov}
+\include{chapters/sota/dl}
+\include{chapters/sota/dlfeatures}
+\include{chapters/sota/dlinpcp}
+\include{chapters/methods}
+\include{chapters/results}
+\include{chapters/conclusion}
+
+
+\appendix
+
+\backmatter
+
+\printindex % use makeindex to generate the index
+
+\bibliographystyle{plain}
+
+\bibliography{report}
+
+\newpage
+\printglossary[type=main]
+
+\end{document}

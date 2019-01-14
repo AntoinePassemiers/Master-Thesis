@@ -1,0 +1,308 @@
+\section{Deep learning}
+
+    \subsection{A definition of \textit{deep learning}}
+
+        Behind the trendy words, it is quite difficult to find a consensus on the definition of \textit{deep learning}. According to many, the process of learning 
+        deeply can only be achieved by deep neural networks. A deep articifical neural network is composed of a set of parameters and a large stack 
+        (or graph) of mathematical operators designed to minimize an objective function.
+        Each operation may be dependent on a subset of the network parameters.
+        In most cases, the network can be described as a stack of operators. 
+        The objective function is then a composition of all mathematical operations. Such a network is usually trained using the 
+        backpropagation algorithm. The method consists in minimizing the objective function which is usually an average distance between what the network
+        predicts on the basis of an input and what the human supervisor expects. More specifically, it is an iterative algorithm that evaluates the gradient of the 
+        objective at each iteration and performs one step in the direction of the steepest descent in the parameter space. The algorithm is expected to stop
+        once a global minimum has been reached.
+
+        Deep learning is also often viewed as the capacity of a machine to create a hierarchical modelling of the data.
+        This implies that the model can transform the data to high-level feature maps.
+        According to Yoshua Bengio and Yann LeCun, neural networks only exemplify the notion of deep
+        architectures. They provided a sufficiently good basis for a definition:
+
+        \begin{quotation}
+            Deep architectures are compositions of many layers of adaptive non-linear components,
+            in other words, they are cascades of parameterized non-linear modules that contain
+            trainable parameters at all levels. Deep architectures allow the representation of wide
+            families of functions in a more compact form than shallow architectures, because they
+            can trade space for time (or breadth for depth) while making the time-space product
+            smaller, as discussed below. The outputs of the intermediate layers are akin to intermediate
+            results on the way to computing the final output. Features produced by the lower
+            layers represent lower-level abstractions, that are combined to form high-level features
+            at the next layer, representing higher-level abstractions~\cite{40d5d7fd62cb44ba934a8a75d4b2b076}.
+        \end{quotation}
+
+        This definition seems to be suitable for stacked models: one can design a cascade of decision tree modules since decision trees are able to construct
+        non-linear decision boundaries. The problem rather lies in determining if there exists a natural way to make them extract high-level features from data.
+        Apart from that, the backpropagation algorithm for neural networks is going to be introduced in more details.
+
+    \subsection{The backpropagation algorithm}
+
+        A description of backpropagation has to be made in order to understand how modern deep learning works. 
+        Let's consider a feedforward neural network containing no cycle.
+        Each of its layers can be viewed as a couple $(f_i(\theta_i, X), b_i(\theta_i, dX))$,
+        where $f_i$ is the forward pass function (prediction function)
+        of layer $i$, $b_i$ is the backward pass function, $\theta_i$ is the set of parameters,
+        and $X, Y$ are input tensors of shapes compatible with $f_i$ and
+        $g_i$, respectively, and $dX$ is the signal tensor propagated from next layer to current layer.
+        Let's make the assumption that convolutional layers are two-dimensional and that input instances are image-like data.
+        Also, let's consider a particular case of neural network consisting of a stack of neural layers instead of a graph:
+        a feedforward neural network.
+        Also, let $b$ be the number of instances in the input tensor (more commonly referred to as the batch size), 
+        $w$ and $h$ respectively the width and height of the images, 
+        and $c$ the number of channels. Finally, let $n$ be the number of layers and $m$ be the number of output neurons in the network.
+        Knowing this, we are able to express the output $Y \in \mathbb{R}^{b \times m}$ of the network as such:
+
+        \begin{equation}
+            Y = (\bigcirc_{i=1}^{n} f_{\theta_i})(X)
+        \end{equation}
+
+        where $X \in \mathbb{R}^{b \times w \times h \times c}$ and $f_{\theta_i}(X)$ 
+        is a more convenient notation for $f_i(\theta_i, X)$. We observe that the prediction
+        function of the network is basically a large composition of functions.
+
+        Such model is designed to optimize a function reflecting its ability to accurately predict a target value or to abstractly represent the input 
+        data in a more general sense. Accordingly, let's introduce a generic loss function $L(Y): \mathbb{R}^{b \times m} \rightarrow \mathbb{R}$ that measures 
+        the model's inability to fulfill the given task. Again, the loss function can be rewritten as a composition of the layer forward passes and the loss
+        function, and the objective is to find the set of parameters that minimizes the loss function:
+
+        \begin{equation}
+            \hat{\theta} = \argmin_{\theta \in \Theta} L((\bigcirc_{i=1}^{n} f_{i, \theta_i})(X))
+        \end{equation}
+
+        where $\Theta$ is the set of all possible values for the parameter set $\theta = (\theta_1, \ldots, \theta_n)$.
+        Since we are considering a loss function, the latter must be minimized. The generic task of minimizing a scalar continuous function can be achieved
+        using numerous continuous optimization techniques  among gradient descent algorithms~\cite{DBLP:journals/corr/Ruder16}
+        or quasi-Newton methods~\cite{LBFGS}. In practice, gradient descent approaches require more iterations to converge to a satisfying solution,
+        but are much easier to implement. Also, contrary to quasi-Newton methods, they don't require to implicitly compute the hessian matrix of the loss
+        function according to the network parameters, which makes them less computation-intensive. Let's consider the optimization of the loss function
+        in the gradient descent framework. The loss function is minimized by moving in the parameter space in the direction of the loss gradient, with
+        a step proportional to a parameter either determined empirically or adjusted during optimization phase, called learning rate.
+        Luckily, since we are regarding our neural network as a stack of layers (viewed as nested functions), the gradient computation can be decomposed
+        using the chain rule:
+
+        \begin{equation} \label{eq:backprop}
+            (f \circ g)'(X) = \nabla f(g(X)) \cdot g'(X)
+        \end{equation}
+
+        Knowing this, the gradient of $loss(\theta)$ according to the parameters $\theta_m$ of layer $m$ (for any layer $m$ with learnable parameters),
+        can be decomposed as the following product:
+
+        \begin{equation} \label{eq:loss}
+            \nabla \ loss(\theta_m) = \prod_{i=1}^m f'((\bigcirc_{k=1}^{i} f_{\theta_i})(X)) \cdot L'((\bigcirc_{j=1}^{n} f_{\theta_j})(X))
+        \end{equation}
+
+        Each factor $i$ of the product can be computed using the definition of function $f'_i$, and the current input to layer $i$.
+        However, layer $i$ requires the factor from layer $i+1$ in order to compute loss gradient according to its own parameters.
+        Consequently, the signal (the product of factors from layer $n$ to current layer $k$) is passed from layer $k+1$ to layer $k$.
+        In a more general sense, the gradient signal is passed from the ouput layer to the input layer, hence the name "backpropagation".
+
+        The move in the gradient direction with step $\alpha$ (the so-called learning rate) is such that:
+
+        \begin{equation}
+            \theta_k \leftarrow \theta_k - \alpha \cdot \nabla \ loss(\theta_k) \  \ \forall k \in \{1, \ldots, n\}
+        \end{equation}
+
+        This step is repeated until one of the stop criteria has been met. For example, the algorithm stops when a maximum number of iterations has been
+        reached. However, gradient descent is not the only optimization algorithm that yields satisfying results in practice.
+        For example, Limited-memory BFGS~\cite{LBFGS} relies on a second order approximation of the loss function given a limited number of past
+        update vectors: this provides a better search direction but in return does not theoretically guarantee that the loss function actually decreases at each
+        iteration.
+
+    \subsection{Fully-connected layers}
+
+        A \textit{Multi-layer perceptron} is a neural network composed of multiple layers,
+        where each layer's forward pass consists of a linear combination
+        followed by an element-wise non-linear activation function.
+        Let $X \in \mathbb{R}^{n \times m}$ be the input matrix,
+        $W \in \mathbb{R}^{m \times k}$ the weight matrix,
+        $b \in \mathbb{R}^{k}$ the bias vector, $n^{(k)}$ the number of inputs to layer $k$
+        and $\sigma$ the non-linear activation function of layer $k$.
+        Each layer can than be formalized as follows:
+
+        \begin{equation}
+            Y_{i, k} = \sigma \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big)
+        \end{equation}
+
+        Backpropagation requires to compute the partial derivatives of layer outputs with respect to current layer parameters:
+
+        \begin{align}
+            \frac{\partial Y_{i, k}}{\partial W_{j, k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big) \ X_{i, j} \\
+            \frac{\partial Y_{i, k}}{\partial b_{k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big)
+        \end{align}
+
+        where $Y \in \mathbb{R}^2$ is the output matrix and $\sigma'(x)$ is the derivative of $\sigma(x)$,
+        typically $\sigma(x) (1 - \sigma(x))$ for the sigmoid function.
+
+        Multi-layer perceptrons have been proved to be Universal Approximators~\cite{hornik1991approximation},
+        meaning that they can approximate feedforward prediction functions that minimize any training loss (loss function computed on the training set).
+        However, this fact does not inform about the type of non-linear function to use in order to minimize
+        a given loss function. More importantly, this does not guarantee that the model will perform well on unseen examples.
+        Indeed, high representational power is required when the classification task is abstract.
+        To overcome this problem and lower the validation loss as much as possible, data scientists usually stack more layers on top of each other,
+        but this may imply high computational requirements. Convolutional layers are used instead of dense weight matrices.
+
+    \subsection{Convolutional layers}
+
+        One of the major advances in semantic segmentation
+        is due to Convolutional Neural Networks (CNNs)~\cite{DBLP:journals/corr/Garcia-GarciaOO17}.
+        A CNN is an artificial neural network made of a stack of neural layers~\cite{lecun1998gradient}. One characteristic of CNNs is the
+        presence of convolutional filters that map raw data to more abstract features. Each filter (or kernel) is locally connected to its output unit, which
+        allows the convolutional layer to capture some local information about the inputs, as opposed to fully-connected layers that don't take any spatial
+        information into account when passing data forward. This procedure is inspired by the notion of receptive field introduced 
+        by Hubel and Wiesel~\cite{Hubel1962}.
+
+        Weights are no longer stored in a bidimensional matrix since all inputs are no longer connected to each neuron of the current layer.
+        Instead, each neuron is connected to a certain neighborhood of inputs. In this way, the network drastically reduces its number of parameters
+        but still takes the spatial dependence of the data into account. If the convolutional layer is designed for processing multi-channel images for example,
+        the parameters will be stored in a 4-dimensional tensor. Let $W \in \mathbb{R}^4$ be the weights of the convolutional filters,
+        $X \in \mathbb{R}^4$ the input images, $b \in \mathbb{R}$ the bias vector and $Y \in \mathbb{R}^4$ the output feature maps.
+        Let's consider the relation between the input images and the output feature maps:
+
+        \begin{equation} \label{eq:conv2D}
+            Y_{i, j, k, l} = \sigma \Big( \sum\limits_{a=1}^h \sum\limits_{d=1}^w \sum\limits_{c=1}^{n_c} W_{j, a, d, c} X_{i, k+s_1 a, l+s_2 d, c} + b_{j} \Big) 
+        \end{equation}
+
+            where $i$ is the image identifier, $j$ is the filter index, $n_c$ is the number of channels, $h$ is the filter height, $w$ is the filter width
+            and $(s_1, s_2)$ are the strides (vertical and horizontal distances between neighboring pixels in the neighborhood connected to a same neuron).
+            Partial derivatives are simply given by:
+
+        \begin{align}
+            \frac{\partial Y_{i, j, k, l}}{\partial W_{j, a, d, c}} & = 
+                \sigma' \Big( \sum\limits_{a=1}^h \sum\limits_{d=1}^w \sum\limits_{c=1}^{n_c} W_{j, a, d, c}
+                X_{i, k+s_1 a, l+s_2 d, c} + b_{j} \Big) X_{i, k+s_1 a, l+s_2 d, c} \\
+            \frac{\partial Y_{i, j, k, l}}{\partial b_{j}} & =
+                \sigma' \Big( \sum\limits_{a=1}^h \sum\limits_{d=1}^w \sum\limits_{c=1}^{n_c} W_{j, a, d, c}
+                X_{i, k+s_1 a, l+s_2 d, c} + b_{j} \Big)
+        \end{align}
+
+        Just as in the case of fully-connected layers, the computations for the signal propagation are not shown because this report is intended to remain brief.
+        Contrary to neural networks, it must be noted that random forest implementations are rarely equipped with convolutional filters or even multivariate 
+        splits. Even in computer vision applications, univariate decision trees are the most frequently used trees in ensemble learners.
+
+    \subsection{Activation functions}
+
+        An activation function describes the output value of a neuron and is biologically inspired. It is a mathematical representation
+        of the level of action potential sent along its axon. More formally, it is a non-linear scalar function that takes a scalar as input.
+        The presence of activation functions in neural networks along with fully-connected layers allows them to increase their representational
+        power. Indeed, a stack of fully-connected layers without activation functions would have the same representational power as a single
+        fully-connected layers, since a linear combination of linear combinations is itself a linear combination. Thus, activation functions
+        help to actually build a hierarchical representational of the data by folding the hyperplane containing the data points multiple times
+        and at each layer.
+
+        However, not every activation function is suitable for backpropagation and one of the reasons for the success of deep learning is the low
+        computation requirements for the gradients. Most of the activation functions are non-prametric and element-wise, which makes it easy
+        to compute the signal during backward pass.
+
+        The best known activation function is the sigmoid function $\sigma(x)$.
+        It has the property to have a derivative $\sigma'(x)$ expressed as a function of $\sigma(x)$,
+        which speeds up computation times, assuming that the neural outputs are cached.
+
+        \begin{equation}
+            \begin{split}
+                \sigma(x) & = \frac{1}{1 + \smallexp{-x}} = \frac{\smallexp{x}}{1 + \smallexp{x}} \\
+                \sigma'(x) & = \sigma(x) (1 - \sigma(x))
+            \end{split}
+        \end{equation}
+
+        However, LeCun~\cite{efficientBackprop} does not recommend standard sigmoid functions because normalizing
+        activation functions generally ensure better performance.
+        For this reason, the hyperbolic tangent is suitable because its outputs are centered around zero. 
+        Also, its derivative $\tanh'(x)$ is expressed as a function of $\tanh(x)$ which is computationally convenient.
+        Finally, an additional linear term can be added in order to
+        avoid flat areas, leading to an activation function of the following form: $f(x) = \tanh(x) + ax$.
+
+        \begin{equation}
+            \begin{split}
+                \tanh(x) & = \frac{\smallexp{x} - \smallexp{-x}}{\smallexp{x} + \smallexp{-x}} = \frac{\smallexp{2x} - 1}{\smallexp{2x} + 1} \\
+                \tanh'(x) & = 1 - \tanh^2(x)
+            \end{split}
+        \end{equation}
+
+        Assuming that target values are in the set $\{-1, 1\}$ in the framework of binary classficaition,
+        the hyperbolic tangent can be linearly modified to obtain a new function of the form $f(x) = 1.7159 \tanh(\frac{2}{3} x)$.
+        Such an activation function is profitable because, has its second derivative maximized at $x = -1$ and $x = 1$, avoiding
+        saturation effects.
+
+        The chain rule informs us that the gradient of a given layer is factorized as a product of vectors/matrices computed by previous layers.
+        Because the norm of gradients w.r.t. activation functions is always less than one for both tanh and standard sigmoid,
+        deep architectures are often subject to vanishing gradients. Linear rectifier units (ReLU) are piecewise linear functions designed to solve
+        these issues by keeping positive inputs unchanged. Let's note that ReLU is not differentiable at $x = 0$ but inputs are rarely zero in practice.
+
+        \begin{equation}
+            \begin{split}
+                \text{ReLU}(x) & = \max{(x, 0)} \\
+                \text{ReLU}'(x) & = 
+                \begin{cases}
+                    1 & \text{if } x > 0 \\
+                    0 & \text{if } x < 0
+                \end{cases}
+            \end{split}
+        \end{equation}
+
+        The outputs of a neural network are often desired to sum to one, especially when the classification task is to assign each class to a probability
+        conditionally to the network's input. In the case where there are $m$ classes, the output layer is composed of $m$ neurons where the activation
+        function associated to neuron $i$ is given by:
+
+        \begin{equation}
+            \begin{split}
+                \sigma(x^{(i)}) & = \frac{\smallexp{x^{(i)}}}{\sum\limits_{k=1}^m \smallexp{x^{(k)}}} \\
+                \sigma'(x^{(i)}) & = \sigma(x^{(i)}) (1 - \sigma(x^{(i)}))
+            \end{split}
+        \end{equation}
+
+        where $x^{(i)}$ is the component $i$ of the output vector.
+        This function is identical to the Boltzmann distribution introduced in section \ref{potts}.
+
+
+    \subsection{Batch normalization}
+
+        According to Ioffe and Szegedy~\cite{DBLP:journals/corr/IoffeS15}, deep neural networks are subject to a phenomenon
+        called \textbf{internal covariate shift}. When the learning rate is too large, the distribution of a layer's outputs
+        is drastically altered, making it difficult to train the next layer since the latter is constantly adapting to the new
+        distribution. Batch normalization helps dealing with this issue and allows us to run the training algorithm with less
+        careful parameter initialization and larger learning rate.
+
+        When the network is training with batch learning, its parameters are updated every batch. Therefore, the distribution
+        of each layer's outputs is changed at each batch. This is the reason for using the statistics of each batch individually
+        to normalize the data between layers.
+
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|l|c|c|}
+                \hline
+                Name & Number of samples involved & Formula \\
+                \hline
+                \hline
+                Average (true) gradient & $N$ & $\frac{1}{N} \sum\limits_{i=1}^N \nabla L(f_{\theta}(X_i))$ \\
+                \hline
+                Batch gradient & $\vert B \vert$ & $\frac{1}{\vert B \vert} \sum\limits_{i \in B} \nabla L(f_{\theta}(X_i))$ \\
+                \hline
+                Sample gradient & $1$ & $\nabla L(f_{\theta}(x))$ \\
+                \hline
+            \end{tabular}
+            \captionof{table}{Types of gradients and gradient approximations used in common optimization methods.}
+            \label{gradients}
+        \end{table}
+
+        \begin{equation}
+            \begin{split}
+                \mu_{\mathcal{B}} & = \frac{1}{\vert\mathcal{B}\vert} \sum\limits_{i=1}^{\vert\mathcal{B}\vert} x_i \\
+                \sigma_{\mathcal{B}}^2 & = \frac{1}{\vert\mathcal{B}\vert} \sum\limits_{i=1}^{\vert\mathcal{B}\vert} (x_i - \mu_{\mathcal{B}}^2) \\
+                \hat{x}_i & \leftarrow \gamma \frac{x_i - \mu_{\mathcal{B}}}{\sqrt{\sigma_{\mathcal{B}}^2 + \epsilon}} + \beta
+            \end{split}
+        \end{equation}
+
+        Optimize $\beta, \gamma$ with backpropagation. \todo{}
+
+    \subsection{Optimization algorithms}
+
+        The gradient vector is obtained by concatenating the gradients w.r.t. each layer's parameter vector. This final gradient vector
+        gives an improvement direction, but a decrease of the loss function is guaranteed by moving by a arbitrary small step
+        in the parameter space.
+
+        \todo{Overview: \cite{DBLP:journals/corr/Ruder16}}
+
+        \todo{Adam: \cite{DBLP:journals/corr/KingmaB14}}
+
+        \todo{Adadelta: \cite{DBLP:journals/corr/abs-1212-5701}}
+
+        \todo{L-BFGS: \cite{LBFGS}}

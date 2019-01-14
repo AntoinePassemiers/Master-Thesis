@@ -1,0 +1,50 @@
+\chapter{Introduction}
+
+    \setcounter{page}{1}
+    \vspace*{0.5cm}
+
+    Proteins are large macromolecules in the form of chains of building blocks called amino acid residues.
+    There are 20 common amino acid types, but certain proteins may contain 2 additional amino acid types, namely pyrrolysine and selenocysteine.
+    According to Anfinsen's dogma, the three-dimensional structure of a protein is uniquely determined by its underlying amino acid sequence,
+    at least when observed in protein's native environment. When environmental conditions are met, a random coil (a sequence of amino acid residues
+    oriented in random directions) will evolve towards the three-dimensional structure that minimizes Gibbs free energy.
+    This process is called protein folding and has, however, a few exceptions.
+
+    Protein Contact Prediction (PCP) can help determining the three-dimensional structure of proteins by limiting the search space to certain conformations
+    forced by predicted contact maps. Protein structure is organized hierarchically: primary structure, secondary structure, tertiary structure
+    and quaternary structure. Primary structure refers to the chemical composition of the protein, hence the sequence of amino acids present in it.
+    Secondary structure indicates the presence of structures local to the amino acids themselves: these structures can generally be $\alpha$-helices
+    or $\beta$-sheets. Tertiary structure contains information about the three-dimensional structure of the protein and results from interactions
+    between side chains of some pairs of amino acids, such as hydrogen bonds, ionic bonds or disulfide bridges.
+    Quaternary structure is specific to proteins having multiple polypeptide chains and describes the structure due to intermolecular interactions between
+    these chains. PCP helps predicting the tertiary structure since three-dimensional models can be reconstructed from protein contact maps (PCM).
+    Also, PCM is a more simplistic and robust description of a protein's geometry because it is invariant to rotations and translations.
+    This simplification helps making deep learning methods perform well on structure prediction.
+
+    Most PCP methods can be roughly divided into two categories:
+    the ones based on Evolutionary Coupling Analysis (ECA) and the ones that infer contacts using
+    supervised machine learning. In the former case, amino acid covariances are statistically modelled and the parameters of the underlying model
+    are then generally optimized through log-likelihood maximization. In the second case, deep neural architectures are used to
+    refine predictions made by low-level predictors such as ECA in order to generate high-quality contact maps.
+    \todo{}
+
+    Ultimately, PCP should help making \textit{ab initio} structure prediction.
+    However, most recent methods rely on a whole raft of alignment and prediction tools.
+    Given a protein encoded in FASTA format, ECA is only possible using a Multiple Sequence Alignment (MSA)
+    of this target protein with homologuous proteins. These homologuous proteins come from the same protein family
+    as the target protein, and therefore the most suitable family must be found.
+    This can be done by matching the target sequence to a Hidden Markov Model (HMM) profile representing a family
+    like in Pfam database~\cite{Pfam}. Once the homologuous sequences have been retrieved, they have to be aligned to
+    the target sequence using an MSA tool like HHblits or HMMER. In the next step, evolutionary couplings are extracted from
+    the MSA using an ECA predictor like PSICOV~\cite{doi:10.1093/bioinformatics/btr638} or plmDCA~\cite{EKEBERG2014341}.
+    Eventually, predictions are gathered and refined using a deep neural architecture, necessitating the use
+    of a differential programming library. These successive layers of dependencies are not making PCP a straightforward process.
+    Therefore, it seems to be a natural choice to set as an objective for this thesis the development of a predictor with
+    minimal requirements and performance close to state-of-the-art techniques.
+
+    In this thesis, common state-of-the-art ECA techniques and deep learning models for PCP are going to be described.
+    ECA methods comprise Direct Coupling Analysis (DCA) and Pseudo-Inverse Covariance matrices (PSICOV), which can
+    both be seen as examples of graphical models.
+    \todo{}
+
+    \todo{One contact for 12 residues: \cite{kim2014one}}

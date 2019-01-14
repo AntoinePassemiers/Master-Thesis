@@ -1,0 +1,93 @@
+\subsection{Input features} \label{inputfeatures}
+
+    \subsubsection{Global features}
+
+        \paragraph{Protein length}
+
+        \paragraph{Effective number of sequences} 
+
+        \paragraph{Predictors standard deviation}
+
+    \subsubsection{1-dimensional features}
+
+        \paragraph{One-hot encoded sequence}
+
+            Given an amino acid sequence $\{s_1, s_2, \ldots,
+            s_L\}$ of size L, its one-hot encoded version
+            is a matrix $X \in \{0, 1\}^{L \times 21}$
+            where $x_{ia}$ is one if $s_i = a$.
+
+        \paragraph{Solvent accessibility}
+
+            \todo{Add picture}
+
+        \paragraph{Predicted Secondary Structure Prediction}
+
+        \paragraph{Amino acid frequencies}
+
+            Amino acid frequencies are position-specific features that can be efficiently computed.
+            Let $S \in \{0, \ldots, \naatypes\}^{M \times L}$ be a 
+            MSA matrix containing $M$ sequences aligned to a target
+            sequence of length $L$. Then amino acid frequencies can be arranged
+            in a matrix $F \in \mathbb{R}^{L \times \naatypes}$
+            where element $F_{ia}$ is computed as follows:
+
+            \begin{equation}
+                F_{ia} = \frac{1}{M} \sum\limits_{k=1}^M \delta(S_{ki}, a)
+            \end{equation}
+
+        \paragraph{Position-Specific Scoring Matrix}
+
+        \paragraph{Atchley factors}
+
+            \todo{Atchley: \cite{Atchley2005}}
+
+        \paragraph{Self-information}
+
+            \cite{Michel383133}
+
+            \begin{equation}
+                I_i = \log_2 (p_i / \langle p_i \rangle)
+            \end{equation}
+
+            where $p_i$ is the probability of observing amino acid $i$ among all residues
+            of given MSA, and $\langle p_i \rangle$ is the frequency of amino acid $i$
+            in the Uniref50 dataset.
+
+        \paragraph{Partial entropies}
+
+            \cite{Michel383133}
+
+            \begin{equation}
+                S_i = p_i \log_2 (p_i / \langle p_i \rangle)
+            \end{equation}
+
+    \subsubsection{2-dimensional features}
+
+        \paragraph{Mutual Information and Normalized Mutual Information}
+
+            Following the formalism described in \cite{Michel383133}, MI is described as:
+
+            \begin{equation}
+                MI(x, y) = \sum\limits_{x, y} P(x, y) \log \Big( \frac{P(x, y)}{P(x) P(y)} \Big)
+            \end{equation}
+
+            \begin{equation}
+                NMI(x, y) = \frac{MI(x, y)}{\sqrt{S(x) S(y)}}
+            \end{equation}
+
+            APC is applied to both MI and NMI.
+
+        \paragraph{Cross-entropy}
+
+            Cross-entropy is computed in \cite{Michel383133} using the following formula:
+            
+            \begin{equation}
+                H(x, y) = S(x) + S(y) - MI(x, y)
+            \end{equation}
+
+        \paragraph{Contact potential}
+
+        \paragraph{Predictions from DCA and PSICOV}
+
+        \paragraph{Covariance}

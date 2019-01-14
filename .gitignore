@@ -1,0 +1,13 @@
+*.acn
+*.aux
+*.bbl
+*.blg
+*.idx
+*.spl
+*.xdy
+*.toc
+*.log
+*.pdf
+*.synctex.gz
+
+*.pptx

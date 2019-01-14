@@ -1,0 +1,133 @@
+\section{Direct Coupling Analysis}
+
+    \subsection{Potts model} \label{potts}
+
+        
+
+    \subsection{Exact inference is hard}
+
+        It has long been stated that three-dimensional structure of proteins have an impact regarding the amino acid composition among
+        homologous proteins. Spatial contacts between residues can thus be inferred by analyzing the variability of amino acid types at fixed pairs of positions.
+        The core idea in Direct Coupling Analysis (DCA) is to disentangle direct correlations and correlations produced at intermediary positions.
+
+        \begin{equation}
+            \begin{split}
+                P(s \vert J, h) & = \frac{1}{Z} \exp{\sum\limits_{i=1}^L \sum\limits_{j=i+1}^L J_{ij}(s_i, s_j) + \sum\limits_{i=1}^L h_i(s_i)}
+            \end{split}
+        \end{equation}
+
+        where $J$ and $h$ are sets of model parameters, $s$ is an amino acid sequence and $Z$ is a normalization factor called partition function ensuring
+        that the sum $\sum\limits_{s} P(s \vert J, h)$ over all lexicographically possible sequences is equal to one.
+        Given a multiple sequence alignment containing $B$ sequences, a na\"\i ve approach would be to maximize its log-likelihood:
+
+        \begin{equation}
+            \begin{split}
+                \log{L}(J, h \vert s^{(1)}, \dotsc, s^{(M)}) & = \sum\limits_{k=1}^M \log P(s^{(k)} \vert J, h) \\
+                & = \sum\limits_{k=1}^M \log \Bigg( \frac{1}{Z} \exp{\sum\limits_{i=1}^L 
+                    \sum\limits_{j=i+1}^L J_{ij}(s_i^{(k)}, s_j^{(k)}) + \sum\limits_{i=1}^L h_i(s_i^{(k)})} \Bigg) \\
+                & = -M \log(Z) + \sum\limits_{k=1}^M \Big( \sum\limits_{i=1}^L \sum\limits_{j=i+1}^L J_{ij}(s_i^{(k)}, s_j^{(k)}) 
+                    + \sum\limits_{i=1}^L h_i(s_i^{(k)}) \Big)
+            \end{split}
+        \end{equation}
+
+        with the following partial derivatives:
+
+        \begin{equation}
+            \begin{split}
+                \frac{\partial}{\partial J_{ij}(a, b)} \log{L}(J, h \vert s^{(1)}, \dotsc, s^{(M)}) & = 
+                    -M \frac{\partial \log(Z)}{\partial J_{ij}(a, b)} + \sum\limits_{k=1}^M \delta\Big(s_i^{(k)}, a\Big) \delta\Big(s_j^{(k)}, b\Big) \\
+                 \frac{\partial}{\partial h_{i}(a)} \log{L}(J, h \vert s^{(1)}, \dotsc, s^{(M)}) & = 
+                    -M \frac{\partial \log(Z)}{\partial h_{i}(a)} + \sum\limits_{k=1}^M \delta\Big(s_i^{(k)}, a\Big)
+            \end{split}
+        \end{equation}
+
+        where $\delta(a, b)$ denotes the Kronecker symbol.
+
+        However, there is no straightforward method to compute the partition function $Z$ or its gradients for large
+        systems due to the discrete nature of amino acid sequences. Indeed, $Z$ contains $21^L$ terms for systems with 21 possible symbols (amino acid types + gap)
+        and sequences of length $L$. For this aim, several methods like Mean-Field (mfDCA)~\cite{MorcosE1293}, Message Passing (mpDCA)~\cite{Weigt2009},
+        Pseudo-Likelihood Maximization (plmDCA)~\cite{EKEBERG2014341} or Multivariate Gaussian Modeling (GaussDCA)~\cite{10.1371/journal.pone.0092721}
+        have been developed.
+
+    \subsection{Pseudo-Likelihood Maximization}
+
+        plmDCA~\cite{EKEBERG2014341} addresses the problem of estimating the partition function by maximizing the pseudo-loglikelihood instead of the loglikelihood.
+        The pseudo-loglikelihood can be expressed as the sum of loglikelihoods $\log{L}(J_r, h_r)$, where each $\log{L}(J_r, h_r)$ is computed
+        at a single site $r$. The method thus assumes the conditional independence between variables belonging to different sites.
+        However, the partition function at a given site can then be easily computed as a sum of 21 terms since a state can take 21 possible values at a given position.
+        More formally, the penalized loglikelihood at site $r$ is given by:
+
+        \begin{equation}
+            \begin{split}
+                \log{L^{(reg)}}(J_r, h_r) = & -\frac{1}{M_{eff}} \sum\limits_{k=1}^M w_k \Bigg( h_r(s_r^{(k)}) 
+                    + \sum\limits_{i \neq k}^L J_{ri}(s_r^{(k)}, s_i^{(k)}) - \log(Z_r) \Bigg) \\
+                & + \lambda_h \norm{h_r}_2^2 + \lambda_J \norm{J_r}_2^2 \\
+                \text{where} \ \ \ \ \ \ \ \ Z_r = & \sum\limits_{a=1}^q \exp{h_r(a) + \sum\limits_{i \neq r} J_{ri}(a, s_i^{(k)})}
+            \end{split}
+        \end{equation}
+
+        It can be observed that the formula contains a $L2$ penalty term for both fields and couplings,
+        and that each log-probability is weighted by a protein weight $w_k$.
+        The latter is \todo{}
+        Also, the optimization procedure is called asymmetric pseudolikelihood maximization because 
+        each matrix $J(a, b)$ is supposed to be symmetric but is in practice
+        independently estimated. This allows plmDCA to run in parallel by optimizing $\log{L^{(reg)}}(J_r, h_r)$ each on a different core.
+
+        After maximizing the pseudo-loglikehood in parallel, all remaining information 
+        that can be explained by the fields are removed from the couplings by applying
+        an average sum correction w.r.t. the states:
+
+        \begin{equation}
+            \hat{J}_{ij}(a, b) = J_{ij}(a, b) - \frac{1}{q} \sum\limits_{a=1}^q J_{ij}(a, b) - \frac{1}{q} \sum\limits_{b=1}^q J_{ij}(a, b) 
+            + \frac{1}{q^2} \sum\limits_{a=1}^q \sum\limits_{b=1}^q J_{ij}(a, b)
+        \end{equation}
+
+        Then each matrix $J(a, b)$ is symmetrized by simply averaging it with its transpose:
+        
+        \begin{equation}
+            \hat{J}(a, b) \leftarrow \frac{1}{2} \big( \hat{J}(a, b) + \hat{J}(a, b)^T \big) \ \ \ \forall a, b
+        \end{equation}
+
+        Finally, a contact map is predicted by norming $\hat{J}$ over the states and applying an average product correction w.r.t. the sites.
+        plmDCA shows remarkable performance on diverse sets of proteins with running times competitive with mean-field DCA.
+
+
+    \subsection{Gaussian Direct Coupling Analysis}
+
+        \subsubsection{Bayesian inference}
+
+            Parametric formulation of Bayes' rule:
+            
+            \begin{equation}
+                P(\theta \vert X, \alpha) = \frac{P(X, \theta \vert \alpha) P(\theta \vert \alpha)}{P(X \vert \alpha)} \propto 
+                P(X, \theta \vert \alpha) P(\theta \vert \alpha)
+            \end{equation}
+
+            $P(\theta \vert \alpha)$ is a prior distribution, hence a distribution over the parameter space without
+            any knowledge about the data $X$. As more and more data becomes available, the newly observed samples can be
+            incorporated to the model through the likelihood $P(X, \theta \vert \alpha)$. The likelihood measures how strongly
+            the data is explained by the model, given a set of parameter values. $P(X \vert \alpha)$ is called evidence or
+            marginal likelihood because it is equal to the data likelihood marginalized over the parameters $\theta$.
+            $P(\theta \vert \alpha)$ is the posterior distribution, giving the probability of some parameters given
+            the observed data. 
+
+            The marginal likelihood is a constant term w.r.t. the hyper-parameters $\alpha$. Therefore, the maximum
+            a posteriori estimation (MAP) is simply the maximum product between the likelihood and the prior.
+
+        \subsubsection{Prior distribution}
+
+            \begin{equation}
+                P(\mu \vert \Sigma) = \Big(\frac{2 \pi}{\kappa}\Big)^{-\frac{N}{2}} \vert\Sigma\vert^{-\frac{1}{2}} \exp{\frac{\kappa}{2}
+                (\mu - \eta)^T \Sigma^{-1} (\mu - \eta)}
+            \end{equation}
+
+
+            \begin{equation}
+                \begin{split}
+                    P(\Sigma) & = \frac{1}{Z} \vert\Sigma\vert^{\frac{\nu + N + 1}{2}} \exp{-\frac{1}{2} \trace{\Lambda \Sigma^{-1}}} \\
+                    \text{where } & \ \ \ \ \ \ \ \ Z = 2^{\nu N}{2} \pi^{\frac{N (N - 1)}{4}} \vert\Lambda\vert 
+                    \prod\limits_{n=1}^{N} \Gamma\Big(\frac{\nu + 1 - N}{2}\Big)
+                \end{split}
+            \end{equation}
+
+            $Gamma$ is Euler's Gamma function, $\nu$ is the degree of freedom and $\Lambda$ is a parameter matrix called scale matrix.
