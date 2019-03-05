@@ -293,6 +293,28 @@
 
         Optimize $\beta, \gamma$ with backpropagation. \todo{}
 
+    \subsection{Regularization}
+
+	From an optimization perspective, regularization is a penalty used to prevent parameters from growing arbitrarily big during training.
+	According to Occam's law of parsimony, simpler hypotheses should be privileged over more complex ones.
+	Therefore, when the neural architecture involves a large number of free parameters in the presence of relatively few data samples,
+	regularization helps reducing parameters importance and converging to less arbitrary parameter values.
+	From a Bayesian perspective, regularization provides a prior distribution over the model parameters.
+	
+	\todo{CE = negative log-likelihood}
+	\begin{equation}
+	    CE(\hat{y}, y) = -\sum\limits_{i=0}^n y_i \log{\hat{y}} + (1 - y_i) \log{1 - \hat{y}}
+	\end{equation}
+
+
+	\subsubsection{L1 regularization}
+
+	   \todo{Laplace distribution} 
+
+	\subsubsection{L2 regularization}
+	    
+	   \todo{Gaussian distribution}
+
     \subsection{Optimization algorithms}
 
         The gradient vector is obtained by concatenating the gradients w.r.t. each layer's parameter vector. This final gradient vector

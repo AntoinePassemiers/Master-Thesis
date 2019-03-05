@@ -9,4 +9,7 @@
 *.log
 *.synctex.gz
 
+*.swn
+*.swo
+*.swp
 *.pptx

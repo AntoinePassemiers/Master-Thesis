@@ -27,6 +27,8 @@
   available at the address \url{http://pconsc3.bioinfo.se/pred/download/} as on the date of 28th December 2018.
   Information available in these datasets is the following:
 
+  \todo{PDB parser to obtain distance and contact maps}
+
   \begin{itemize}
     \item Protein sequence in FASTA format
     \item MSA obtained using HHblits on the corresponding protein family
@@ -49,8 +51,9 @@
 
   As described in section \ref{inputfeatures}, input features can be split into three categories:
   global, 1-dimensional and 2-dimensional features.
-  The proposed model takes as input the protein length, the effective number of sequences in the corresponding MSA,
-  the 
+  The proposed model takes as input the protein length, the effective number of sequences 
+  in the corresponding MSA, position-specific statistics, residue pair-specific statistics
+  and predictions made by PSICOV, plmDCA and GaussDCA.
 
   \begin{table}[H]
     \centering
@@ -69,7 +72,7 @@
       2-dimensional & Mutual information & $L \times L$ \\
                     & Normalized mutual information & $L \times L$ \\
                     & Cross-entropy & $L \times L$ \\
-                    & PhyCMAP predictions & $L \times L$ \\
+                    & PSICOV predictions & $L \times L$ \\
                     & GaussDCA predictions & $L \times L$ \\
                     & plmDCA predictions & $L \times L$ \\
       \hline
@@ -111,13 +114,13 @@
   Best-L/k PPV can also be split into three separated metrics: short-range, medium-range and long-range contacts.
   These three types of contacts can be defined by the residue separations used by Skwark et al.~\cite{10.1371/journal.pcbi.1003889}:
 
-  \begin{itemize}
-    \item Short-range contacts: 6 - 12 residue separation
-    \item Medium-range contacts: 12 - 24 residue separation
-    \item Long-range contacts: 24+ residue separation
-  \end{itemize}
+    \begin{itemize}
+      \item Short-range contacts: 6 - 12 residue separation
+      \item Medium-range contacts: 12 - 24 residue separation
+      \item Long-range contacts: 24+ residue separation
+    \end{itemize}
 
-\section{Hyper-parameters optimization}
+\section{Hyper-parameter optimization}
 
   \todo{Hyperopt}
 
