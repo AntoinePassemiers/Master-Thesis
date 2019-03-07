@@ -3,8 +3,20 @@
     \subsubsection{Global features}
 
         \paragraph{Protein length}
+	
+  	    Protein length is computed as the number of residues in the protein sequence.
+	    It provides complementary information that convolutional layers cannot capture.
+ 	    Indeed, fully-connected neural networks have the ability to handle arbitrary-sized
+	    features maps at the cost of not knowing the dimensionality of their inputs.
+	    Injecting protein length as a supplementary global feature may help the model
+	    to infer the maximum distance in long-range contacts.
 
-        \paragraph{Effective number of sequences} 
+	\paragraph{Effective number of sequences}
+
+	    The number of effective sequences is equal, w.r.t. to a given threshold,
+	    to the number of non-redundant sequences in the set of homologous sequences.
+	    It provides a bound on the potential performance of the DCA methods involved
+	    in the pipeline.
 
         \paragraph{Predictors standard deviation}
 

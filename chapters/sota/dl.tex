@@ -295,31 +295,71 @@
 
     \subsection{Regularization}
 
-	From an optimization perspective, regularization is a penalty used to prevent parameters from growing arbitrarily big during training.
+	From an optimization perspective, regularization is a penalty used to prevent 
+	parameters from growing arbitrarily big during training.
 	According to Occam's law of parsimony, simpler hypotheses should be privileged over more complex ones.
-	Therefore, when the neural architecture involves a large number of free parameters in the presence of relatively few data samples,
+	Therefore, when the neural architecture involves a large number of free parameters
+	in the presence of relatively few data samples,
 	regularization helps reducing parameters importance and converging to less arbitrary parameter values.
 	From a Bayesian perspective, regularization provides a prior distribution over the model parameters.
-	
-	\todo{CE = negative log-likelihood}
+	In Bayes formula, the posterior $P(\theta \vert X, \alpha)$ is a function of both the prior
+	$P(\theta \vert \alpha)$ and the likelihood of the data $P(X \vert \theta, \alpha)$ under model $\theta$.
+
 	\begin{equation}
-	    CE(\hat{y}, y) = -\sum\limits_{i=0}^n y_i \log{\hat{y}} + (1 - y_i) \log{1 - \hat{y}}
+	    P(\theta \vert X, \alpha) = \frac{P(X \vert \theta, \alpha)\,P(\theta \vert \alpha)}{P(X \vert \alpha}
 	\end{equation}
 
+	The relation between the loss function of a neural network and Bayes formula can be established
+	by proving the two following points:
+
+	\begin{itemize}
+	    \item The log-likelihood of the data is equal to the negative cross-entropy.
+	    \item The regularization term is proportional to the prior distribution of the parameters.
+	\end{itemize}
+
+	The first part is easy to show since negative log-likelihood can be obtained from binary cross-entropy:
+	\begin{align}
+		CE(\hat{y}, y) & = - \log{\prod\limits_{i=0}^n P(\hat{y_i})^{y_i}}  \\
+		& = -\sum\limits_{i=0}^n y_i \log{\hat{y}} + (1 - y_i) \log{1 - \hat{y}}
+	\end{align}
+	This allows us to provide a statistical interpretation of the loss function.
+	Regarding priors, L1 and L2 regularizations are going to be introduced in the following two sections.
 
 	\subsubsection{L1 regularization}
 
-	   \todo{Laplace distribution} 
+	   Adding a L1 regularization term to the loss function reduces to providing a Laplacian
+	   prior on model parameters.  
+
+	   \begin{align}
+	       \max_{\theta}\, \log{P(\theta \vert \eta, b)} 
+		   & = \max_{\theta}\, \log{\prod\limits_{i=1}^m \, \frac{1}{2b_i}\,
+		   \exp{\frac{- \abs{\theta_i - \eta_i}}{b_i}}} \\
+		   & = \max_{\theta}\, \sum\limits_{i=1}^m \frac{- \abs{\theta_i - \eta_i}}{b_i} - \log{2b_i} \\
+		   & = \min_{\theta}\, \sum\limits_{i=1}^m \abs{\theta_i - \eta_i}
+	   \end{align}
 
 	\subsubsection{L2 regularization}
-	    
-	   \todo{Gaussian distribution}
+		   
+	   L2 regularization acts as a Gaussian prior on model parameters.
+	   This can be highlighted by setting the probability density function of the Gaussian
+	   distribution as the prior and show that the regularization term is proportional
+	   to the logarithm of the product of priors.
+
+	   \begin{align}
+               \max_{\theta}\, \log{P(\theta \vert \eta, \sigma)}
+		   & = \max_{\theta}\, \log{\prod\limits_{i=1}^m \, \frac{1}{\sqrt{2\pi\sigma^2}} 
+		   \exp{-\frac{(\theta - \eta)^2}{2\sigma^2}}} \\
+		   & = \max_{\theta}\, \sum\limits_{i=1}^m \, -\frac{(\theta_i - \eta_i)^2}{2\sigma^2}
+		   - \log{\sqrt{2\pi\sigma^2}} \\
+		   & = \min_{\theta}\, \sum\limits_{i=1}^m \, (\theta_i - \eta_i)^2 
+           \end{align}
 
     \subsection{Optimization algorithms}
 
-        The gradient vector is obtained by concatenating the gradients w.r.t. each layer's parameter vector. This final gradient vector
-        gives an improvement direction, but a decrease of the loss function is guaranteed by moving by a arbitrary small step
-        in the parameter space.
+        The gradient vector is obtained by concatenating the gradients w.r.t.
+	each layer's parameter vector. This final gradient vector
+        gives an improvement direction, but a decrease of the loss function
+	is guaranteed by moving by a arbitrary small step in the parameter space.
 
         \todo{Overview: \cite{DBLP:journals/corr/Ruder16}}
 
