@@ -283,6 +283,8 @@
             \label{gradients}
         \end{table}
 
+        \todo{Backpropagating sample gradients in fully-convolution networks}
+
         \begin{equation}
             \begin{split}
                 \mu_{\mathcal{B}} & = \frac{1}{\vert\mathcal{B}\vert} \sum\limits_{i=1}^{\vert\mathcal{B}\vert} x_i \\
@@ -338,6 +340,9 @@
 		   & = \min_{\theta}\, \sum\limits_{i=1}^m \abs{\theta_i - \eta_i}
 	   \end{align}
 
+	   By setting vector $\eta \in \mathbb{R}^m$ to $0$, the resulting regularization term
+	   takes its final well-known form $\sum\limits_{i=1}^m \abs{\theta_i}$.
+
 	\subsubsection{L2 regularization}
 		   
 	   L2 regularization acts as a Gaussian prior on model parameters.
@@ -353,6 +358,9 @@
 		   - \log{\sqrt{2\pi\sigma^2}} \\
 		   & = \min_{\theta}\, \sum\limits_{i=1}^m \, (\theta_i - \eta_i)^2 
            \end{align}
+
+	   Again, by setting vector $\eta \in \mathbb{R}^m$ to $0$, the regularization term takes its
+	   final form $\sum\limits_{i=1}^m \theta_i^2$.
 
     \subsection{Optimization algorithms}
 
