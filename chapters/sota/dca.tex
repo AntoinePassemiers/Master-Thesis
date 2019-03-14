@@ -2,8 +2,6 @@
 
     \subsection{Potts model} \label{potts}
 
-        
-
     \subsection{Exact inference is hard}
 
         It has long been stated that three-dimensional structure of proteins have an impact regarding the amino acid composition among
@@ -94,9 +92,32 @@
 
     \subsection{Gaussian Direct Coupling Analysis}
 
+        plmDCA is of state-of-the-art performance, but still it requires high computational resources.
+        An alternative method is to use GaussDCA~\cite{10.1371/journal.pone.0092721}, which does
+        exact inference in a single step.
+
+        In GaussDCA, each variable $x_i \in \{0, 1\}$ indicates whether residue located at locus $i \% L \in \{ 1, \dotsc, L \}$
+        is of amino acid type $i / L \in \{1, \dotsc, \naatypes\}$. With such a formalism, each protein is described as a vector
+        $x \in \{0, 1\}^{\naatypes\,L}$. The key assumption at the core of the method is to approximate each binary variable $x_i$
+        by a continuous, Gaussian variable. Let $m$ be the number of sequences in a MSA, $X \in \{0, 1\}^{m \times \naatypes\,L}$
+        the matrix representation of the MSA, and $\mu, \bar{x}$ be, respectively, the theoretical and empirical mean vectors associated to it,
+        the empirical covariance matrix of $X$ is given by:
+        \begin{equation}
+            \bar{C}_{ij}(X, \mu) \triangleq C_{ij}(X, \mu) = C_{ij}(X, \bar{x}) = \frac{1}{m} \sum\limits_{k=1}^m (x_i^k - \mu_i) (x_j^k - \mu_j)
+        \end{equation}
+
+        Similarly to PSICOV~\cite{doi:10.1093/bioinformatics/btr638}, evolutionary couplings are detected by keeping track of direct interations
+        between variables of the system, what can be realized by computing the precision matrix, also known as the inverse of the covariance matrix.
+        When matrix $\bar{C}$ is not rank-deficient, maximum log-likelihood is attained by setting the theoretical covariance matrix
+        $\Sigma$ to $\bar{C}$. However, empirical covariance matrix is rarely full-rank due to the limited number of effective sequences
+        in MSAs. The suggested solution is to provide a prior distribution on positive-definite matrices and perform exact Bayesian inference
+        to find an inversible covariance matrix.
+
         \subsubsection{Bayesian inference}
 
-            Parametric formulation of Bayes' rule:
+            In Bayesian inference, a hypothesis is favoured over others based on its posterior probability,
+            which is proportional to the product of the data log-likelihood under this hypothesis
+            and its prior probability. This relation holds in the parametric formulation of Bayes' rule:
             
             \begin{equation}
                 P(\theta \vert X, \alpha) = \frac{P(X, \theta \vert \alpha) P(\theta \vert \alpha)}{P(X \vert \alpha)} \propto 
@@ -116,18 +137,45 @@
 
         \subsubsection{Prior distribution}
 
+            A reasonable choice for the prior distribution over $\mu$ and $\Sigma$ is the normal-inverse-Wishart (NIW)
+            distribution, which is known to be conjugate prior for the Gaussian log-likelihood.
+            The prior and the posterior are said to be conjugate if they are of the same form. In the case of NIW prior,
+            the posterior is also a NIW distribution. The prior is defined as the product
+            $P(\mu, \Sigma) = P(\mu \vert \Sigma)\,P(\Sigma)$, where the prior of the mean vector is defined as a multivariate
+            Gaussian distribution:
+
             \begin{equation}
-                P(\mu \vert \Sigma) = \Big(\frac{2 \pi}{\kappa}\Big)^{-\frac{N}{2}} \vert\Sigma\vert^{-\frac{1}{2}} \exp{\frac{\kappa}{2}
-                (\mu - \eta)^T \Sigma^{-1} (\mu - \eta)}
+                P(\mu \vert \Sigma) = \Big(\frac{2 \pi}{\kappa}\Big)^{-\frac{m}{2}} \vert\Sigma\vert^{-\frac{1}{2}}
+                \exp{\frac{\kappa}{2} (\mu - \eta)^T \Sigma^{-1} (\mu - \eta)}
             \end{equation}
 
+            Let's note that the Gaussian distribution is conjugate to itself. The prior over positive-definite matrices
+            (we are interested in inversible covariance matrices exclusively) is defined by the NIW distribution:
 
             \begin{equation}
                 \begin{split}
-                    P(\Sigma) & = \frac{1}{Z} \vert\Sigma\vert^{\frac{\nu + N + 1}{2}} \exp{-\frac{1}{2} \trace{\Lambda \Sigma^{-1}}} \\
-                    \text{where } & \ \ \ \ \ \ \ \ Z = 2^{\nu N}{2} \pi^{\frac{N (N - 1)}{4}} \vert\Lambda\vert 
-                    \prod\limits_{n=1}^{N} \Gamma\Big(\frac{\nu + 1 - N}{2}\Big)
+                    P(\Sigma) & = \frac{1}{Z} \vert\Sigma\vert^{\frac{\nu + m + 1}{2}} \exp{-\frac{1}{2} \trace{\Lambda \Sigma^{-1}}} \\
+                    \text{where } & \ \ \ \ \ \ \ \ Z = 2^{\nu m}{2} \pi^{\frac{m (m - 1)}{4}} \vert\Lambda\vert 
+                    \prod\limits_{k=1}^{m} \Gamma\Big(\frac{\nu + 1 - m}{2}\Big)
                 \end{split}
             \end{equation}
 
-            $Gamma$ is Euler's Gamma function, $\nu$ is the degree of freedom and $\Lambda$ is a parameter matrix called scale matrix.
+            where $\Gamma$ is Euler's Gamma function, $\nu$ is the degree of freedom and $\Lambda$ is a parameter matrix called scale matrix.
+            
+        \subsubsection{Computing the MAP covariance matrix}
+
+            The mean values for the NIW prior are known and equal to $\eta$ and $\Lambda / (\nu - m - 1)$, respectively.
+            Assuming $\eta'$, $\nu'$ and $\Lambda'$ are the corresponding parameters in the NIW posterior, the mean values are given by
+            $\eta'$ and $\Lambda / (\nu' - m - 1)$, respectively. In particular, the matrix $\Lambda'$ that allows the posterior to be conjugate
+            with the prior is given by the following relation:
+            \begin{equation}
+                \Lambda' = \Lambda + n \bar{C} + \frac{\kappa m}{\kappa + m} (\bar{x} - \eta) (\bar{x} - \eta)^T
+            \end{equation}
+            Finally, the average covariance matrix is computed as:
+            \begin{align*}
+                \Sigma & = \frac{\Lambda'}{\nu' - m - 1} \\
+                & = \frac{\Lambda + n \hat{C} + \frac{\kappa n}{\kappa + n} (\hat{x} - \eta)^T (\bar{x} - \eta)}{\nu + n - m -1} \\
+                & = \lambda \Lambda + (1 - \lambda) \bar{C} + \lambda (1 - \lambda) (\bar{x} - \eta)^T (\bar{x} - \eta)
+            \end{align*}
+            As a viable choice for the hyper-parameter matrix $\Lambda$, one could choose the less arbitrary one. To this aim, the covariance
+            matrix corresponding to a uniform multivariate distribution has been selected.

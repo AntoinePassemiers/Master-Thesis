@@ -34,16 +34,16 @@
     \item MSA obtained using HHblits on the corresponding protein family
     \item Atom 3D coordinates
     \item PhyCMAP~\cite{PhyCMap} intermediate predictions
-    \item plmDCA intermediate predictions
-    \item GaussDCA intermediate predictions
+    \item plmDCA~\cite{EKEBERG2014341} intermediate predictions
+    \item GaussDCA~\cite{10.1371/journal.pone.0092721} intermediate predictions
     \item Predictions made by PConsC3~\cite{Skwark079673} at each layer of the model
     \item CCMPred~\cite{CCMPred} predictions (only available in the 4 test sets)
-    \item EVFold predictions (only available in the 4 test sets)
-    \item PSICOV predictions (only available in the 4 test sets)
+    \item EVFold~\cite{Sheridan021022} predictions (only available in the 4 test sets)
+    \item PSICOV~\cite{doi:10.1093/bioinformatics/btr638} predictions (only available in the 4 test sets)
     \item MetaPSICOV~\cite{MetaPSICOV} predictions (only available in the 4 test sets)
   \end{itemize}
 
-  \todo{Took alignments from PConsC and DNCON2 -> model not influenced by the new releases of alignments tools}
+  \todo{Took alignments from PConsC2 and PConsC3 -> model not influenced by the new releases of alignments tools}
   \todo{What about the protein structures?}
 
   \todo{Oversampling negative class: \cite{markowski2016oversampling}}
@@ -123,7 +123,7 @@
 
 \section{Hyper-parameter optimization}
 
-  \todo{Hyperopt}
+  \todo{Hyperopt: \cite{Bergstra_2015}}
 
   \begin{table}[H]
     \centering
