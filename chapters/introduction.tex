@@ -4,17 +4,30 @@
     \vspace*{0.5cm}
 
     Proteins are large macromolecules in the form of chains of building blocks called amino acid residues.
-    There are 20 common amino acid types, but certain proteins may contain 2 additional amino acid types, namely pyrrolysine and selenocystein
-    .
+    There are 20 common amino acid types, but certain proteins may contain 2 additional amino acid types, namely pyrrolysine and selenocystein.
     According to Anfinsen's dogma, the three-dimensional structure of a protein is uniquely determined by its underlying amino acid sequence,
     at least when observed in protein's native environment. When environmental conditions are met, a random coil (a sequence of amino acid residues
     oriented in random directions) will evolve towards the three-dimensional structure that minimizes Gibbs free energy.
     This process is called protein folding and has, however, a few exceptions.
 
     Protein Contact Prediction (PCP) can help determining the three-dimensional structure of proteins by limiting the search space to certain conformations
-    forced by predicted contact maps. Protein structure is organized hierarchically: primary structure, secondary structure, tertiary structure
+    forced by predicted contact maps. The problem of predicting the structure of a protein can be reduced to PCP because the latter is a much simpler problem,
+    and only a few correctly predicted contacts are sufficient to reconstruct the whole structure~\cite{kim2014one}.
+
+    Structure-based methods are important in biology, as they help in assigning biochemical or biological functions to proteins. Indeed, the three-dimensional
+    structure of a protein is more well conserved than the underlying amino acid sequence across evolution. Prompted by this knowledge, similar functions
+    can be assigned to proteins with low structural dissimilarity. Precisely identifying the role played by each protein in an organism is the first step
+    towards understanding complex body mechanisms like muscle contraction, digestion or perceiving light.
+    Also, determining the static structure of proteins help in detecting misfolded proteins which are possibly involved in diseases like Parkinson's or
+    Alzheimer's, but also in diagnosing those diseases.
+    Finally, solving the protein folding (structure prediction) problem will enable to do better protein design, for example to engineer enzymes like PETase
+    so they have faster pastic-degrading capabilities.
+    There are pipelines designed to predict the structure and then the function of a newly
+    observed protein, such as RaptorX server~\cite{peng2011raptorx}.
+
+    Protein structure is organized hierarchically: primary structure, secondary structure, tertiary structure
     and quaternary structure. Primary structure refers to the chemical composition of the protein, hence the sequence of amino acids present in it.
-    Secondary structure indicates the presence of structures local to the amino acids themselves: these structures can generally be $\alpha$-helices
+    Secondary structure indicates the presence of structures that are local to the amino acids themselves: these structures can generally be $\alpha$-helices
     or $\beta$-sheets. Tertiary structure contains information about the three-dimensional structure of the protein and results from interactions
     between side chains of some pairs of amino acids, such as hydrogen bonds, ionic bonds or disulfide bridges.
     Quaternary structure is specific to proteins having multiple polypeptide chains and describes the structure due to intermolecular interactions between
@@ -24,15 +37,14 @@
 
     Most PCP methods can be roughly divided into two categories:
     the ones based on Evolutionary Coupling Analysis (ECA) and the ones that infer contacts using
-    supervised machine learning. In the former case, amino acid covariances are statistically modelled and the parameters of the underlying model
-    are then generally optimized through log-likelihood maximization. In the second case, deep neural architectures are used to
-    refine predictions made by low-level predictors such as ECA in order to generate high-quality contact maps.
-    \todo{}
+    supervised machine learning. In the former case, amino acid pairwise mutations are statistically modelled and the underlying model's parameters
+    are generally optimized through log-likelihood maximization. In the second case, deep neural architectures are used to
+    refine predictions made by low-level predictors such as ECA, in order to generate high-quality contact maps.
 
     Ultimately, PCP should help making \textit{ab initio} structure prediction.
     However, most recent methods rely on a whole raft of alignment and prediction tools.
     Given a protein encoded in FASTA format, ECA is only possible using a Multiple Sequence Alignment (MSA)
-    of this target protein with homologuous proteins. These homologuous proteins come from the same protein family
+    of this target protein against homologuous proteins. These homologuous proteins come from the same protein family
     as the target protein, and therefore the most suitable family must be found.
     This can be done by matching the target sequence to a Hidden Markov Model (HMM) profile representing a family
     like in Pfam database~\cite{Pfam}. Once the homologuous sequences have been retrieved, they have to be aligned to
@@ -45,14 +57,15 @@
 
     In this thesis, common state-of-the-art ECA techniques and deep learning models for PCP are going to be described.
     ECA methods comprise Direct Coupling Analysis (DCA) and Pseudo-Inverse Covariance matrices (PSICOV), which can
-    both be seen as examples of graphical models.
-    \todo{}
+    both be seen as examples of graphical models. \todo{More about what comes in the thesis}
 
-    \todo{One contact for 12 residues: \cite{kim2014one}}
+    \todo{Levinthal's paradox}
 
     \todo{DCA are not sufficient -> Show the improvement of DL over DCA}
     \todo{Make a comparison with DL state-of-the-art architectures}
     \todo{Show DL invariance to the number of homologous sequences}
+
+    \todo{DeepMind: \cite{DeepMind}}
 
     \section{Proteins}
 
