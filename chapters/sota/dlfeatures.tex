@@ -67,14 +67,18 @@
 
         \paragraph{Self-information}
 
-            \cite{Michel383133}
+            In information theory, self-information is the amount of information, in bits,
+            obtained by observing a random variable. In particular, let $x_{ij} \in \{0, 1\}$ be
+            a binary variable indicating the presence of an amino acid of type $j$ at site $i$.
+            The self-information suggested by Michel et al~\cite{Michel383133} can be formalized
+            with the following equation:
 
             \begin{equation}
-                I_i = \log_2 (p_i / \langle p_i \rangle)
+                I_{ij} = \log_2 (p_{ij} / \langle p_i \rangle)
             \end{equation}
 
-            where $p_i$ is the probability of observing amino acid $i$ among all residues
-            of given MSA, and $\langle p_i \rangle$ is the frequency of amino acid $i$
+            where $p_{ij}$ is the probability of observing amino acid $j$ at site $i$ among all residues
+            of given MSA, and $\langle p_j \rangle$ is the frequency of amino acid $j$
             in the Uniref50 dataset.
 
         \paragraph{Partial entropies}
