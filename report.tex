@@ -19,6 +19,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage{caption}
 \usepackage{verbatim}
 \usepackage{hyperref}
@@ -32,7 +33,7 @@
 % Configure hyperref
 \hypersetup{
     colorlinks,
-    linkcolor={red!50!black},
+    linkcolor={red!50!black},  % Intra-document links in red
     citecolor={blue!50!black}, % Citations in blue
     urlcolor={blue!80!black}   % URLs in blue
 }
@@ -51,6 +52,8 @@
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator{\trace}{Tr}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
 \parindent0em
 \parskip1.5ex

@@ -157,7 +157,7 @@
         but still takes the spatial dependence of the data into account. If the convolutional layer is designed for processing multi-channel images for example,
         the parameters will be stored in a 4-dimensional tensor. Let $W \in \mathbb{R}^{b \times h \times w \times n_c}$ be the weights of the convolutional filters,
         $X^{(p)} \in \mathbb{R}^{b \times h_b \times w_b \times n_c}$ the input images of layer $p$, $b \in \mathbb{R}$ the bias vector
-        and $X^{(p+1)} \in \mathbb{R}^{b \times (\floor{(h_b - h) / \beta_1} + 1) \times (\floor{(w_b - w) / \beta_2} + 1) \times n_f
+        and $X^{(p+1)} \in \mathbb{R}^{b \times (\floor{(h_b - h) / \beta_1} + 1) \times (\floor{(w_b - w) / \beta_2} + 1) \times n_f}$
         the output feature maps. Let's consider the relation between the input images and the output feature maps:
 
         \begin{equation} \label{eq:conv2D}
