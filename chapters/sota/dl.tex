@@ -65,7 +65,7 @@
         function, and the objective is to find the set of parameters that minimizes the loss function:
 
         \begin{equation}
-            \hat{\theta} = \argmin_{\theta \in \Theta} L((\bigcirc_{i=1}^{n} f_{i, \theta_i})(X))
+            \hat{\theta} = \argmin_{\theta \in \Theta} \mathbb{l}((\bigcirc_{i=1}^{n} f_{i, \theta_i})(X))
         \end{equation}
 
         where $\Theta$ is the set of all possible values for the parameter set $\theta = (\theta_1, \ldots, \theta_n)$.
@@ -87,18 +87,20 @@
         can be decomposed as the following product:
 
         \begin{equation} \label{eq:loss}
-            \nabla \ loss(\theta_m) = \prod_{i=1}^m f'((\bigcirc_{k=1}^{i} f_{\theta_i})(X)) \cdot L'((\bigcirc_{j=1}^{n} f_{\theta_j})(X))
+            \nabla \ \mathbb{l}(\theta_m) = \prod_{i=1}^m f'((\bigcirc_{p=1}^{i} f_{\theta_i})(X)) \cdot L'((\bigcirc_{j=1}^{n} f_{\theta_j})(X))
         \end{equation}
+
+        \todo{Replace prime symbols by actual partial derivatives}
 
         Each factor $i$ of the product can be computed using the definition of function $f'_i$, and the current input to layer $i$.
         However, layer $i$ requires the factor from layer $i+1$ in order to compute loss gradient according to its own parameters.
-        Consequently, the signal (the product of factors from layer $n$ to current layer $k$) is passed from layer $k+1$ to layer $k$.
+        Consequently, the signal (the product of factors from layer $n$ to current layer $p$) is passed from layer $p+1$ to layer $p$.
         In a more general sense, the gradient signal is passed from the ouput layer to the input layer, hence the name "backpropagation".
 
         The move in the gradient direction with step $\alpha$ (the so-called learning rate) is such that:
 
         \begin{equation}
-            \theta_k \leftarrow \theta_k - \alpha \cdot \nabla \ loss(\theta_k) \  \ \forall k \in \{1, \ldots, n\}
+            \theta_k \leftarrow \theta_k - \alpha \cdot \nabla \ \mathbb{l}(\theta_k) \  \ \forall k \in \{1, \ldots, n\}
         \end{equation}
 
         This step is repeated until one of the stop criteria has been met. For example, the algorithm stops when a maximum number of iterations has been
@@ -112,21 +114,21 @@
         A \textit{Multi-layer perceptron} is a neural network composed of multiple layers,
         where each layer's forward pass consists of a linear combination
         followed by an element-wise non-linear activation function.
-        Let $X \in \mathbb{R}^{n \times m}$ be the input matrix,
+        Let $X^{(p)} \in \mathbb{R}^{n \times m}$ be the input matrix of layer $p$,
         $W \in \mathbb{R}^{m \times k}$ the weight matrix,
-        $b \in \mathbb{R}^{k}$ the bias vector, $n^{(k)}$ the number of inputs to layer $k$
-        and $\sigma$ the non-linear activation function of layer $k$.
+        $b \in \mathbb{R}^{k}$ the bias vector, $n^{(p)}$ the number of inputs to layer $p$
+        and $\sigma$ the non-linear activation function of layer $p$.
         Each layer can than be formalized as follows:
 
         \begin{equation}
-            Y_{i, k} = \sigma \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big)
+            X_{i, k}^{(p+1)} = \sigma \Big( \sum\limits_{j=1}^{n^{(k)}} X^{(p)}_{i, j} W_{j, k} + b_{k} \Big)
         \end{equation}
 
         Backpropagation requires to compute the partial derivatives of layer outputs with respect to current layer parameters:
 
         \begin{align}
-            \frac{\partial Y_{i, k}}{\partial W_{j, k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big) \ X_{i, j} \\
-            \frac{\partial Y_{i, k}}{\partial b_{k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big)
+            \frac{\partial X_{i, k}^{(p+1)}}{\partial W_{j, k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big) \ X_{i, j}^{(p)} \\
+            \frac{\partial X_{i, k}^{(p+1)}}{\partial b_{k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big)
         \end{align}
 
         where $Y \in \mathbb{R}^2$ is the output matrix and $\sigma'(x)$ is the derivative of $\sigma(x)$,
@@ -140,7 +142,7 @@
         To overcome this problem and lower the validation loss as much as possible, data scientists usually stack more layers on top of each other,
         but this may imply high computational requirements. Convolutional layers are used instead of dense weight matrices.
 
-    \subsection{Convolutional layers}
+    \subsection{Convolutional layers} \label{convlayers}
 
         One of the major advances in semantic segmentation
         is due to Convolutional Neural Networks (CNNs)~\cite{DBLP:journals/corr/Garcia-GarciaOO17}.
@@ -153,30 +155,34 @@
         Weights are no longer stored in a bidimensional matrix since all inputs are no longer connected to each neuron of the current layer.
         Instead, each neuron is connected to a certain neighborhood of inputs. In this way, the network drastically reduces its number of parameters
         but still takes the spatial dependence of the data into account. If the convolutional layer is designed for processing multi-channel images for example,
-        the parameters will be stored in a 4-dimensional tensor. Let $W \in \mathbb{R}^4$ be the weights of the convolutional filters,
-        $X \in \mathbb{R}^4$ the input images, $b \in \mathbb{R}$ the bias vector and $Y \in \mathbb{R}^4$ the output feature maps.
-        Let's consider the relation between the input images and the output feature maps:
+        the parameters will be stored in a 4-dimensional tensor. Let $W \in \mathbb{R}^{b \times h \times w \times n_c}$ be the weights of the convolutional filters,
+        $X^{(p)} \in \mathbb{R}^{b \times h_b \times w_b \times n_c}$ the input images of layer $p$, $b \in \mathbb{R}$ the bias vector
+        and $X^{(p+1)} \in \mathbb{R}^{b \times (\floor{(h_b - h) / \beta_1} + 1) \times (\floor{(w_b - w) / \beta_2} + 1) \times n_f
+        the output feature maps. Let's consider the relation between the input images and the output feature maps:
 
         \begin{equation} \label{eq:conv2D}
-            Y_{i, j, k, l} = \sigma \Big( \sum\limits_{a=1}^h \sum\limits_{d=1}^w \sum\limits_{c=1}^{n_c} W_{j, a, d, c} X_{i, k+s_1 a, l+s_2 d, c} + b_{j} \Big) 
+            X_{i, j, k, l}^{(p+1)} = \sigma \Big( \sum\limits_{\alpha=1}^h \sum\limits_{\delta=1}^w
+                \sum\limits_{c=1}^{n_c} W_{j, \alpha, \delta, c} X_{i, k+\beta_1 \alpha, l+\beta_2 \delta, c}^{(p)} + b_{j} \Big) 
         \end{equation}
 
             where $i$ is the image identifier, $j$ is the filter index, $n_c$ is the number of channels, $h$ is the filter height, $w$ is the filter width
-            and $(s_1, s_2)$ are the strides (vertical and horizontal distances between neighboring pixels in the neighborhood connected to a same neuron).
+            and $(\beta_1, \beta_2)$ are the strides (vertical and horizontal distances between neighboring pixels in the neighborhood connected to a same neuron).
             Partial derivatives are simply given by:
 
         \begin{align}
-            \frac{\partial Y_{i, j, k, l}}{\partial W_{j, a, d, c}} & = 
-                \sigma' \Big( \sum\limits_{a=1}^h \sum\limits_{d=1}^w \sum\limits_{c=1}^{n_c} W_{j, a, d, c}
-                X_{i, k+s_1 a, l+s_2 d, c} + b_{j} \Big) X_{i, k+s_1 a, l+s_2 d, c} \\
+            \frac{\partial X_{i, j, k, l}^{(p+1)}}{\partial W_{j, \alpha, \delta, c}} & = 
+                \sigma' \Big( \sum\limits_{\alpha=1}^h \sum\limits_{\delta=1}^w \sum\limits_{c=1}^{n_c} W_{j, \alpha, \delta, c}
+                X_{i, k+\beta_1 \alpha, l+\beta_2 \delta, c}^{(p)} + b_{j} \Big) X_{i, k+\beta_1 \alpha, l+\beta_2 \delta, c} \\
             \frac{\partial Y_{i, j, k, l}}{\partial b_{j}} & =
-                \sigma' \Big( \sum\limits_{a=1}^h \sum\limits_{d=1}^w \sum\limits_{c=1}^{n_c} W_{j, a, d, c}
-                X_{i, k+s_1 a, l+s_2 d, c} + b_{j} \Big)
+                \sigma' \Big( \sum\limits_{\alpha=1}^h \sum\limits_{\delta=1}^w \sum\limits_{c=1}^{n_c} W_{j, \alpha, \delta, c}
+                X_{i, k+\beta_1 \alpha, l+\beta_2 \delta, c}^{(p)} + b_{j} \Big)
         \end{align}
 
         Just as in the case of fully-connected layers, the computations for the signal propagation are not shown because this report is intended to remain brief.
         Contrary to neural networks, it must be noted that random forest implementations are rarely equipped with convolutional filters or even multivariate 
         splits. Even in computer vision applications, univariate decision trees are the most frequently used trees in ensemble learners.
+
+        \todo{Double check indices and whether symbols have been correctly defined}
 
     \subsection{Activation functions}
 
@@ -253,7 +259,7 @@
         This function is identical to the Boltzmann distribution introduced in section \ref{potts}.
 
 
-    \subsection{Batch normalization}
+    \subsection{Batch normalization} \label{batchnorm}
 
         According to Ioffe and Szegedy~\cite{DBLP:journals/corr/IoffeS15}, deep neural networks are subject to a phenomenon
         called \textbf{internal covariate shift}. When the learning rate is too large, the distribution of a layer's outputs

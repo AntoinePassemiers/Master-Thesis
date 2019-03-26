@@ -206,6 +206,40 @@
 
 \section{Implementation}
 
-  Torch~\cite{torch}
-  Scikit-learn~\cite{scikit-learn}
-  Cython~\cite{behnel2010cython}
+  \subsection{Availability}
+
+    Source code is available at: \,
+    \href{https://github.com/AntoinePassemiers/Wynona}{https://github.com/AntoinePassemiers/Wynona}.
+
+  \subsection{Deep learning framework}
+
+    Methods and results presented in this thesis have been both implemented and produced in
+    Python. The neural architecture has been built on top of PyTorch,
+    which is an open source deep learning framework based on Torch~\cite{torch}.
+
+    PyTorch does not natively handle arbitrary-sized inputs, for example fully-convolutional
+    neural networks cannot accept images with variable height/width.
+    For this aim, it is necessary to add a layer of abstraction so the neural models are
+    able to process \textit{virtual batches} of inputs. Let's define a virtual batch as the number
+    of samples a model has to process between each parameter update.
+    A forward pass on a virtual batch then consists in constructing one computational graph
+    per sample and backpropagate the gradients through each one of them separately.
+    Once all the gradients have been computed, they are collected and averaged over the sample
+    dimension. Pytorch allows to explicitly call the forward pass, backward pass and update
+    procedures when needed, which eases the implementation of virtual batch processing.
+
+    Model general architecture is fully-convolutional, forcing us to use only deep learning
+    functionalities that are invariant to individual input sizes. These are:
+
+    \begin{itemize}
+      \item Element-wise operations like activation functions: ReLU, ELU, Sigmoid, etc.
+      \item Dropout, which preserves the dimensionality of its inputs.
+      \item Convolution, because convolutional filters have a dimensionality that is
+      invariant to the input size (see section \ref{convlayers}).
+      \item Batch normalization (see section \ref{batchnorm}).
+      \item Many non-neural transformations like arithmetic operations, Einstein
+      summation, Kronecker product, etc.
+    \end{itemize}
+
+    \todo{Scikit-learn~\cite{scikit-learn}}
+    \todo{Cython~\cite{behnel2010cython}}
