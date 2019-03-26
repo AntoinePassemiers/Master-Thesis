@@ -123,7 +123,55 @@
 
 \section{Hyper-parameter optimization}
 
-  \todo{Hyperopt: \cite{Bergstra_2015}}
+  In order to ensure the best hyper-parameters are selected for the model that will be evaluated
+  on the benchmark sets, the Hyperopt Python library~\cite{Bergstra_2015} has been used to explore
+  the hyper-parameter space and fine-tune the model on the validation set.
+  Training and evaluating a deep neural network is very costly and, as a matter of fact,
+  each trial point in the hyper-parameter space should be carefully selected. Techniques based
+  on grid search do not suit the problem because they are uninformed methods.
+
+  Hyperopt provides an informed search method called Tree-structured Parzen Estimators (TPE)~\cite{bergstra2011algorithms}.
+  In Bayesian hyper-optimization, the posterior probability $P(\alpha \vert L)$ is defined as a function
+  of the hyper-parameter vector $\alpha$ and the loss $L$. Contrary to techniques based on Gaussian processes
+  that approximates $P(\alpha \vert L)$ only, TPE models both posterior $P(\alpha \vert L)$ and $P(L)$.
+  The prior is iteratively replaced with non-parametric densities based on generated points $\{ \alpha_1, \alpha_2, \dotsc \}$.
+  It this search, TPE is an informed search strategy that refines its prior as new points are observed in the
+  hyper-parameter space. The "tree structure" is due to the way the posterior is computed.
+
+  \begin{equation}
+    P(\alpha \vert L) =
+      \begin{cases}
+        l(\alpha) &  \text{if} \, L < L^* \\
+        g(\alpha) &  \text{otherwise}
+      \end{cases}
+  \end{equation}
+
+  Let $f$ be the prediction function of the model (see section \ref{backpropagation} about backpropagation algorithm),
+  and let $f(\alpha) \triangleq \text{argmin}_{f(\Theta, \alpha)} c\big(f(\Theta, \alpha)\big)$ be the prediction function
+  of a trained model that minimizes a given loss function $c$ w.r.t. a fixed hyper-parameter vector $\alpha$.
+  $l(\alpha)$ is the non-parametric density function created by the observations $\{ \alpha^{i} \}$ such that
+  $L = c(f(\alpha))$ is below the threshold $L^*$, and $g(\alpha)$ is created with the remaining observations.
+  The threshold $L^*$ is set as a quantile of the observed values of $L$.
+  The value to be optimized in TPE is the Expected Improvement (EI), which is measured as an infinitesimal sum
+  of loss improvements weighted by the posterior. After applying Bayes formule to the posterior, calculus of EI becomes:
+
+  \begin{equation}
+    EI_{L^*}(\alpha) = \int_{-\infty}^{L^*} (L^* - L) P(L \vert \alpha) dL 
+    = \int_{-\infty}^{L^*} (L^* - L) \frac{P(\alpha \vert L) P(L)}{P(\alpha)} dL
+  \end{equation}
+
+  In the framework of Adaptive Parzen Estimators, each hyper-parameter is associated a prior and a density function,
+  and the estimator is built as a weighted mixture of them.
+  For example, a continuous variable can be assigned:
+  \begin{itemize}
+    \item A uniform prior with lower bound $a$ and upper bound $b$.
+    \item A function defined as a mixture of Gaussian distributions, each centered on a point of the hyper-parameter
+    space. The standard deviation of a particular distribution can be set as the maximum between distances to the left and right
+    neighbors.
+  \end{itemize}
+
+  The density function is either $l(\alpha)$ or $g(\alpha)$ depending on whether the loss function associated to current
+  point is below the threshold or not.
 
   \begin{table}[H]
     \centering
@@ -134,19 +182,25 @@
       \hline
       General & Batch size & $\{ 1, 2, 4, 8, 16, 32 \}$ \\
               & Batch normalization & $\{ \top, \bot \}$ \\
+              & Track running state & $\{ \top, \bot \}$ \\
+              & Learning rate & \text{TODO} \\
+              & L2 penalty & \text{TODO} \\
               & Parameter optimization & $\{ \text{ADADELTA}, \text{Adagrad}, \text{Adam} \}$ \\
-              & Activation function & $\{ \text{ReLU}, \text{Sigmoid}, \text{Tanh} \}$ \\
+              & Activation function & $\{ \text{ReLU}, \text{ELU}, \text{LeakyReLU}, \text{Tanh} \}$ \\
+              & Use global modules & $\{ \top, \bot \}$ \\
+      \hline
+      Global module & Depth & \{ 2, 3, 4, 5, 6, 7, 8, 9, 10 \} \\
       \hline
       1-dimensional module & Depth & $\{ 2, 3, 4, 5, 6, 7, 8, 9, 10 \}$ \\
                            & Filter size & $\{ 3, 5, 7 \}$ \\
-                           & Number of filters & $\{ 4, 8, 16, 32, 64 \}$ \\
+                           & Number of filters & $\{ 8, 16, 32, 64 \}$ \\
       \hline
       2-dimensional module & Depth & $\{ 2, 3, 4, 5, 6, 7, 8, 9, 10 \}$ \\
                            & Filter size & $\{ 3, 5, 7 \}$ \\
-                           & Number of filters & $\{ 4, 8, 16, 32, 64 \}$ \\
+                           & Number of filters & $\{ 8, 16, 32, 64 \}$ \\
       \hline
     \end{tabular}
-    \captionof{table}{Hyper-parameters for the proposed architecture.}
+    \captionof{table}{Hyper-parameter space for the proposed architecture.}
     \label{hyperparams}
   \end{table}
 
