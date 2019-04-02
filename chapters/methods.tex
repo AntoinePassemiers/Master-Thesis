@@ -241,5 +241,13 @@
       summation, Kronecker product, etc.
     \end{itemize}
 
-    \todo{Scikit-learn~\cite{scikit-learn}}
-    \todo{Cython~\cite{behnel2010cython}}
+  \subsection{Feature extraction}
+
+    Many features discussed in the present document rely on amino acid counts.
+    Despite the fact that counting algorithms such as histograms are embarassingly parallel
+    and naturally suitable for multiprocessing, they cannot be efficiently vectorized.
+    For this specific reason, the scientific computing library NumPy (which has been extensively
+    used during the experiments) is not sufficient to extract this type of features in reasonable
+    time. Instead, C extensions have been created using the Cython compiler\cite{behnel2010cython}.
+
+    \todo{Scikit-learn~\cite{scikit-learn} ?}
