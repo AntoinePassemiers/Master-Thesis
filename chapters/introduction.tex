@@ -69,15 +69,31 @@
     minimal requirements and performance close to state-of-the-art techniques
     \cite{RaptorX, DeepContact, doi:10.1093/bioinformatics/bty341, doi:10.1093/bioinformatics/bty341, Michel383133, DeepMind}.
 
-    In this thesis, common state-of-the-art ECA techniques and deep learning models for PCP are going to be described.
-    ECA methods comprise Direct Coupling Analysis (DCA) and Pseudo-Inverse Covariance matrices (PSICOV), which can
-    both be seen as examples of graphical models. \todo{More about what comes in the thesis}
-
-    \todo{DCA are not sufficient -> Show the improvement of DL over DCA}
-    \todo{Make a comparison with DL state-of-the-art architectures}
-    \todo{Show DL invariance to the number of homologous sequences}
+    Let me describe the global view of the thesis itself.
+    Firstly, common state-of-the-art ECA techniques will be described, such as Direct Coupling Analysis (DCA)
+    and Pseudo-Inverse Covariance matrices (PSICOV) (both are statistical methods based on graphical models),
+    as well as the basics of deep learning and backpropagation algorithm.
+    In order to gain a deeper insight on best-performing methods, more details will be given for
+    some specific deep learning methods, such as their architecture, input features and preprocessing.
+    The generic architecture in use for this thesis will be detailed, as well as the hyper-parameter
+    optimization procedure used for cross-validation.
+    Finally, results will be presented in multiple sections:
+    \begin{itemize}
+        \item Since the proposed deep learning approach relies on DCA predictions as input features,
+        the first step should be to demonstrate that deep learning is capable of refining
+        contact maps by looking at complex visual patterns that cannot captured by linear models.
+        \item It should be brought to light whether deep learning's performance is less sensitive to the effective
+        number of homologous sequences than DCA methods. The notion of effective number of homologous sequences
+        will be introduced in section \ref{meff}.
+        \item Finally, a benchmark will be established between the proposed method and other supervised approaches,
+        to the extent possible, state-of-the-art deep learning architectures.
+    \end{itemize}
 
     \section{Proteins}
 
         Some proteins called protein complexes are actually agreggations of multiple polypeptide chains.
         \todo{}
+
+    \subsection{Transmembrane proteins}
+        \todo{PCP on transmembrane proteins}
+        \todo{Datasets}
