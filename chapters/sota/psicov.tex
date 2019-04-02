@@ -1,6 +1,6 @@
 \section{PSICOV}
 
-    \subsection{Gaussian graphical models}
+    \subsection{Gaussian graphical models} \label{graphicalmodels}
 
         \begin{figure}[H]
             \begin{center}
@@ -21,7 +21,7 @@
         amino acid at site $i$ is of type $a$. In particular, value $x_{ia}^{(k)}$ is equal to one if the $k$th sequence in the given MSA has a residue of type $a$
         at site $i$. tWith this knowledge, the sample covariance matrix $S \in \mathbb{R}^{21 L \times 21 L}$ can then be computed by:
 
-        \begin{equation}
+        \begin{equation} \label{covariance}
             \begin{split}
                 S_{ij}^{ab} & = \frac{1}{n} \sum\limits_{k=1}^{n} \big( x_{ia}^{(k)} - \bar{x}_{ia} \big) \big( x_{jb}^{(k)} - \bar{x}_{bj} \big)
             \end{split}

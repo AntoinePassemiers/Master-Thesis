@@ -3,20 +3,29 @@
     \subsubsection{Global features}
 
         \paragraph{Protein length}
-	
-  	    Protein length is computed as the number of residues in the protein sequence.
-	    It provides complementary information that convolutional layers cannot capture.
- 	    Indeed, fully-connected neural networks have the ability to handle arbitrary-sized
-	    features maps at the cost of not knowing the dimensionality of their inputs.
-	    Injecting protein length as a supplementary global feature may help the model
-	    to infer the maximum distance in long-range contacts.
+    	
+      	    Protein length is computed as the number of residues in the protein sequence.
+    	    It provides complementary information that convolutional layers cannot capture.
+     	    Indeed, fully-connected neural networks have the ability to handle arbitrary-sized
+    	    features maps at the cost of not knowing the dimensionality of their inputs.
+    	    Injecting protein length as a supplementary global feature may help the model
+    	    to infer the maximum distance in long-range contacts.
 
-	\paragraph{Effective number of sequences} \label{meff}
+	   \paragraph{Effective number of sequences} \label{meff}
 
-	    The number of effective sequences is equal, w.r.t. to a given threshold,
-	    to the number of non-redundant sequences in the set of homologous sequences.
-	    It provides a bound on the potential performance of the DCA methods involved
-	    in the pipeline.
+    	    The number of effective sequences is equal, w.r.t. to a given threshold,
+    	    to the number of non-redundant sequences in the set of homologous sequences.
+    	    It provides a bound on the potential performance of the DCA methods involved
+    	    in the pipeline.
+
+            \begin{equation}
+                M_{eff} = \sum_{i=1}^m w_i = \sum_{i=1}^m \frac{1}{\#\{r(s_i, s_j) \ge \tau \, \, \, \forall j \in \{1, \dotsc, m\}\}}
+            \end{equation}
+
+            $w_i$ is the weight associated to homologous sequence $i$.
+            $r(s_i, s_j)$ is the identity rate between sequences $s_i$ and $s_j$, in other words
+            the number of matching residues (including gaps) divided by the total number of positions,
+            which is assumed to be equal in both sequences.
 
         \paragraph{Predictors standard deviation}
 
@@ -45,6 +54,8 @@
 
 
         \paragraph{Predicted Secondary Structure Prediction}
+
+            \todo{}
 
         \paragraph{Amino acid frequencies}
 
@@ -85,7 +96,7 @@
 
         \paragraph{Partial entropies}
 
-            \cite{Michel383133}
+            \todo{ \cite{Michel383133}}
 
             \begin{equation}
                 S_i = p_i \log_2 (p_i / \langle p_i \rangle)
@@ -117,11 +128,35 @@
 
         \paragraph{Contact potential}
 
+            \todo{}
+
         \paragraph{Predictions from DCA and PSICOV}
+
+            \todo{}
 
         \paragraph{Covariance}
 
-    \subsection{Features, by method}
+            Covariance matrices are computed as in equation \ref{covariance} of the section
+            about Gaussian graphical models (see section \ref{graphicalmodels}).
+            In PSICOV~\cite{doi:10.1093/bioinformatics/btr638}, the inferred covariance
+            matrix is averaged across the dimension of amino acid types.
+            In DeepCov~\cite{doi:10.1093/bioinformatics/bty341}, the full matrix is used
+            as input to the supervised model.
+
+    \subsection{Features for the proposed approach}
+
+        The lines which will follow are a discussion about the features to use as inputs
+        to the model. At the outset, it should be noted that all models rely on
+        two-dimensional features. Those features are either predictions from another
+        predictor, covariance matrices or correlated mutations.
+        However, using intermediary predictions requires installing additional software.
+        PSICOV is written in C and can be recompiled. The official implementation of
+        plmDCA was originally made in Matlab, forcing researchers to add a whole raft
+        of external tools. plmDCA, as well as GaussDCA now have a Julia implementation,
+        making them more accessible. The proposed approach incorporates all three
+        predictors in its pipeline.
+
+        \todo{}
 
         \begin{figure}[H]
             \begin{center}
