@@ -6,12 +6,25 @@
     Proteins are large macromolecules in the form of chains of building blocks called amino acid residues.
     There are 20 common amino acid types, but certain proteins may contain 2 additional amino acid types, namely pyrrolysine and selenocystein.
     According to Anfinsen's dogma, the three-dimensional structure of a protein is uniquely determined by its underlying amino acid sequence,
-    at least when observed in protein's native environment. When environmental conditions are met, a random coil (a sequence of amino acid residues
+    at least when observed in protein's native environment. When moved from an environment where proper folding conditions are not met
+    to a solvent at neutral pH, a random coil (a sequence of amino acid residues
     oriented in random directions) will evolve towards the three-dimensional structure that minimizes Gibbs free energy.
     This process is called protein folding and has, however, a few exceptions.
 
+    Assuming the protein backbone has no structural restriction and is composed of $n$ residues holded together by $n-1$ peptide bonds,
+    then the protein has $2(n-1)$ bond angles that can be each in three different stable states. Therefore, there are at most
+    $3^{2(n-1)}$ possible configurations, and it would take the age of the universe to find the correct folding by enumeration.
+    There is strong evidence that protein folding is a NP-hard problem~\cite{hart1997robust}.
+    However, in practice small proteins are able to fold into a stable conformation in a fraction of a millisecond.
+    This observation is known as the Levinthal's paradox. There has been a long standing perspective that protein folding
+    is guided by heuristics composed of local interactions~\cite{levinthal1969fold}. Heuristic folding leads to misfolded proteins
+    that can potentially cause genetic diseases. Luckily, some proteins are assisted by molecular chaperones during their folding process~\cite{ellis1991molecular}
+    to attain their functional conformation. It must be noted that Anfinsen's observations of polypeptide chains refolding spontaneously in an aqueous medium
+    have been made in the framework of in vitro studies: they do not take into account protein-protein interations and thus cannot generalize the
+    self-assembly process well.
+
     Protein Contact Prediction (PCP) can help determining the three-dimensional structure of proteins by limiting the search space to certain conformations
-    forced by predicted contact maps. The problem of predicting the structure of a protein can be reduced to PCP because the latter is a much simpler problem,
+    constrained by predicted contact maps. The problem of predicting the structure of a protein can be reduced to PCP because the latter is a much simpler problem,
     and only a few correctly predicted contacts are sufficient to reconstruct the whole structure~\cite{kim2014one}.
 
     Structure-based methods are important in biology, as they help in assigning biochemical or biological functions to proteins. Indeed, the three-dimensional
@@ -53,19 +66,16 @@
     Eventually, predictions are gathered and refined using a deep neural architecture, necessitating the use
     of a deep learning framework. These successive layers of dependencies are not making PCP a straightforward process.
     Therefore, it seems to be a natural choice to set as an objective for this thesis the development of a predictor with
-    minimal requirements and performance close to state-of-the-art techniques.
+    minimal requirements and performance close to state-of-the-art techniques
+    \cite{RaptorX, DeepContact, doi:10.1093/bioinformatics/bty341, doi:10.1093/bioinformatics/bty341, Michel383133, DeepMind}.
 
     In this thesis, common state-of-the-art ECA techniques and deep learning models for PCP are going to be described.
     ECA methods comprise Direct Coupling Analysis (DCA) and Pseudo-Inverse Covariance matrices (PSICOV), which can
     both be seen as examples of graphical models. \todo{More about what comes in the thesis}
 
-    \todo{Levinthal's paradox}
-
     \todo{DCA are not sufficient -> Show the improvement of DL over DCA}
     \todo{Make a comparison with DL state-of-the-art architectures}
     \todo{Show DL invariance to the number of homologous sequences}
-
-    \todo{DeepMind: \cite{DeepMind}}
 
     \section{Proteins}
 
