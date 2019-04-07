@@ -2,11 +2,14 @@
 
     \subsection{Potts model} \label{potts}
 
-    \subsection{Exact inference is hard}
-
-        It has long been stated that three-dimensional structure of proteins have an impact regarding the amino acid composition among
-        homologous proteins. Spatial contacts between residues can thus be inferred by analyzing the variability of amino acid types at fixed pairs of positions.
-        The core idea in Direct Coupling Analysis (DCA) is to disentangle direct correlations and correlations produced at intermediary positions.
+        It has long been stated that three-dimensional structure of proteins
+        have an impact regarding the amino acid composition among
+        homologous proteins. Spatial contacts between residues can thus be inferred
+        by analyzing the variability of amino acid types at fixed pairs of positions.
+        The core idea in Direct Coupling Analysis (DCA) is to disentangle direct
+        correlations and correlations produced at intermediary positions.
+        Potts model allows to perform this disentanglement through inverse
+        statistical mechanics~\cite{PhysRevE.87.012707}.
 
         \begin{equation}
             \begin{split}
@@ -14,8 +17,13 @@
             \end{split}
         \end{equation}
 
-        where $J$ and $h$ are sets of model parameters, $s$ is an amino acid sequence and $Z$ is a normalization factor called partition function ensuring
-        that the sum $\sum\limits_{s} P(s \vert J, h)$ over all lexicographically possible sequences is equal to one.
+        where $J$ and $h$ are sets of model parameters, $s$ is an amino acid sequence and
+        $Z$ is a normalization factor called partition function ensuring
+        that the sum $\sum\limits_{s} P(s \vert J, h)$ over all lexicographically
+        possible sequences is equal to one.
+
+    \subsection{Exact inference is hard}
+
         Given a multiple sequence alignment containing $B$ sequences, a na\"\i ve approach would be to maximize its log-likelihood:
 
         \begin{equation}
@@ -66,8 +74,9 @@
 
         It can be observed that the formula contains a $L2$ penalty term for both fields and couplings,
         and that each log-probability is weighted by a protein weight $w_k$.
-        The latter is \todo{}
-        Also, the optimization procedure is called asymmetric pseudolikelihood maximization because 
+        The latter is computed as the protein contribution to set the set of effective sequences, 
+        as described in the section of $M_{eff}$~\ref{PhysRevE.87.012707}.
+        It must be observed that the optimization procedure is called asymmetric pseudolikelihood maximization because 
         each matrix $J(a, b)$ is supposed to be symmetric but is in practice
         independently estimated. This allows plmDCA to run in parallel by optimizing $\log{L^{(reg)}}(J_r, h_r)$ each on a different core.
 

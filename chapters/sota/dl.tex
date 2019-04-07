@@ -69,7 +69,8 @@
         \end{equation}
 
         where $\Theta$ is the set of all possible values for the parameter set $\theta = (\theta_1, \ldots, \theta_n)$.
-        Since we are considering a loss function, the latter must be minimized. The generic task of minimizing a scalar continuous function can be achieved
+        Since we are considering a loss function, the latter must be minimized.
+        The generic task of minimizing a scalar continuous function can be achieved
         using numerous continuous optimization techniques  among gradient descent algorithms~\cite{DBLP:journals/corr/Ruder16}
         or quasi-Newton methods~\cite{LBFGS}. In practice, gradient descent approaches require more iterations to converge to a satisfying solution,
         but are much easier to implement. Also, contrary to quasi-Newton methods, they don't require to implicitly compute the hessian matrix of the loss
@@ -90,17 +91,15 @@
             \nabla \ \ell(\theta_m) = \prod_{i=1}^m f'((\bigcirc_{p=1}^{i} f_{\theta_i})(X)) \cdot L'((\bigcirc_{j=1}^{n} f_{\theta_j})(X))
         \end{equation}
 
-        \todo{Replace prime symbols by actual partial derivatives}
-
         Each factor $i$ of the product can be computed using the definition of function $f'_i$, and the current input to layer $i$.
         However, layer $i$ requires the factor from layer $i+1$ in order to compute loss gradient according to its own parameters.
-        Consequently, the signal (the product of factors from layer $n$ to current layer $p$) is passed from layer $p+1$ to layer $p$.
+        Consequently, the signal (the product of factors accumulated from layer $n$ to current layer $p$) is passed from layer $p+1$ to layer $p$.
         In a more general sense, the gradient signal is passed from the ouput layer to the input layer, hence the name "backpropagation".
 
         The move in the gradient direction with step $\alpha$ (the so-called learning rate) is such that:
 
         \begin{equation}
-            \theta_k \leftarrow \theta_k - \alpha \cdot \nabla \ \mathbb{l}(\theta_k) \  \ \forall k \in \{1, \ldots, n\}
+            \theta_k \leftarrow \theta_k - \alpha \cdot \nabla \ \ell(\theta_k) \  \ \forall k \in \{1, \ldots, n\}
         \end{equation}
 
         This step is repeated until one of the stop criteria has been met. For example, the algorithm stops when a maximum number of iterations has been
