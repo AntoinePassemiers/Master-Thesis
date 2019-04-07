@@ -1,19 +1,22 @@
 \section{PSICOV}
 
-    \subsection{Gaussian graphical models} \label{graphicalmodels}
+    \subsection{Gaussian graphical models} 
 
-        \begin{figure}[H]
-            \begin{center}
-                \includegraphics[width=\textwidth, keepaspectratio]{imgs/ggm.png}
-                \caption{Illustration of a small system with only 3 sites and 2 amino acid types A and B:
-                    (a) Gaussian graphical model representing the system.
-                    (b) Sparsity pattern of the estimated inverse covariance matrix.
-                    Cells associated to zero variables are drawn in black. (c) Corresponding MSA.}
-                \label{thresholds}
-            \end{center}
-        \end{figure}
+        PSICOV relies on a Gaussian graphical modelization. Such models are represented by undirected graphs that
+        satisfy the pairwise Markov property: two nodes are not connected by an edge if they are conditionally independent.
+        Let $G = (V, E)$ be a graph and let each node $k$ be associated to a random variable $X_k$.
+        Conditional independence between variables $X_u$ and $X_v$ is formally defined as follows:
+        \begin{equation}
+            X_u \independent X_v \vert X_{V \\ \{u, v\}} \, \, \text{if } \{u, v\} \notin E
+        \end{equation}
+        If the graph is not complete, then there exists pairs of conditionally independent variables in the model,
+        resulting in sparsity patterns in the underlying precision matrix.
+        When the covariance matrix of the multivariate Gaussian model is rank-deficient, a solution for the precision
+        matrix has to be found with a high prior towards sparse matrices. Such a solution can be achieved through
+        regularization. The solution that follows in the next section relies on pseudo-inverse computation
+        with L1 regularization.
 
-        \todo{Gaussian graphical models, precision matrix, etc.}
+    \subsection{Evolutionary couplings} \label{graphicalmodels}
 
         The motivation behind PSICOV~\cite{doi:10.1093/bioinformatics/btr638} is that residue contacts produce constraints on the types of residues in the
         protein at certain pairs of sites: two residues involved in a contact should have complementary physicochemical properties. To capture the covariation
@@ -34,6 +37,18 @@
         the inverse of covariance submatrix $S_{ij}$, but there is no guarantee that such an inverse can be computed directly. Indeed, each submatrix
         $S_{ij}$ is very likely to be singular due to the absence of correlations for some residue types that are rarely (or never) observed at given sites.
 
+        \begin{figure}[H]
+            \begin{center}
+                \includegraphics[width=\textwidth, keepaspectratio]{imgs/ggm.png}
+                \caption{Illustration of a small system with only 3 sites and 2 amino acid types A and B:
+                    (a) Gaussian graphical model representing the system.
+                    (b) Sparsity pattern of the estimated inverse covariance matrix.
+                    Cells associated to zero variables are drawn in black. (c) Corresponding MSA.}
+                \label{thresholds}
+            \end{center}
+        \end{figure}
+
+    \subsection{Inference}
 
         The solution chosen here is to estimate sparse inverse covariance matrices instead,
         by having recourse to Graphical Lasso algorithm~\cite{graphicalLasso}.

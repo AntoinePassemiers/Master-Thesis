@@ -65,7 +65,7 @@
         function, and the objective is to find the set of parameters that minimizes the loss function:
 
         \begin{equation}
-            \hat{\theta} = \argmin_{\theta \in \Theta} \mathbb{l}((\bigcirc_{i=1}^{n} f_{i, \theta_i})(X))
+            \hat{\theta} = \argmin_{\theta \in \Theta} \ell((\bigcirc_{i=1}^{n} f_{i, \theta_i})(X))
         \end{equation}
 
         where $\Theta$ is the set of all possible values for the parameter set $\theta = (\theta_1, \ldots, \theta_n)$.
@@ -87,7 +87,7 @@
         can be decomposed as the following product:
 
         \begin{equation} \label{eq:loss}
-            \nabla \ \mathbb{l}(\theta_m) = \prod_{i=1}^m f'((\bigcirc_{p=1}^{i} f_{\theta_i})(X)) \cdot L'((\bigcirc_{j=1}^{n} f_{\theta_j})(X))
+            \nabla \ \ell(\theta_m) = \prod_{i=1}^m f'((\bigcirc_{p=1}^{i} f_{\theta_i})(X)) \cdot L'((\bigcirc_{j=1}^{n} f_{\theta_j})(X))
         \end{equation}
 
         \todo{Replace prime symbols by actual partial derivatives}

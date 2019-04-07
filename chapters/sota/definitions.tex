@@ -23,13 +23,14 @@
         with machine learning methods, contrary to matrices of pairwise distances. Furthermore, the original 3D residue coordinates can be recovered from
         contact maps~\cite{10.1007/978-3-540-72031-7_53}. Anfinsen's Dogma postulates that the secondary and tertiary structures 
         of a protein can be inferred from its primary structure: even after disrupting the hydrophobic bonds of a protein, experiments have shown
-        that the latter can recover its original structure with some assisted folding, highlighting the idea that tertiary structure is encoded in the sequence
-        of amino acids itself.
+        that the latter can recover its original structure with some assisted folding,
+        highlighting the idea that tertiary structure is encoded in the sequence of amino acids itself.
 
-        \todo{Van der Waals radii? }
 
-    \subsubsection{Definition}
+    \subsection{An alternative representation: protein contact networks} \label{pcn}
 
+        Another way of interpreting contact maps is viewing them as adjacency maps of protein contact networks.
+        This sub-section will present the formal definition of protein contact networks as suggested in \cite{doi:10.1021/cr3002356}.
         Let $G = (V, E)$ be a graph where $V$ is the set of vertices and $E$ the set of edges. Such a graph $G$ can be encoded as a matrix $A$ called
         the adjacency matrix. Given a set of vertices $\{ v_1, \ldots, v_n \}$, adjacency matrix $A \in \{ 0, 1 \}^{n \times n}$ is such that:
 
@@ -84,7 +85,7 @@
         The diameter of a graph $G = (V, E)$ is defined as follows:
 
         \begin{equation}
-            diam(G) = \max \{ sp_{v_1, v_2} | v_1, v_2 \in V \}
+            \text{diam}(G) = \max \{ sp_{v_1, v_2} | v_1, v_2 \in V \}
         \end{equation}
 
         \todo{Continue with \cite{doi:10.1021/cr3002356}}
