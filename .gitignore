@@ -3,6 +3,8 @@
 *.bbl
 *.blg
 *.idx
+*.ilg
+*.ind
 *.spl
 *.xdy
 *.toc

@@ -1,6 +1,7 @@
-\documentclass[11pt,a4paper,oneside]{thesis}
+\documentclass[11pt,a4paper,oneside]{book}
 \usepackage[hmargin={1.25in,1.25in},vmargin={1.25in,1.25in}]{geometry}
 
+\makeindex
 \usepackage{ifxetex}
 \ifxetex
   \usepackage{fontspec}
@@ -9,11 +10,10 @@
   \usepackage[utf8]{inputenc}
   \usepackage{lmodern}
 \fi
-
-\makeindex
 \usepackage{textcomp}
 \usepackage{fancyhdr}
 \usepackage{makeidx}
+\usepackage[toc,page]{appendix}
 \usepackage{xcolor}
 \usepackage{float}
 \usepackage{graphicx}
@@ -24,7 +24,6 @@
 \usepackage{verbatim}
 \usepackage{hyperref}
 \usepackage{algorithm}
-\usepackage[nomain,acronym,xindy,toc]{glossaries}
 \usepackage[noend]{algpseudocode}
 \pagestyle{myheadings}
 \fancyhf{}
@@ -47,6 +46,8 @@
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
 \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand{\pdbid}[1] {(PDB: #1)}
+\newcommand{\abs}[1]{\left|#1\right|}
 
 % Custom operators
 \DeclareMathOperator*{\argmax}{argmax}
@@ -64,21 +65,6 @@
 \setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
 
-% Glossary entries
-\newacronym{apc}{APC}{Average Product Correction}
-\newacronym{dca}{DCA}{Direct Coupling Analysis}
-\newacronym{eca}{ECA}{Evolutionary Coupling Analysis}
-\newacronym{msa}{MSA}{Multiple Sequence Alignment}
-\newacronym{mi}{MI}{Mutual Information}
-\newacronym{nmi}{NMI}{Normalized Mutual Information}
-\newacronym{pcm}{PCM}{Protein Contact Map}
-\newacronym{pcn}{PCN}{Protein Contact Network}
-\newacronym{pcp}{PCP}{Protein Contact Prediction}
-\newacronym{pssm}{PSSM}{Position-Specific Scoring Matrix}
-\newacronym{sap}{SAP}{Solvent Accessibility Prediction}
-\newacronym{ssp}{SSP}{Secondary Structure Prediction}
-\makeglossaries
-
 
 \begin{document}
 
@@ -90,51 +76,58 @@
 \textbf{D\'{e}partement d'Informatique}
 \vfill{}\vfill{}
 
-{\LARGE  MEMO-F-524 - Master thesis:
- \vspace*{2cm}
- \linebreak[4] Protein Residue Contact Prediction based on a \\
- \vspace*{0.4cm} Fully-Convolutional Neural Architecture}
-
-\vspace{0.5cm}
+{\Huge  Protein Residue Contact Prediction \vspace*{.5cm} \linebreak[4]
+Based on a Fully-Convolutional \vspace*{.5cm} \linebreak[4] Neural Architecture}
 
 {\Huge \par}
-\begin{center}{\Large Antoine Passemiers}\end{center}{\Huge \par}
+\begin{center}{\LARGE Antoine Passemiers}\end{center}{\Huge \par}
 \vfill{}\vfill{}
-\large Under the supervision of : \\
-\vspace*{1cm}
-%\begin{flushleft}
-% \noindent\hrulefill \\
-\vspace{0.2cm}
-\textbf{Dr. Daniele Raimondi} \\
-\large Co-supervisor of the thesis \\
-% \noindent\hrulefill \\
-\vspace{0.5cm}
-\textbf{Prof. Tom Lenaerts} \\
-\large Supervisor of the thesis \\
-% \noindent\hrulefill \\
-{\large }\hfill{}{}
-%\end{flushleft}
-{\large\par}\vfill{}\vfill{}\enlargethispage{3cm}
+\begin{flushright}{
+    \large \textbf{Promotor :} Prof. Tom Lenaerts \\
+    \textbf{Co-supervisor: } Dr. Daniele Raimondi} \\
+\hfill{}{\large Master Thesis in Computer Sciences}\\
+{\large }\hfill{}{}\end{flushright}{\large\par}
+\vfill{}\vfill{}\enlargethispage{3cm}
 \textbf{Academic year 2018~-~2019}
 \end{center}
 \end{titlepage}
-
-%\newpage
-
+\newpage
 \thispagestyle{empty} 
 \null
-
-\makeatletter
-\def\BState{\State\hskip-\ALG@thistlm}
-\makeatother
 
 \newenvironment{vcenterpage}
 {\newpage\thispagestyle{empty} 
 \vspace*{\fill}}
 {\vspace*{\fill}\par\pagebreak}
 
-\newcommand{\pdbid}[1] {(PDB: #1)}
-\newcommand{\abs}[1]{\left|#1\right|}
+
+%\begin{vcenterpage}
+%\begin{flushright}
+%    \large\em\null\vskip1in 
+%    \todo{dedication} \vfill
+%  \end{flushright}
+%\end{vcenterpage}
+
+\thispagestyle{empty}
+\vspace*{5cm}
+
+\todo{}
+
+\begin{quotation}
+\noindent ``\emph{You may also include one or more general quotes related to your topic.}''
+\begin{flushright}\textbf{Name of the author, date}\end{flushright}
+\end{quotation}
+
+\medskip
+
+\begin{quotation}
+\noindent ``\emph{Another quote.}''
+\begin{flushright}\textbf{Name of the author, date}\end{flushright}
+\end{quotation}
+\chapter*{Acknowledgment}
+\thispagestyle{empty} 
+
+\noindent I want to thank ...
 
 \thispagestyle{empty} 
 \setcounter{page}{0}
@@ -153,6 +146,9 @@
 \include{chapters/results}
 \include{chapters/conclusion}
 
+\begin{appendices}
+    \include{chapters/appendices}
+\end{appendices}
 
 \appendix
 
@@ -163,8 +159,5 @@
 \bibliographystyle{plain}
 
 \bibliography{report}
-
-\newpage
-\printglossary[type=main]
 
 \end{document}

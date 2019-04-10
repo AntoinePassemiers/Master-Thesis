@@ -1,12 +1,14 @@
 PROJECT = report
 COMPILER = xelatex
 BIBTEX = bibtex
+MAKEINDEX = makeindex
 
 
 build: $(SOURCE)
 	$(COMPILER) $(PROJECT).tex
 
 all:
+	$(MAKEINDEX) $(PROJECT)
 	make build
 	$(BIBTEX) $(PROJECT)
 	make build
