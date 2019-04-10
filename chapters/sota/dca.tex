@@ -6,7 +6,7 @@
         have an impact regarding the amino acid composition among
         homologous proteins. Spatial contacts between residues can thus be inferred
         by analyzing the variability of amino acid types at fixed pairs of positions.
-        The core idea in Direct Coupling Analysis (DCA) is to disentangle direct
+        The core idea in Direct Coupling Analysis (\index{DCA}) is to disentangle direct
         correlations and correlations produced at intermediary positions.
         Potts model allows to perform this disentanglement through inverse
         statistical mechanics~\cite{PhysRevE.87.012707}.
@@ -57,7 +57,7 @@
 
     \subsection{Pseudo-Likelihood Maximization}
 
-        plmDCA~\cite{EKEBERG2014341} addresses the problem of estimating the partition function by maximizing the pseudo-loglikelihood instead of the loglikelihood.
+        \index{plmDCA}~\cite{EKEBERG2014341} addresses the problem of estimating the partition function by maximizing the pseudo-loglikelihood instead of the loglikelihood.
         The pseudo-loglikelihood can be expressed as the sum of loglikelihoods $\log{L}(J_r, h_r)$, where each $\log{L}(J_r, h_r)$ is computed
         at a single site $r$. The method thus assumes the conditional independence between variables belonging to different sites.
         However, the partition function at a given site can then be easily computed as a sum of 21 terms since a state can take 21 possible values at a given position.
@@ -102,7 +102,7 @@
     \subsection{Gaussian Direct Coupling Analysis}
 
         plmDCA is of state-of-the-art performance, but still it requires high computational resources.
-        An alternative method is to use GaussDCA~\cite{10.1371/journal.pone.0092721}, which does
+        An alternative method is to use \index{GaussDCA}~\cite{10.1371/journal.pone.0092721}, which does
         exact inference in a single step.
 
         In GaussDCA, each variable $x_i \in \{0, 1\}$ indicates whether residue located at locus $i \% L \in \{ 1, \dotsc, L \}$
@@ -115,7 +115,7 @@
             \bar{C}_{ij}(X, \mu) \triangleq C_{ij}(X, \mu) = C_{ij}(X, \bar{x}) = \frac{1}{m} \sum\limits_{k=1}^m (x_i^k - \mu_i) (x_j^k - \mu_j)
         \end{equation}
 
-        Similarly to PSICOV~\cite{doi:10.1093/bioinformatics/btr638}, evolutionary couplings are detected by keeping track of direct interations
+        Similarly to \index{PSICOV}~\cite{doi:10.1093/bioinformatics/btr638}, evolutionary couplings are detected by keeping track of direct interations
         between variables of the system, what can be realized by computing the precision matrix, also known as the inverse of the covariance matrix.
         When matrix $\bar{C}$ is not rank-deficient, maximum log-likelihood is attained by setting the theoretical covariance matrix
         $\Sigma$ to $\bar{C}$. However, empirical covariance matrix is rarely full-rank due to the limited number of effective sequences

@@ -2,7 +2,8 @@
 
     \subsection{A definition of \textit{deep learning}}
 
-        Behind the trendy words, it is quite difficult to find a consensus on the definition of \textit{deep learning}. According to many, the process of learning 
+        Behind the trendy words, it is quite difficult to find a consensus on the definition of \textit{deep learning}.
+        According to many, the process of learning 
         deeply can only be achieved by deep neural networks. A deep articifical neural network is composed of a set of parameters and a large stack 
         (or graph) of mathematical operators designed to minimize an objective function.
         Each operation may be dependent on a subset of the network parameters.
@@ -120,14 +121,14 @@
         Each layer can than be formalized as follows:
 
         \begin{equation}
-            X_{i, k}^{(p+1)} = \sigma \Big( \sum\limits_{j=1}^{n^{(k)}} X^{(p)}_{i, j} W_{j, k} + b_{k} \Big)
+            X_{i, k}^{(p+1)} = \sigma \Big( \sum\limits_{j=1}^{n^{(p)}} X^{(p)}_{i, j} W_{j, k} + b_{k} \Big)
         \end{equation}
 
         Backpropagation requires to compute the partial derivatives of layer outputs with respect to current layer parameters:
 
         \begin{align}
-            \frac{\partial X_{i, k}^{(p+1)}}{\partial W_{j, k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big) \ X_{i, j}^{(p)} \\
-            \frac{\partial X_{i, k}^{(p+1)}}{\partial b_{k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(k)}} X_{i, j} W_{j, k} + b_{k} \Big)
+            \frac{\partial X_{i, k}^{(p+1)}}{\partial W_{j, k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(p)}} X_{i, j} W_{j, k} + b_{k} \Big) \ X_{i, j}^{(p)} \\
+            \frac{\partial X_{i, k}^{(p+1)}}{\partial b_{k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(p)}} X_{i, j} W_{j, k} + b_{k} \Big)
         \end{align}
 
         where $Y \in \mathbb{R}^2$ is the output matrix and $\sigma'(x)$ is the derivative of $\sigma(x)$,
