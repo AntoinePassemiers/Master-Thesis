@@ -29,7 +29,22 @@
             \delta(x_i, x_j) = 5.72 \times GD_{i,j}
         \end{align}
 
+        It must be noted that the error on the euclidean distance also increases
+        with graph distance. For all residue pairs for which no tractable information
+        is available and no protein template is available,
+        this estimated distance remains the best estimator.
+
     \subsection{Gaussian restraints}
+
+        Each residue pair may be associated to at most one Gaussian restraint.
+        A Gaussian restraint is defined by its mean and standard deviation,
+        computed empirically over a set of distances with specific properties
+        like graph distances, sequence separation or secondary structure.
+
+        As an example, residue pairs with a graph distance of one (residues are
+        in contact) and a sequence separation of one have an average distance equal
+        to the $C_{\alpha}-C_{\beta}$ distance (3.82 \AA{}), and a standard deviation
+        equal to 0.35 \AA{}.
 
         \begin{table}[H]
             \centering
@@ -63,6 +78,24 @@
 
     \subsection{Evolutionary algorithm}
 
+        Gaussian log-likelihood is maximized by a vanilla genetic algorithm.
+        The initial population is obtained by adding random noise to the coordinates
+        predicted by the multidimensional scaling algorithm.
+        Parent selection is done by creating two random partitions from current population
+        and keeping the individuals that maximize log-likelihood in each.
+        A new individual is then created by taking each point from either the first
+        or the second parent, randomly. Mutation is simulated by adding Gaussian noise
+        to each point with a 50\% chance.
+        Finally, the individual with lowest log-likelihood is replaced by the
+        newly created individual.
+
+        The set of hyper-parameters is composed of:
+        \begin{itemize}
+            \item Population size (default value is 2000)
+            \item Partition size (default value is 50)
+            \item Maximum number of iterations (default value is 200000)
+            \item Standard deviation of mutation noise (default value is 10)
+        \end{itemize}
 
 \section{Evaluation metrics}
 
@@ -73,6 +106,17 @@
 
 where $\delta_0 = 1.24 \sqrt[3]{L - 15} - 1.8$.
 
+The best alignment in 3D is found by determining the projection of $X^{(aligned)}$ that
+either maximizes the TM-score or minimizes the RMSD.
+Such a projection has 9 parameters:
+\begin{itemize}
+    \item 3 boolean parameters that indicate whether to swap coordinates along
+    the X, Y and Z dimensions, respectively.
+    \item 3 real-valued parameters for translating coordinates along the X, Y and Z
+    dimensions, respectively.
+    \item 3 angles that parametrize the rotation matrices around the X, Y and Z axes,
+    respectively.
+\end{itemize}
 
 \begin{align*}
     P(x) & = R^X_{\phi} R^Y_{\psi} R^Z_{\theta} x + b \\
