@@ -15,14 +15,14 @@
         to the architecture. The latter can thus no longer be viewed as
         a regular composition of functions and must take into account
         the sum at the end of each residual block.
-        Let's assume a residual block starts at layer $k$. Then the output
-        of the residual block can still be formalized as the following:
+        The output $Y^{(r)}$ of residual block $k$ should now
+        be formalized with a more general form:
 
         \begin{equation}
             Y^{(r)} = f\big(X^{(r)}, \{W^{(p)}\}_p\big)
         \end{equation}
 
-        \todo{}
+        where $W^{(p)}$ are the weights of a layer $p$ in block $k$.
 
         \begin{figure}[H]
             \begin{center}

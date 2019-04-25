@@ -4,7 +4,7 @@
 
   Five datasets have been used in the framework of this thesis:
   one for training the model, one for optimizing the hyper-parameters, and three for benchmarking.
-  The training set is set of 354 proteins composed of the 150 families reported in the original PSICOV
+  The training set is a set of 354 proteins including the 150 families reported in the original PSICOV
   paper~\cite{doi:10.1093/bioinformatics/btr638}, plus a subset of the first benchmark set used by
   Michel et el. to evaluate PConsC3~\cite{Skwark079673}.
   The validation set is composed of the 30 protein families from the validation set of PConsC3,
@@ -16,15 +16,42 @@
 
   \subsection{Homology reduction}
 
+    A straightforward method for reducing homology between two set of proteins is to
+    remove proteins that have a sequence identity rate above a given threshold.
+    As a rule of thumb, this threshold is usually set to 40\%.
+    Identity rates where computed by running Needleman-Wunsch algorithm on each
+    pair of proteins coming from two different datasets. Score matrix was set
+    such that exact matches give a score of 1 and any mismatch gives a penalty of -1.
+    Indeed this approach promotes global alignments with maximum identity rates.
+
+    \begin{table}[H]
+      \centering
+      \begin{tabular}{|l|c|c|c|}
+        \hline
+        Identity rate & Minimum & Average & Maximum \\
+        \hline
+        \hline
+        Training set - CASP11 & 5.4 & 22.4 & 32.5 \\
+        PSICOV150 - CASP11 & 7.3 & 22.9 & 39.7 \\
+        PSICOV150 - CAMEO & 6.2 & 21.7 & 34.4 \\
+        Training set - CAMEO & 4.0 & 21.3 & 32.5 \\
+        PSICOV150 - Membrane & 7.6 & 22.2 & 74.0 \\
+        \hline
+      \end{tabular}
+      \captionof{table}{Identity rates between training and benchmark sets, expressed as percentages.}
+      \label{identityrates}
+    \end{table}
+
+    Similarity rates are more informative than identity rates because amino acids
+    are very likely to mutate acros evolution towards amino acids that share
+    similar physico-chemical properties, and such measures take these mutations
+    into account. However, ECOD H-classes~\cite{10.1371/journal.pcbi.1003926}
+    were used instead of similarity rates because they can potentially give more
+    evidence on whether two sequences are evolutionary related.
+    Therefore, proteins belonging to different datasets and sharing the same
+    ECOD H-class have been rejected.
+
     \todo{Computation of identity rates, Common ECOD H-classes}
-
-    ECOD H-class~\cite{10.1371/journal.pcbi.1003926}
-
-    Identity rate between PConsC3 dataset and CASP11: min 5,4\%, avg 22,4\%, max 32,5\%.
-    Identity rate between PSICOV150 dataset and CASP11: min 7,3\%, avg 22,9\%, max 39,7\%.
-    Identity rate between PSICOV150 dataset and CAMEO: min 6,2\%, avg 21,7\%, max 34,4\%.
-    Identity rate between PConsC3 dataset and CAMEO: min 4,0\%, avg 21,3\%, max 32,5\%.
-    Identity rate between PSICOV150 dataset and membrane proteins: min 7,6\%, avg 22,2\%, max 74,0\%.
 
     \begin{figure}[H]
       \begin{center}
@@ -118,30 +145,36 @@
 
 \section{Evaluation}
 
-  Protein contact maps are imbalanced by nature: they contain very few residue contacts compared to their number of residue pairs.
-  $L$ being the number of residues in a protein, the number of residue contacts increases linearly with $L$ while the number of residue pairs
-  increases quadratically~\cite{OLMEA1997S25}. This is important because one can evaluate a model only on the $L$ (or even less than $L$) predicted
-  residue contacts the model is the most confident about. Such evaluation metric is called \textit{best-L/k PPV (Positive Predictive Value)}
-  and can be formulated as follows:
+  \subsection{Contact map evaluation}
 
-  \begin{equation}
-    \text{Best-L/k PPV} = \frac{\sum_{\underset {i-j \geq 6}{(i, j) \in B(L/k)}} C_{i, j}}{L/k}
-  \end{equation}
+    Protein contact maps are imbalanced by nature: they contain very few residue contacts compared to their number of residue pairs.
+    $L$ being the number of residues in a protein, the number of residue contacts increases linearly with $L$ while the number of residue pairs
+    increases quadratically~\cite{OLMEA1997S25}. This is important because one can evaluate a model only on the $L$ (or even less than $L$) predicted
+    residue contacts the model is the most confident about. Such evaluation metric is called \textit{best-L/k PPV (Positive Predictive Value)}
+    and can be formulated as follows:
 
-  where $C_{i, j}, N_{i, j} \in \{0, 1\} \ \forall i, j, i-j \ge 6$ are boolean values indicating a contact or a non-contact, respectively.
-  $B(L/k)$ is the set of $L/k$ most confident predicted probabilities (with highest values) and $p_{i, j}$ is the predicted probability
-  that residue pair $(i, j)$ forms a contact.
-  Contacts under a residue distance of 6 amino acids are not considered during evaludation phase even though they are used during
-  training phase.
+    \begin{equation}
+      \text{Best-L/k PPV} = \frac{\sum_{\underset {i-j \geq 6}{(i, j) \in B(L/k)}} C_{i, j}}{L/k}
+    \end{equation}
 
-  Best-L/k PPV can also be split into three separated metrics: short-range, medium-range and long-range contacts.
-  These three types of contacts can be defined by the residue separations used by Skwark et al.~\cite{10.1371/journal.pcbi.1003889}:
+    where $C_{i, j}, N_{i, j} \in \{0, 1\} \ \forall i, j, i-j \ge 6$ are boolean values indicating a contact or a non-contact, respectively.
+    $B(L/k)$ is the set of $L/k$ most confident predicted probabilities (with highest values) and $p_{i, j}$ is the predicted probability
+    that residue pair $(i, j)$ forms a contact.
+    Contacts under a residue distance of 6 amino acids are not considered during evaludation phase even though they are used during
+    training phase.
 
-    \begin{itemize}
-      \item Short-range contacts: 6 - 12 residue separation
-      \item Medium-range contacts: 12 - 24 residue separation
-      \item Long-range contacts: 24+ residue separation
-    \end{itemize}
+    Best-L/k PPV can also be split into three separated metrics: short-range, medium-range and long-range contacts.
+    These three types of contacts can be defined by the residue separations used by Skwark et al.~\cite{10.1371/journal.pcbi.1003889}:
+
+      \begin{itemize}
+        \item Short-range contacts: 6 - 12 residue separation
+        \item Medium-range contacts: 12 - 24 residue separation
+        \item Long-range contacts: 24+ residue separation
+      \end{itemize}
+
+    \subsection{3D model evaluation}
+
+      \todo{TM-score and RMSD}
 
 \section{Hyper-parameter optimization}
 
@@ -278,5 +311,6 @@
   \subsection{Contact-assisted 3D modelling}
 
     Contact-assisted 3D modelling algorithm makes use of the Multidimensional scaling algorithm
-    as implemented by Scikit-learn~\cite{scikit-learn}.
-    The algorithm design is explained in appendix.
+    as implemented by Scikit-learn~\cite{scikit-learn} and the implementation of Dijkstra's
+    algorithm from NetworkX \todo{cite?}.
+    Details about the algorithm design are given in appendix.

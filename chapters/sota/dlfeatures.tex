@@ -38,7 +38,7 @@
             is a matrix $X \in \{0, 1\}^{L \times 21}$
             where $x_{ia}$ is one if $s_i = a$.
 
-        \paragraph{Solvent accessibility}
+        \paragraph{Solvent accessibility prediction}
 
             \todo{}
 
@@ -52,10 +52,38 @@
                 \end{center}
             \end{figure}
 
+            \todo{define Relative Solvent Accessibility}
+            \todo{cite RaptorX-property}
+            RSA prediction is 3-state. A residue is either:
+            \begin{itemize}
+                \item Buried (B), when RSA is below 10\%.
+                \item Intermediate (I), when RSA is between 10\% and 40\%.
+                \item Exposed (E), when RSA is above 40\%.
+            \end{itemize}
 
-        \paragraph{Predicted Secondary Structure Prediction}
 
-            \todo{}
+        \paragraph{Predicted secondary structure prediction}
+
+            As defined by DSSP, there are 8 different states for encoding
+            secondary structure: H (alpha-helix),
+            G (310 helix), I (pi-helix), E (beta-strand), B (beta-bridge),
+            T (beta-turn), S (high curvature loop) and L (irregular loop).
+            In practice, secondary structure prediction is either 3-state
+            or 8-state. \todo{cite RaptorX-property}
+            When the number of labels is limited to three,
+            the predictor only focuses on beta-strands (E), alpha-helices (H)
+            and a third state which is the union of the six remaining states (C).
+
+            Formally, a m-state secondary structure prediction is a matrix
+            $S \in [0, 1]^{L \times m}$ where element $S_{i,j}$ is the probability of residue $i$ being in conformation $j$,
+            with each row summing to one.
+
+        \paragraph{Region disorder prediction}
+
+            Region disorder prediction is a vector $D \in [0, 1]^L$
+            where $D_i$ is the probability of residue $i$ being in a region
+            of missing residues in the X-ray 3D structure. Residues with high
+            probability are said to be disordered.
 
         \paragraph{Amino acid frequencies}
 
