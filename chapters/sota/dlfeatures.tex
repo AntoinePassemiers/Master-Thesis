@@ -27,8 +27,6 @@
             the number of matching residues (including gaps) divided by the total number of positions,
             which is assumed to be equal in both sequences.
 
-        \paragraph{Predictors standard deviation}
-
     \subsubsection{1-dimensional features}
 
         \paragraph{One-hot encoded sequence}
@@ -75,7 +73,8 @@
             and a third state which is the union of the six remaining states (C).
 
             Formally, a m-state secondary structure prediction is a matrix
-            $S \in [0, 1]^{L \times m}$ where element $S_{i,j}$ is the probability of residue $i$ being in conformation $j$,
+            $S \in [0, 1]^{L \times m}$ where element $S_{i,j}$ is the probability
+            of residue $i$ being in conformation $j$,
             with each row summing to one.
 
         \paragraph{Region disorder prediction}
@@ -158,9 +157,10 @@
 
             \todo{}
 
-        \paragraph{Predictions from DCA and PSICOV}
+        \paragraph{Evolutionary couplings}
 
-            \todo{}
+            Predictions from GaussDCA, plmDCA or PSICOV can be used as input to the deep
+            learning approach. Only top predicted contacts are informative,
 
         \paragraph{Covariance}
 
