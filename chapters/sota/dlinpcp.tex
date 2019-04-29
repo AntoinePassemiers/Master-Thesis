@@ -13,7 +13,8 @@
         libraries, padding of type "same" refers to the padding applied by convolutional layers
         to maintain the sizes of spatial (convoluted) dimensions.
         In DeepCov, the only features are the covariance matrices as computed
-        in equation \ref{covariance}.
+        in equation \ref{covariance}. Couplings matrices predicted by DCA methods can be fed as
+        input to the model instead of covariance matrices, as shown in plmConv study~\cite{golkov2016protein}.
 
         The approach described in the DNCON2 paper~\cite{doi:10.1093/bioinformatics/bty341}
         also implements convolutional layers with dynamic spatial dimensions.
@@ -91,8 +92,8 @@
         average product correction is applied.
         One-dimensional features are convoluted through one-dimensional residual networks~\index{residual network},
         concatenated and finally reshaped to two-dimensional maps with an outer product.
-        After reshaping, the intermediary feature maps are concatenated with the
-        two-dimensional features and the whole is used as input to the U-net architecture.
+        After reshaping, the intermediate feature maps are concatenated with the
+        two-dimensional features and the whole is fed as input to the U-net architecture.
 
         Models designed for semantic segmentation problems (including PCP) have been shown
         to gain significant performance when additional connections are allowed between
@@ -101,7 +102,8 @@
         that compress and decompress the information, respectively.
         The first sub-network successively alternates between convolutional transformations
         and max-pooling, while the second sub-network alternates between convolutional
-        transformations and upsampling. Similarly to autoencoders, the features maps
+        transformations and transposed convolutions (also called upsampling).
+        Similarly to autoencoders, the features maps
         processed the middle layers or of much smaller dimensionality than input or output tensors.
         To prevent the whole architecture from forgetting contextual information due to
         compression, shortcut connections are added between tensors of identical dimensionality.
@@ -111,10 +113,17 @@
         Because PconsC4 model outputs entire contact maps, and because proteins are
         of variable length by nature, input feature maps of a particular protein are zero-padded
         to the smallest power of two that is larger than the protein length.
+        Finally, PconsC4 archicture not only predict a contact map but multiple contact maps
+        at different distance thresholds.
 
     \subsection{Dense networks (DenseNets)}
 
-        DenseNet: \cite{huang2017densely}
+        Dense networks extend the idea of residual networks by allowing residual mappings
+        between all layers, resulting in an ergodic topology. In DenseNets~\cite{huang2017densely},
+        shortcut connections are implemented with a concatenation operation instead of addition.
+        Nevertheless, spatial dimensions are still constrained to be identical between the source and the destination
+        of a shortcut connection. Figure \ref{densenet} illustrates a dense block composed of
+        2 convolution layers: it is shown how connections are allowed between all entry points and layer outputs.
 
         \begin{figure}[H]
             \begin{center}
@@ -126,38 +135,72 @@
             \end{center}
         \end{figure}
 
+        Each unit of a dense block is the composition of batch normalization, activation and
+        convolution operations.
 
+    \subsection{TiramiProt}
 
-    \todo{TiramiProt: \cite{TsardakasRenhuldt1228846}}
+        TiramiProt is based on the Tiramisu architecture~\cite{TsardakasRenhuldt1228846}
+        which tries to combine the ideas of both U-net and DenseNet.
+        As U-net architectures, Tiramisu applies max-pooling for reducing dimensionality
+        and upsampling to restore the input dimensionality. Each dense block output from
+        the downsampling part of the network is, by symmetry, connected to the entry point
+        of the corresponding dense block in the upsampling part of the network.
+        As in U-net, these shortcut connections are implemented by feature map concatenation.
+        Training set and features are the same as in the Pconsc4 study.
 
-    \todo{DeepConPred2: \cite{DeepConPred2}}
+    \subsection{DeepConPred2}
 
-    \todo{plmConv: \cite{golkov2016protein}}
+        DeepConPred2~\cite{DeepConPred2} is based on a problem-specific architecture made
+        of three modules. First module consists of a Deep Belief Network (DBN) that predicts 
+        contacts between secondary structures from CCMPred coevolutionary information.
+        A DBN is a graphical model implemented as
+        a stack of unsupervised building blocks such as autoencoders or
+        restricted Boltzmann machines.
+        The output of the first module, together with solvent accessibility and secondary
+        structure prediction, is fed as input to each of the DBNs composing
+        the second module: one for short-range contacts, one for medium-range contacts
+        and three for long-range contacts (taken from previous study~\cite{xiong2017deep}).
+        Each of these components are used to predict actual residue contacts.
+        Then, each DBN output is fed as input to one of the ResNets of the third module.
+        Each ResNet has 50-80 convolutional layers with Leaky-ReLU activation functions.
 
-    Benchmark with both accuracy and standard deviation w.r.t. proteins.
+    \subsection{Properties of DL approaches}
 
+        PCP methods that have just been described are summarized in table \ref{overview}
+        according to some indicators such as training set size, fully-convolutional and fuzzy
+        aspects of the approach and depth of the architecture. RaptorX-contact is not been
+        counted as a fully-convolutional approach since zero-padding is used for batches of
+        more than one protein. Depth of the network has been measured as the number of non-linearities,
+        that is to say the number of layers or blocks preceding an activation function.
+        Additionaly, the table shows which methods incorporate contacts defined at different distance
+        thresholds.
 
-    \todo{Deep architectures in PCP: \cite{di2012deep}}
+        \begin{table}[H]
+            \centering
+            \resizebox{\textwidth}{!}{
+            \begin{tabular}{lcccc}
+                \hline
+                 & Training set size & Fully-convolutional & \# non-linearities & Fuzzy \\
+                \hline
+                \hline
+                DNCON2 & 1230 & - & 6 & $\top$ \\
+                DeepCov & 6003 & $\top$ & 14 & $\bot$ \\
+                plmConv & 231 & $\bot$ & 4 & $\bot$ \\
+                DeepConPred2 & 3443 & - & 50-80 & $\bot$ \\
+                DeepContact & - & $\top$ & 9 & $\bot$ \\
+                PconsC4 & 2891 & $\bot$ & - & $\top$ \\
+                TiramiProt & 2891 & $\bot$ & 16 & $\top$ \\
+                RaptorX-Contact & \tidle 6000 & $\bot$ & 60-70 & $\bot$ \\
+                \hline
+            \end{tabular}
+            }
+            \captionof{table}{Overview of different deep learning models for PCP:
+            number of proteins in the training set, whether the architecture is
+            fully-convolutional, how deep (measured in activation functions) the model is,
+            and whether it learns from contact maps defined with multiple distance thresholds.}
+            \label{overview}
+        \end{table}
 
-    \begin{table}[H]
-        \centering
-        \resizebox{\textwidth}{!}{
-        \begin{tabular}{lccc}
-            \hline
-             & Training set size & Fully-convolutional & \# non-linearities \\
-            \hline
-            \hline
-            DNCON2 & 1230 & - & 6 \\
-            DeepCov & 6003 & $\top$ & 14 \\
-            plmConv & - & - & -\\
-            DeepConPred2 & - & - & - \\
-            DeepContact & - & $\top$ & 9 \\
-            PconsC4 & 2891 & $\bot$ & \\
-            TiramiProt & 2891 & $\bot$ & 16 \\
-            RaptorX-Contact & - & $\bot$ & 60-70 \\
-            \hline
-        \end{tabular}
-        }
-        \captionof{table}{Overview of different deep learning models for PCP.}
-        \label{overview}
-    \end{table}
+        In PconsC4 and TiramiProt, a single network predicts multiple contact maps at the same time, while
+        DNCON2 uses multiple networks to predict each a contact map at a different threshold.
