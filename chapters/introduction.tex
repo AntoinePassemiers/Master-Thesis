@@ -9,7 +9,7 @@
     There are 20 common amino acid types, but certain proteins may contain 2 additional amino acid types, namely pyrrolysine and selenocystein.
     According to Anfinsen's dogma, the three-dimensional structure of a protein is uniquely determined by its underlying amino acid sequence,
     at least when observed in protein's native environment. When moved from an environment where proper folding conditions are not met
-    to a solvent at neutral pH, a random coil (a sequence of amino acid residues
+    to a solvent at neutral pH, a random coil (a sequence of amino acid residues  % proper conditions are not met to a solvent at neutral pH? Weird formulation
     oriented in random directions) will evolve towards the three-dimensional structure that minimizes Gibbs free energy.
     This process is called protein folding and has, however, a few exceptions.
 
@@ -31,13 +31,13 @@
     and only a few correctly predicted contacts are sufficient to reconstruct the whole structure~\cite{kim2014one}.
 
     Structure-based methods are important in biology, as they help in assigning biochemical or biological functions to proteins. Indeed, the three-dimensional
-    structure of a protein is more well conserved than the underlying amino acid sequence across evolution. Prompted by this knowledge, similar functions
+    structure of a protein is more conserved than the underlying amino acid sequence across evolution. Prompted by this knowledge, similar functions
     can be assigned to proteins with low structural dissimilarity. Precisely identifying the role played by each protein in an organism is the first step
     towards understanding complex body mechanisms like muscle contraction, digestion or perceiving light.
     Also, determining the static structure of proteins help in detecting misfolded proteins which are possibly involved in diseases like Parkinson's or
-    Alzheimer's, but also in diagnosing those diseases.
+    Alzheimer's, but also in diagnosing those diseases.  % [reference needed]
     Finally, solving the protein folding (structure prediction) problem will enable to do better protein design, for example to engineer enzymes like PETase
-    so they have faster pastic-degrading capabilities.
+    so they have faster plastic-degrading capabilities.
     There are pipelines designed to predict the structure and then the function of a newly
     observed protein, such as RaptorX server~\cite{peng2011raptorx}.
 
@@ -70,11 +70,11 @@
     of a deep learning framework. These successive layers of dependencies are not making PCP a straightforward process.
     Therefore, it seems to be a natural choice to set as an objective for this thesis the development of a predictor with
     minimal requirements and performance close to state-of-the-art techniques
-    \cite{RaptorX, DeepContact, doi:10.1093/bioinformatics/bty341, doi:10.1093/bioinformatics/bty341, Michel383133, DeepMind}.
+    \cite{RaptorX, DeepContact, doi:10.1093/bioinformatics/bty341, Michel383133, DeepMind}.
 
 \section{Structure of the thesis}
 
-    Let me describe the global view of the thesis itself.
+    Let me describe the global view of the thesis itself.  % Let me? Weird formulation. -> Let's
     Firstly, common state-of-the-art ECA techniques will be described, such as Direct Coupling Analysis (DCA)
     and Pseudo-Inverse Covariance matrices (PSICOV) (both are statistical methods based on graphical models),
     as well as the basics of deep learning and backpropagation algorithm.
@@ -85,14 +85,14 @@
     Finally, results will be presented in multiple sections:
     \begin{itemize}
         \item Since the proposed deep learning approach relies on DCA predictions as input features,
-        the first step should be to demonstrate that deep learning is capable of refining
+        the first step should demonstrate that deep learning is capable of refining
         contact maps by looking at complex visual patterns that cannot captured by linear models.
         \item It should be brought to light whether deep learning's performance is less sensitive to the effective
         number of homologous sequences than DCA methods. The notion of effective number of homologous sequences
         will be introduced in section \ref{meff}.
         \item Finally, a benchmark will be established to assess the performance of the proposed method
         and other supervised approaches,
-        to the extent possible, state-of-the-art deep learning architectures.
+        to the extent possible, state-of-the-art deep learning architectures.  % to the extent possible? Weird formulation
     \end{itemize}
 
 \section{Contributions}

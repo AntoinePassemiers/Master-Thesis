@@ -23,7 +23,7 @@
         between graph distances and real euclidean distances.
         Let $GD_{i,j}$ be the graph distance between residues $i$ and $j$. Then
         the euclidean distance $\delta(x_i, x_j)$ between the corresponding
-        points $x_i$ and $x_j$ is approximated by:
+        points $x_i$ and $x_j$ is approximated by:  % Denoting Euclidean distance by $\delta$ is very unusual
 
         \begin{align}
             \delta(x_i, x_j) = 5.72 \times GD_{i,j}
@@ -72,7 +72,7 @@
         The set of points $X$ that best satisfies Gaussian restraints is simply
         obtained by log-likelihood maximization:
         \begin{align}
-            \hat{X} & = \text{argmax}_{X} \sum\limits_{i < j ,\, (\mu_{i,j}, \sigma_{i,j}) \in R}
+            \hat{X} & = \argmax_{X} \sum\limits_{i < j ,\, (\mu_{i,j}, \sigma_{i,j}) \in R}  % What is R?
                 \Bigg(\frac{\delta(x_i, x_j) - \mu_{i,j}}{\sigma_{i,j}}\Bigg)^2
         \end{align}
 
@@ -82,7 +82,7 @@
         The initial population is obtained by adding random noise to the coordinates
         predicted by the multidimensional scaling algorithm.
         Parent selection is done by creating two random partitions from current population
-        and keeping the individuals that maximize log-likelihood in each.
+        and keeping the individuals that maximize log-likelihood in each one.
         A new individual is then created by taking each point from either the first
         or the second parent, randomly. Mutation is simulated by adding Gaussian noise
         to each point with a 50\% chance.
@@ -100,7 +100,7 @@
     \section{Evaluation metrics}
 
     \begin{align}
-        \text{TM-score}(X^{(target)}, X^{(aligned)}) = \text{max} \Bigg[ \frac{1}{L} \sum\limits_{i=1}^L 
+        \text{TM-score}(X^{(target)}, X^{(aligned)}) = \max \Bigg[ \frac{1}{L} \sum\limits_{i=1}^L  % What set does the \max act on?
             \frac{1}{1 + \Big(\frac{\delta(x_i^{(target)}, x_i^{(aligned)})}{\delta_0}\Big)^2} \Bigg]
     \end{align}
 
@@ -154,4 +154,4 @@
         \label{gde_results}
       \end{center}
     \end{figure}
-   
+
