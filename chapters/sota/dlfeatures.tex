@@ -3,7 +3,7 @@
     \subsubsection{Global features}
 
         \paragraph{Protein length}
-    	
+
       	    Protein length is computed as the number of residues in the protein sequence.
     	    It provides complementary information that convolutional layers cannot capture.
      	    Indeed, fully-connected neural networks have the ability to handle arbitrary-sized
@@ -18,7 +18,7 @@
     	    It provides a bound on the potential performance of the DCA methods involved
     	    in the pipeline.
 
-            \begin{equation}
+            \begin{equation}  % Formalism: unclear. Is this \#\{j \in \{1, \ldots, m\} : r(s_i, s_j) \geq \tau\} or is this 1 if \forall j \in \{1, \ldots, m\} : r(s_i, s_j) \geq \tau and 0 if \exists j \in \{1, \ldots, m\} such that r(s_i, s_j) < \tau?
                 M_{eff} = \sum_{i=1}^m w_i = \sum_{i=1}^m \frac{1}{\#\{r(s_i, s_j) \ge \tau \, \, \, \forall j \in \{1, \dotsc, m\}\}}
             \end{equation}
 
@@ -72,7 +72,7 @@
             the predictor only focuses on beta-strands (E), alpha-helices (H)
             and a third state which is the union of the six remaining states (C).
 
-            Formally, a m-state secondary structure prediction is a matrix
+            Formally, a $m$-state secondary structure prediction is a matrix
             $S \in [0, 1]^{L \times m}$ where element $S_{i,j}$ is the probability
             of residue $i$ being in conformation $j$,
             with each row summing to one.
@@ -87,7 +87,7 @@
         \paragraph{Amino acid frequencies}
 
             Amino acid frequencies are position-specific features that can be efficiently computed.
-            Let $S \in \{0, \ldots, \naatypes\}^{M \times L}$ be a 
+            Let $S \in \{0, \ldots, \naatypes\}^{M \times L}$ be a
             MSA matrix containing $M$ sequences aligned to a target
             sequence of length $L$. Then amino acid frequencies can be arranged
             in a matrix $F \in \mathbb{R}^{L \times \naatypes}$
@@ -140,15 +140,15 @@
             \end{equation}
 
             \begin{equation}
-                NMI(x, y) = \frac{MI(x, y)}{\sqrt{S(x) S(y)}}
+                NMI(x, y) = \frac{MI(x, y)}{\sqrt{S(x) S(y)}}  % S(x) and S(y)?
             \end{equation}
 
-            APC is applied to both MI and NMI.
+            APC is applied to both MI and NMI.  % APC?
 
         \paragraph{Cross-entropy}
 
             Cross-entropy is computed in \cite{Michel383133} using the following formula:
-            
+
             \begin{equation}
                 H(x, y) = S(x) + S(y) - MI(x, y)
             \end{equation}
@@ -195,4 +195,4 @@
                 \label{features}
             \end{center}
         \end{figure}
-        
+

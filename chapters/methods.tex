@@ -6,7 +6,7 @@
   one for training the model, one for optimizing the hyper-parameters, and three for benchmarking.
   The training set is a set of 354 proteins including the 150 families reported in the original PSICOV
   paper~\cite{doi:10.1093/bioinformatics/btr638}, plus a subset of the first benchmark set used by
-  Michel et el. to evaluate PConsC3~\cite{Skwark079673}.
+  Michel et al. to evaluate PConsC3~\cite{Skwark079673}.
   The validation set is composed of the 30 protein families from the validation set of PConsC3,
   which itself is a subset of the test set of PConsC2~\cite{10.1371/journal.pcbi.1003889}.
 
@@ -19,7 +19,7 @@
     A straightforward method for reducing homology between two set of proteins is to
     remove proteins that have a sequence identity rate above a given threshold.
     As a rule of thumb, this threshold is usually set to 40\%.
-    Identity rates where computed by running Needleman-Wunsch algorithm on each
+    Identity rates were computed by running Needleman-Wunsch algorithm on each
     pair of proteins coming from two different datasets. Score matrix was set
     such that exact matches give a score of 1 and any mismatch gives a penalty of -1.
     Indeed this approach promotes global alignments with maximum identity rates.
@@ -43,7 +43,7 @@
     \end{table}
 
     Similarity rates are more informative than identity rates because amino acids
-    are very likely to mutate acros evolution towards amino acids that share
+    are very likely to mutate across evolution towards amino acids that share
     similar physico-chemical properties, and such measures take these mutations
     into account. However, ECOD H-classes~\cite{10.1371/journal.pcbi.1003926}
     were used instead of similarity rates because they can potentially give more
@@ -69,7 +69,7 @@
 
     \todo{Profile HMMs: \cite{eddy1998profile}}
     MSAs have been created using HHblits~\cite{HHblits} (version as of the date of 26th February 2016) on the Uniprot20 database
-    with an e-value of 1. Parameters have been set in such a way that all sequences in each of the database's MSA are aligned.
+    with an e-value of 1. Parameters have been set in such a way that all sequences in each of the database MSAs are aligned.
     The obtained MSAs have been used as input to all other predictors and intermediate predictors, allowing for easier comparability.
 
     All protein sequences, structures, MSAs and intermediate predictions used in this thesis come from the datasets that were publicly
@@ -101,10 +101,10 @@
 
   As described in section \ref{inputfeatures}, input features can be split into three categories:
   global, 1-dimensional and 2-dimensional features.
-  The proposed model takes as input the protein length, the effective number of sequences 
+  The proposed model takes as input the protein length, the effective number of sequences
   in the corresponding MSA, position-specific statistics,
   residue pair-specific statistics, and predictions made by PSICOV, plmDCA and GaussDCA.
-  Additionaly to these features, secondary structure, solvent accessibility and 
+  Additionaly to these features, secondary structure, solvent accessibility and
   region disorder are predicted by RaptorX-property server and added to the rest of
   1-dimensional features.
   \todo{cite RaptorX-property}
@@ -164,8 +164,8 @@
       \text{Best-L/k PPV} = \frac{\sum_{\underset {i-j \geq 6}{(i, j) \in B(L/k)}} C_{i, j}}{L/k}
     \end{equation}
 
-    where $C_{i, j}, N_{i, j} \in \{0, 1\} \ \forall i, j, i-j \ge 6$ are boolean values indicating a contact or a non-contact, respectively.
-    $B(L/k)$ is the set of $L/k$ most confident predicted probabilities (with highest values) and $p_{i, j}$ is the predicted probability
+    where $C_{i, j}, N_{i, j} \in \{0, 1\} \ \forall i, j, i-j \ge 6$ are boolean values indicating a contact or a non-contact, respectively.  % N_{i,j} does not appear in the formula.
+    $B(L/k)$ is the set of $L/k$ most confident predicted probabilities (with highest values) and $p_{i, j}$ is the predicted probability  % Neither does p_{i,j}.
     that residue pair $(i, j)$ forms a contact.
     Contacts under a residue distance of 6 amino acids are not considered during evaludation phase even though they are used during
     training phase.
@@ -193,7 +193,7 @@
   on grid search do not suit the problem because they are uninformed methods.
 
   Hyperopt provides an informed search method called Tree-structured Parzen Estimators (TPE)~\cite{bergstra2011algorithms}.
-  In Bayesian hyper-optimization, the posterior probability $P(\alpha \vert L)$ is defined as a function
+  In Bayesian hyper-optimization, the posterior probability $P(\alpha \vert L)$ is defined as a function  % $L$ is confusing: it is the length of sequences just above. Maybe use $\mathcal L$ or $\ell$
   of the hyper-parameter vector $\alpha$ and the loss $L$. Contrary to techniques based on Gaussian processes
   that approximates $P(\alpha \vert L)$ only, TPE models both posterior $P(\alpha \vert L)$ and $P(L)$.
   The prior is iteratively replaced with non-parametric densities based on generated points $\{ \alpha_1, \alpha_2, \dotsc \}$.
@@ -206,23 +206,23 @@
         l(\alpha) &  \text{if} \, L < L^* \\
         g(\alpha) &  \text{otherwise}
       \end{cases}
-  \end{equation}
+  \end{equation}  % l, g and L^* have not been defined yet. And are not clearly defined below.
 
   Let $f$ be the prediction function of the model (see section \ref{backpropagation} about backpropagation algorithm),
-  and let $f(\alpha) \triangleq \text{argmin}_{f(\Theta, \alpha)} c\big(f(\Theta, \alpha)\big)$ be the prediction function
-  of a trained model that minimizes a given loss function $c$ w.r.t. a fixed hyper-parameter vector $\alpha$.
+  and let $f(\alpha) \triangleq \text{argmin}_{f(\Theta, \alpha)} c\big(f(\Theta, \alpha)\big)$ be the prediction function  % Formalism: meh
+  of a trained model that minimizes a given loss function $c$ w.r.t. a fixed hyper-parameter vector $\alpha$.  % loss function? If denoted by $c$, maybe "cost" function?
   $l(\alpha)$ is the non-parametric density function created by the observations $\{ \alpha^{i} \}$ such that
   $L = c(f(\alpha))$ is below the threshold $L^*$, and $g(\alpha)$ is created with the remaining observations.
   The threshold $L^*$ is set as a quantile of the observed values of $L$.
-  The value to be optimized in TPE is the Expected Improvement (EI), which is measured as an infinitesimal sum
+  The value to be optimized in TPE is the Expected Improvement (EI), which is measured as an infinitesimal sum  % infinitesimal sum? Integral?
   of loss improvements weighted by the posterior. After applying Bayes formule to the posterior, calculus of EI becomes:
 
   \begin{equation}
-    EI_{L^*}(\alpha) = \int_{-\infty}^{L^*} (L^* - L) P(L \vert \alpha) dL 
+    EI_{L^*}(\alpha) = \int_{-\infty}^{L^*} (L^* - L) P(L \vert \alpha) dL
     = \int_{-\infty}^{L^*} (L^* - L) \frac{P(\alpha \vert L) P(L)}{P(\alpha)} dL
   \end{equation}
 
-  In the framework of Adaptive Parzen Estimators, each hyper-parameter is associated a prior and a density function,
+  In the framework of Adaptive Parzen Estimators, to each hyper-parameter is assigned a prior and a density function,
   and the estimator is built as a weighted mixture of them.
   For example, a continuous variable can be assigned:
   \begin{itemize}

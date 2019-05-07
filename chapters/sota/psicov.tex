@@ -1,28 +1,28 @@
 \section{PSICOV}
 
-    \subsection{Gaussian graphical models} 
+    \subsection{Gaussian graphical models}
 
         PSICOV relies on a Gaussian graphical modelization. Such models are represented by undirected graphs that
         satisfy the pairwise Markov property: two nodes are not connected by an edge if they are conditionally independent.
         Let $G = (V, E)$ be a graph and let each node $k$ be associated to a random variable $X_k$.
         Conditional independence between variables $X_u$ and $X_v$ is formally defined as follows:
         \begin{equation}
-            X_u \independent X_v \vert X_{V \\ \{u, v\}} \, \, \text{if } \{u, v\} \notin E
+            X_u \independent X_v \vert X_{V \\ \{u, v\}} \, \, \text{if } \{u, v\} \notin E  % Notation X_{\{u, v\}}?
         \end{equation}
         If the graph is not complete, then there exists pairs of conditionally independent variables in the model,
         resulting in sparsity patterns in the underlying precision matrix.
-        When the covariance matrix of the multivariate Gaussian model is rank-deficient, a solution for the precision
+        When the covariance matrix of the multivariate Gaussian model is rank deficient, a solution for the precision
         matrix has to be found with a high prior towards sparse matrices. Such a solution can be achieved through
         regularization. The solution that follows in the next section relies on pseudo-inverse computation
-        with L1 regularization.
+        with $L_1$ regularization.
 
     \subsection{Evolutionary couplings} \label{graphicalmodels}
 
         The motivation behind PSICOV~\cite{doi:10.1093/bioinformatics/btr638} is that residue contacts produce constraints on the types of residues in the
         protein at certain pairs of sites: two residues involved in a contact should have complementary physicochemical properties. To capture the covariation
-        of residue types for any pair of sites, the random variable $X_{ia}: \Omega \rightarrow \{0, 1\}$ is defined. $X_{ia}$ takes value one if
+        of residue types for any pair of sites, the random variable $X_{ia}: \Omega \rightarrow \{0, 1\}$ is defined. $X_{ia}$ takes value one if  % \Omega?
         amino acid at site $i$ is of type $a$. In particular, value $x_{ia}^{(k)}$ is equal to one if the $k$th sequence in the given MSA has a residue of type $a$
-        at site $i$. tWith this knowledge, the sample covariance matrix $S \in \mathbb{R}^{21 L \times 21 L}$ can then be computed by:
+        at site $i$. With this knowledge, the sample covariance matrix $S \in \mathbb{R}^{21 L \times 21 L}$ can then be computed by:
 
         \begin{equation} \label{covariance}
             \begin{split}
@@ -30,12 +30,13 @@
             \end{split}
         \end{equation}
 
-        where s$n$ is the number of
-        homologuous sequences and $S_{ij}^{ab}$ is the sequence identity covariance from amino acid $a$ to amino acid $b$ and from site $i$ to site $j$.
+        where $n$ is the number of
+        homologous sequences and $S_{ij}^{ab}$ is the sequence identity covariance from amino acid $a$ to amino acid $b$ and from site $i$ to site $j$.
         Each matrix $S_{ab}$ is thus a covariance matrix between sites $i$ and $j$. It is noteworthy that such a covariance matrix is neither positive
         semidefinite nor symmetric and is, thus, substantially different from regular sample covariance matrices. Precision matrix $\Theta_{ij}$ is defined as
         the inverse of covariance submatrix $S_{ij}$, but there is no guarantee that such an inverse can be computed directly. Indeed, each submatrix
         $S_{ij}$ is very likely to be singular due to the absence of correlations for some residue types that are rarely (or never) observed at given sites.
+				% Something is unclear about the notation: $S_{ij}$ is a matrix? What is $S_{ab}$? Is it the same as $S_{ij}$? If so, why is there $S_{ij}^{ab}$?
 
         \begin{figure}[H]
             \begin{center}
@@ -56,7 +57,7 @@
         characterized by the following probability density function:
 
         \begin{equation}
-            f(x) = \frac{1}{\sqrt{(2\pi)^k \vert\Sigma\vert}} \exp{-\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu)}
+            f(x) = \frac{1}{\sqrt{(2\pi)^d \vert\Sigma\vert}} \exp{-\frac{1}{2} (x - \mu)^T \Sigma^{-1} (x - \mu)}
         \end{equation}
 
         where $d=21L$ is the number of components in vector $x$, $\mu$ is the theoretical mean and $\Sigma$ the theoretical covariance matrix.
@@ -67,10 +68,10 @@
                 \log{L}(\Theta) & = \sum\limits_{k=1}^{n} \log{f(x^{(k)})} \\
                 & = \sum\limits_{k=1}^{n} \Bigg( -\frac{1}{2} (x^{(k)} - \mu)^T \Sigma^{-1} (x^{(k)} - \mu) - \log{\sqrt{(2\pi)^d \vert\Sigma\vert}} \Bigg) \\
                 & = \sum\limits_{k=1}^{n} \Bigg( -\frac{1}{2} (x^{(k)} - \mu)^T \Theta (x^{(k)} - \mu) - \log{\sqrt{(2\pi)^d \frac{1}{\vert\Theta\vert}}} \Bigg) \\
-                & = -\frac{1}{2} \sum\limits_{k=1}^{n} (x^{(k)} - \mu)^T \Theta (x^{(k)} - \mu) 
+                & = -\frac{1}{2} \sum\limits_{k=1}^{n} (x^{(k)} - \mu)^T \Theta (x^{(k)} - \mu)
                     - \frac{1}{2} \sum\limits_{k=1}^{n} \log{\Big((2\pi)^d \frac{1}{\vert\Theta\vert}\Big)} \\
                 & = -\frac{1}{2} \trace\big(S \Theta\big) - \frac{1}{2} \sum\limits_{k=1}^{n} \log{(2\pi)^d} + \frac{1}{2} \log{\vert\Theta\vert} \\
-            \end{split}
+            \end{split}  % Last equality: shouldn't there be a factor $n$ coming out of the trace?
         \end{equation}
 
         The latter expression holds because the empirical mean $\bar{x}$ is equal to $\mu$ for any $\Sigma$.
@@ -81,7 +82,7 @@
         \begin{equation}
             \begin{split}
                 \hat{\Theta} & = \argmax_{\Theta} \ \ \log{L}(\Theta) - \rho \norm{\Theta}_1 \\
-                & = \argmax_{\Theta} \ \ -\frac{1}{2} \trace\big(S \Theta\big) - \frac{1}{2} \sum\limits_{k=1}^{n} 
+                & = \argmax_{\Theta} \ \ -\frac{1}{2} \trace\big(S \Theta\big) - \frac{1}{2} \sum\limits_{k=1}^{n}
                     \log{(2\pi)^d} + \frac{1}{2} \log{\vert\Theta\vert} - \rho \norm{\Theta}_1 \\
                 & = \argmax_{\Theta} \ \ -\trace\big(S \Theta\big) + \log{\vert\Theta\vert} - \rho \norm{\Theta}_1 \\
             \end{split}
@@ -100,7 +101,7 @@
 
         \begin{equation}\label{mbest}
             \begin{split}
-                & min_{\Theta^{(m+1)}} \frac{1}{2} \trace\big(S \Theta\big) + \frac{1}{2} 
+                & \min_{\Theta^{(m+1)}} \frac{1}{2} \trace\big(S \Theta\big) + \frac{1}{2}
                     \sum\limits_{k=1}^{n} \log{(2\pi)^d} - \frac{1}{2} \log{\vert\Theta\vert} \\
                 & s.t. \ \ \ d(\Theta^{(k)}, \Theta^{(m+1)}) \ge \epsilon, \ \ k = 1, \dotsc, m
             \end{split}
@@ -112,8 +113,8 @@
             d(\Theta^{(k)}, \Theta) = - \sum\limits_{i, j} \delta_0(\theta^{(k)})_{i, j} \vert \Theta_{i, j} \vert
         \end{equation}
 
-        where $\delta_0: \mathbb{R}^{21L \times 21L} \rightarrow \mathbb{R}^{L \times L}$ is such that 
-        $d(\Theta_{i, j})$ takes value $1$ if submatrix $\Theta_{i, j}$ is $0$, and $-1$ otherwise.
+        where $\delta_0: \mathbb{R}^{21L \times 21L} \rightarrow \mathbb{R}^{L \times L}$ is such that
+        $d(\Theta_{i, j})$ takes value $1$ if submatrix $\Theta_{i, j}$ is $0$, and $-1$ otherwise.  % d(\Theta_{i,j}) or \delta_0(\Theta_{ij})? Also if \delta_0 is the (-1) \cdot Dirac measure at 0, why take values in \{-1, 0\} and then negate the result instead of defining \delta_0 to take values in \{0, 2\} which is way more natural?
         The objective function is optimized using a second-order method and updating the solution in the Newton direction at each iteration.
         Finally, a contact map is obtained by selecting the submatrices among the solutions according to their sparsity.
-        More specifically, submatrices are selected according to their nuclear norm, hence the sum of their singular values.
+        More specifically, submatrices are selected according to their nuclear norm, hence the sum of their singular values.  % Why nuclear norm instead of L^p norm? Explanation/reference?
