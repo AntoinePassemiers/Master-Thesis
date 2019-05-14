@@ -4,8 +4,8 @@
 
         It has long been stated that the three-dimensional structure of proteins
         has an impact regarding the amino acid composition among
-        homologous proteins. Spatial contacts between residues can thus be inferred  % Shouldn't it be the other way around? It's weird to say that 3D structure has an impact on AA sequence since AAs induce 3D structure [Anfinsen]
-        by analyzing the variability of amino acid types at fixed pairs of positions.
+        homologous proteins. Spatial contacts between residues are related to
+        the variability of amino acid types at fixed pairs of positions.
         The core idea in Direct Coupling Analysis (DCA\index{DCA}) is to disentangle direct
         correlations and correlations produced at intermediary positions.
         Potts model allows to perform this disentanglement through inverse
@@ -17,9 +17,7 @@
         Boltzmann distribution, with the following probability mass function:
 
         \begin{equation}
-            \begin{split}  % Why split?
-                P(s \vert J, h) & = \frac{1}{Z} \exp{\sum\limits_{i=1}^L \sum\limits_{j=i+1}^L J_{ij}(s_i, s_j) + \sum\limits_{i=1}^L h_i(s_i)}
-            \end{split}
+            P(s \vert J, h) = \frac{1}{Z} \exp{\sum\limits_{i=1}^L \sum\limits_{j=i+1}^L J_{ij}(s_i, s_j) + \sum\limits_{i=1}^L h_i(s_i)}
         \end{equation}
 
         where $J$ and $h$ are sets of model parameters, $s$ is an amino acid sequence and
@@ -29,7 +27,8 @@
 
     \subsection{Exact inference is hard}
 
-        Given a multiple sequence alignment containing $B$ sequences, a na\"\i ve approach would be to maximize its log-likelihood:  % $B$ sequences or $M$ sequences?
+        Given a multiple sequence alignment containing $M$ sequences, a na\"\i
+        ve approach would be to maximize its log-likelihood:
 
         \begin{equation}
             \begin{split}

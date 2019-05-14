@@ -22,11 +22,11 @@
         As explained in \cite{pietal2015gdfuzz3d}, there is a linear relationship
         between graph distances and real euclidean distances.
         Let $GD_{i,j}$ be the graph distance between residues $i$ and $j$. Then
-        the euclidean distance $\delta(x_i, x_j)$ between the corresponding
-        points $x_i$ and $x_j$ is approximated by:  % Denoting Euclidean distance by $\delta$ is very unusual
+        the euclidean distance $\dis(\mathbf{x_i},\mathbf{x_j})$ between the corresponding
+        points $x_i$ and $x_j$ is approximated by:
 
         \begin{align}
-            \delta(x_i, x_j) = 5.72 \times GD_{i,j}
+            \dis(\mathbf{x_i},\mathbf{x_j}) = 5.72 \times GD_{i,j}
         \end{align}
 
         It must be noted that the error on the euclidean distance also increases
@@ -72,9 +72,12 @@
         The set of points $X$ that best satisfies Gaussian restraints is simply
         obtained by log-likelihood maximization:
         \begin{align}
-            \hat{X} & = \argmax_{X} \sum\limits_{i < j ,\, (\mu_{i,j}, \sigma_{i,j}) \in R}  % What is R?
+            \hat{X} & = \argmax_{X} \sum\limits_{i < j ,\, (\mu_{i,j}, \sigma_{i,j}) \in R}
                 \Bigg(\frac{\delta(x_i, x_j) - \mu_{i,j}}{\sigma_{i,j}}\Bigg)^2
         \end{align}
+
+        where $R$ is the set of parameters of the Gaussian restraints. This notation is used
+        because all residue pairs may not be restrained.
 
     \subsection{Evolutionary algorithm}
 
@@ -100,11 +103,11 @@
     \section{Evaluation metrics}
 
     \begin{align}
-        \text{TM-score}(X^{(target)}, X^{(aligned)}) = \max \Bigg[ \frac{1}{L} \sum\limits_{i=1}^L  % What set does the \max act on?
+        \text{TM-score}(X^{(target)}, X^{(aligned)}) = \max_P \Bigg[ \frac{1}{L} \sum\limits_{i=1}^L
             \frac{1}{1 + \Big(\frac{\delta(x_i^{(target)}, x_i^{(aligned)})}{\delta_0}\Big)^2} \Bigg]
     \end{align}
 
-    where $\delta_0 = 1.24 \sqrt[3]{L - 15} - 1.8$.
+    where $\delta_0 = 1.24 \sqrt[3]{L - 15} - 1.8$, and $P$ is a projection that preserves
 
     The best alignment in 3D is found by determining the projection of $X^{(aligned)}$ that
     either maximizes the TM-score or minimizes the RMSD.
