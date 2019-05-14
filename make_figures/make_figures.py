@@ -1,5 +1,9 @@
 import numpy as np
+from numpy.polynomial.polynomial import polyfit
 import matplotlib.pyplot as plt
+
+
+colors = ['#073B3A', '#0B6E4F', '#08A045', '#6BBF59', '#DDB771', '#DE6B48', '#C65B7C']
 
 
 def load_results(filepath):
@@ -17,17 +21,39 @@ def load_results(filepath):
 
 
 casp11 = load_results('casp11.full.txt')
-
-print(casp11['RMSD'])
-
-
-options = {
-    'marker': 'o',
-    's': 6
-}
-colors = ['#007379', '#009360', '#86a824', '#ffa600']
+cameo = load_results('cameo.full.txt')
+casp11_plmdca = load_results('casp11.plmdca.txt')
 
 
+
+f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+ax2.set_axis_off()
+options = { 'marker': 'x', 's': 25 }
+for ax, metric, name in zip(
+        [ax1,ax3,ax4],
+        ['PPV/5','PPV/5-medium','PPV/5-long'],
+        ['All contacts','Medium-range contacts','Long-range contacts']):
+    xs, ys = np.log(casp11_plmdca['Meff']), casp11_plmdca[metric]
+    b, m = polyfit(xs, ys, 1)
+    ax.scatter(xs, ys, label='plmDCA', color=colors[0], **options)
+    xs = np.asarray([np.min(xs), np.max(xs)])
+    ax.plot(xs, b + m * xs, '--', color=colors[0])
+    xs, ys = np.log(casp11['Meff']), casp11[metric]
+    b, m = polyfit(xs, ys, 1)
+    ax.scatter(xs, ys, label='Wynona', color=colors[5], **options)
+    xs = np.asarray([np.min(xs), np.max(xs)])
+    ax.plot(xs, b + m * xs, '--', color=colors[5])
+    ax.set_ylabel('Best-L/5 PPV', fontsize=12)
+    if ax in [ax3, ax4]:
+        ax.set_xlabel('ln(Meff)', fontsize=12)
+    ax.set_ylim(-.05, np.max(ys))
+    ax.set_title(name, fontsize=12)
+    ax.legend(prop={ 'size': 12 })
+plt.show()
+
+# import sys; sys.exit(0)
+
+options = { 'marker': 'o', 's': 18 }
 scatter_axes = plt.subplot2grid(
         (3, 3), (1, 0), rowspan=2, colspan=2)
 x_hist_axes = plt.subplot2grid(
@@ -35,16 +61,14 @@ x_hist_axes = plt.subplot2grid(
 y_hist_axes = plt.subplot2grid(
         (3, 3), (1, 2), rowspan=2, sharey=scatter_axes)
 scatter_axes.scatter(casp11['RMSD'], casp11['TM-score'], label='CASP11', color=colors[0], **options)
-#scatter_axes.scatter(cameo_rmsd, cameo_tm, label='CAMEO', color=colors[1], **options)
-
-scatter_axes.set_ylabel('Template modeling score')
-scatter_axes.set_xlabel('Root mean square deviation')
-scatter_axes.legend()
-
+scatter_axes.scatter(cameo['RMSD'], cameo['TM-score'], label='CAMEO', color=colors[2], **options)
+scatter_axes.set_ylabel('Template modeling score', fontsize=17)
+scatter_axes.set_xlabel('Root mean square deviation', fontsize=17)
+scatter_axes.axhline(y=.20, linestyle='--', color='grey')
+scatter_axes.legend(prop={ 'size': 15 })
 x_hist_axes.hist(casp11['RMSD'], color=colors[0], bins=20, orientation='vertical')
 y_hist_axes.hist(casp11['TM-score'], color=colors[0], bins=20, orientation='horizontal')
-
-#x_hist_axes.hist(cameo_rmsd, color=colors[1], bins=20, orientation='vertical')
-#y_hist_axes.hist(cameo_tm, color=colors[1], bins=20, orientation='horizontal')
-
+x_hist_axes.hist(cameo['RMSD'], color=colors[2], bins=20, orientation='vertical')
+y_hist_axes.hist(cameo['TM-score'], color=colors[2], bins=20, orientation='horizontal')
+y_hist_axes.axhline(y=.20, linestyle='--', color='grey')
 plt.show()

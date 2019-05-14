@@ -2,14 +2,14 @@
 
 \todo{Deep architectures in PCP: \cite{di2012deep}}
 
-\section{Model evaluation on the different benchmark sets}
+\section{Hyper-Parameter Optimization}
 
-    
+\section{Model evaluation on the different benchmark sets}
 
     \begin{table}[H]
         \centering
         \resizebox{\textwidth}{!}{
-        \begin{tabular}{lccccccccc}
+        \begin{tabular}{|l|ccc|ccc|ccc|}
             \hline
             & & CASP11 & & & CAMEO & & & Membrane & \\
             \hline
@@ -26,7 +26,7 @@
             \hline
         \end{tabular}
         }
-        \captionof{table}{Best-L PPV of different methods on short,
+        \captionof{table}{Best-L/5 PPV of different methods on short,
         medium and long-range contacts. Results are shown for the three
         different benchmark sets: CASP11 targets, CAMEO proteins, and
         the benchmark set of membrane proteins.}
@@ -45,6 +45,28 @@
 
         \todo{}
 
-\section{Invariance to the number of homologous sequences}
+\section{Sensitivity to the number of homologous sequences}
+
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=\textwidth, keepaspectratio]{imgs/Meff.png}
+            \caption{Performance as a function of the logarithm of the effective
+            number of homologous sequences. Top figure shows the results on
+            CASP11 targets for all contacts. Bottom left and bottom right figures
+            focus on medium-range and long-range contacts, respectively.}
+            \label{sensitivity}
+        \end{center}
+    \end{figure}
+
+\section{Folding proteins from contact maps}
+
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=\textwidth, keepaspectratio]{imgs/fold.png}
+            \caption{Root mean square deviations and template-modelling scores
+            on the 3 benchmark sets.}
+            \label{fold}
+        \end{center}
+    \end{figure}
 
 \todo{tSNE: \cite{Maaten2008VisualizingDU}}
