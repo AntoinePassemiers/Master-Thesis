@@ -4,6 +4,63 @@
 
 \section{Hyper-Parameter Optimization}
 
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=\textwidth, keepaspectratio]{imgs/hpo.png}
+            \caption{Performance and hyper-parameter values as a function of the number
+            of Hyper-Parameter Optimization (HPO) iterations.
+            Top left figure illustrates the optimal point whose value on x-axis
+            is given by the HPO iteration that yields highest validation Best-L PPV.
+            Optimal values for the learning rate, L2 penalty and batch size are denoted
+            by dashed lines in top right, bottom left and bottom right figures, respectively.}
+            \label{hpoparams}
+        \end{center}
+    \end{figure}
+
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=\textwidth, keepaspectratio]{imgs/hpo2.png}
+            \caption{Performance and hyper-parameter values as a function of the number
+            of Hyper-Parameter Optimization (HPO) iterations.
+            Top left figure illustrates the optimal point whose value on x-axis
+            is given by the HPO iteration that yields highest validation Best-L PPV.
+            Optimal values for kernel size, number of kernels and activation function are denoted
+            by dashed lines in top right, bottom left and bottom right figures, respectively.}
+            \label{hpoparams2}
+        \end{center}
+    \end{figure}
+
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{lll}
+          \hline
+          Module & Hyper-parameter & Set of values \\
+          \hline
+          \hline
+          General & Batch size & $4$ \\
+                  & Batch normalization & $\top$ \\
+                  & Track running state & $\bot$ \\
+                  & Learning rate & $10^{-4}$ \\
+                  & L2 penalty & $10^{-4}$ \\
+                  & Parameter optimization & $\text{Adam}$ \\
+                  & Activation function & $\text{LeakyReLU}$ \\
+                  & Use global modules & $\top$ \\
+          \hline
+          Global module & Depth & $3$ \\
+          \hline
+          1-dimensional module & Depth & $18$ \\
+                               & Filter size & $7$ \\
+                               & Number of filters & $128$ \\
+          \hline
+          2-dimensional module & Depth & $18$ \\
+                               & Filter size & $7$ \\
+                               & Number of filters & $128$ \\
+          \hline
+        \end{tabular}
+        \captionof{table}{Set of hyper-parameter values obtained at optimal point.}
+        \label{besthp}
+    \end{table}
+
 \section{Model evaluation on the different benchmark sets}
 
     \begin{table}[H]
@@ -57,6 +114,8 @@
             \label{sensitivity}
         \end{center}
     \end{figure}
+
+\section{Model performance by structural class}
 
 \section{Folding proteins from contact maps}
 
