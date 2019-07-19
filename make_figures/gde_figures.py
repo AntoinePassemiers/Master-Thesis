@@ -10,50 +10,104 @@ PCONSFOLD_RMSD = [4.9, 3.2, 3.9, 4.3, 4.3, 6.4, 10.7, 16.4, 5.8, 4.9, 4.9, 13.4,
 GDE_TM =   [0.43,  0.26,  0.35,  0.27,  0.32,  0.31,  0.30,  0.27,  0.40,  0.23,  0.28,  0.30,  0.32,  0.34,  0.27,  0.37,  0.27,  0.33,  0.36,  0.39,  0.50,  0.36,  0.33,  0.31,  0.27,  0.39,  0.30,  0.40,  0.29,  0.25,  0.23,  0.27,  0.22,  0.30,  0.25,  0.33,  0.35,  0.24,  0.41,  0.36,  0.26,  0.29,  0.31,  0.32,  0.35,  0.32,  0.33,  0.32,  0.26,  0.31,  0.37,  0.29,  0.44,  0.35,  0.32,  0.28,  0.47,  0.44,  0.34,  0.33,  0.55,  0.34,  0.26,  0.28,  0.27,  0.29,  0.35,  0.26,  0.23,  0.41,  0.27,  0.34,  0.27,  0.36,  0.34,  0.24,  0.58,  0.26,  0.41,  0.31,  0.36,  0.40,  0.25,  0.31,  0.33,  0.38,  0.52,   0.25,  0.26,  0.38,  0.34,  0.26,  0.25,  0.25,  0.38,  0.23,  0.31,  0.33,  0.31,  0.27,  0.28,  0.24,  0.29,  0.28,  0.33,  0.42,  0.30,  0.35,  0.33,  0.36,  0.40,  0.35,  0.32,  0.32,  0.31,  0.27,  0.44,  0.30,  0.26,  0.42,  0.40,  0.23,  0.31,  0.46, 0.23, 0.29, 0.42, 0.29, 0.23, 0.33, 0.32, 0.23, 0.36, 0.35, 0.27, 0.24, 0.33, 0.33, 0.28, 0.23, 0.34, 0.29, 0.24, 0.30, 0.36, 0.32, 0.32, 0.38, 0.23, 0.39]
 GDE_RMSD = [6.78, 10.68,  6.93,  6.42,  7.49,  8.81, 12.14, 12.28,  9.28,  9.22,  9.12, 10.42, 10.62,  8.43,  5.95, 11.51, 11.08,  8.86,  5.72,  5.45,  7.58,  9.61, 11.74,  6.30,  8.44,  8.44,  9.42,  8.62, 10.66, 10.59, 13.91,  9.15, 13.82,  9.61,  8.90,  7.72,  9.69, 11.42,  9.15, 10.53, 13.69,  8.54, 10.61,  8.47,  7.39, 11.85, 11.88,  13.05, 9.50,  9.55,  8.80, 12.38,  6.23,  5.84, 10.09, 12.99,  7.50,  8.83,  8.34,  6.33,  6.79,  9.91, 12.69, 10.87, 11.99,  9.83, 12.59, 11.88, 14.30,  7.68,  8.71,  9.01,  9.11,  9.06, 11.86, 11.20,  4.57, 12.67,  9.61, 11.92, 11.87,  8.65,  8.89,  6.42,  8.47,  9.99,  6.27,  11.91, 12.23, 11.56, 10.58, 12.82, 10.61, 12.47,  8.51,  8.56,  5.88, 10.64, 11.06, 11.32,  9.41,  7.45,  7.71, 11.26, 10.05,  8.50,  8.29,  7.06, 14.48, 11.72,  7.33,  6.53, 11.65, 11.51, 11.39, 12.09,  5.92,  9.08,  9.88,  8.82,  8.82,  9.25,  7.39,  5.19, 10.12, 9.64, 12.18, 10.29, 8.34, 10.01, 7.40, 11.77, 8.65, 10.79, 10.20, 10.33, 11.53, 11.95, 12.79, 14.72, 9.98, 9.13, 10.30, 9.37, 9.55, 11.63, 12.12, 9.54, 13.62, 10.35]
 
-import matplotlib.pyplot as plt
+import numpy as np
+from bokeh.io import export_png, export_svgs
+from bokeh.layouts import gridplot
+from bokeh.models import BoxSelectTool, LassoSelectTool
+from bokeh.plotting import figure, curdoc, show
+from bokeh.models import ColumnDataSource, DataRange1d, Plot, LinearAxis, Grid, Legend, LegendItem
 
-options = {
-    'marker': 'o',
-    's': 6
-}
+
 colors = ['#007379', '#009360', '#86a824', '#ffa600']
 
 
-scatter_axes = plt.subplot2grid(
-        (3, 3), (1, 0), rowspan=2, colspan=2)
-x_hist_axes = plt.subplot2grid(
-        (3, 3), (0, 0), colspan=2, sharex=scatter_axes)
-y_hist_axes = plt.subplot2grid(
-        (3, 3), (1, 2), rowspan=2, sharey=scatter_axes)
+hmin = np.min(FTCOMAR_RMSD + PCONSFOLD_RMSD + GDFUZZ3D_RMSD + GDE_RMSD) * 1.1
+hmax = np.max(FTCOMAR_RMSD + PCONSFOLD_RMSD + GDFUZZ3D_RMSD + GDE_RMSD) * 1.1
+vmin = np.min(FTCOMAR_TM + PCONSFOLD_TM + GDFUZZ3D_TM + GDE_TM) * 1.1
+vmax = np.max(FTCOMAR_TM + PCONSFOLD_TM + GDFUZZ3D_TM + GDE_TM) * 1.1
 
-scatter_axes.scatter(FTCOMAR_RMSD, FTCOMAR_TM, label='FT-Comar', color=colors[0], **options)
+# Scatter plot
+p = figure(plot_width=600, plot_height=400, min_border=10, min_border_left=50,
+           toolbar_location=None, x_axis_location=None, y_axis_location=None,
+           title='Folding of PSICOV150 proteins')
+p.background_fill_color = '#fafafa'
 
-scatter_axes.scatter(PCONSFOLD_RMSD, PCONSFOLD_TM, label='PconsFold', color=colors[1], **options)
+p.scatter(FTCOMAR_RMSD, FTCOMAR_TM, size=5, color=colors[0], alpha=0.6, legend='FT-Comar')
+p.scatter(PCONSFOLD_RMSD, PCONSFOLD_TM, size=5, color=colors[1], alpha=0.6, legend='PConsFold')
+p.scatter(GDFUZZ3D_RMSD, GDFUZZ3D_TM, size=5, color=colors[2], alpha=0.6, legend='GDFuzz3D')
+p.scatter(GDE_RMSD, GDE_TM, size=5, color=colors[3], alpha=0.6, legend='GDE-GaussFold')
 
-scatter_axes.scatter(GDFUZZ3D_RMSD, GDFUZZ3D_TM, label='GDFuzz3D', color=colors[2], **options)
 
-scatter_axes.scatter(GDE_RMSD, GDE_TM, label='GDE-GaussFold', color=colors[3], **options)
 
-scatter_axes.set_ylabel('Template modeling score')
-scatter_axes.set_xlabel('Root mean square deviation')
-scatter_axes.legend()
+# Horizontal histogram
+LINE_ARGS = dict(color="#3A5785", line_color=None)
 
-x_hist_axes.hist(FTCOMAR_RMSD, color=colors[0], bins=20, orientation='vertical')
-y_hist_axes.hist(FTCOMAR_TM, color=colors[0], bins=20, orientation='horizontal')
+ph = figure(toolbar_location=None, plot_width=p.plot_width, plot_height=200, x_range=p.x_range,
+            min_border=10, min_border_left=50, y_axis_location="right")
+ph.xgrid.grid_line_color = None
+ph.yaxis.major_label_orientation = np.pi/4
+ph.background_fill_color = "#fafafa"
+ph.xaxis.axis_label = 'Root Mean Square Deviation'
+ph.xaxis.axis_label_text_font_size = '15pt'
+ph.xaxis.axis_label_text_font_style = 'normal'
 
-x_hist_axes.hist(PCONSFOLD_RMSD, color=colors[1], bins=20, orientation='vertical')
-y_hist_axes.hist(PCONSFOLD_TM, color=colors[1], bins=20, orientation='horizontal')
+hhist, hedges = np.histogram(FTCOMAR_RMSD, bins=20)
+hzeros = np.zeros(len(hedges)-1)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color=colors[0], line_color="#3A5785")
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
+hhist, hedges = np.histogram(PCONSFOLD_RMSD, bins=20)
+hzeros = np.zeros(len(hedges)-1)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color=colors[1], line_color="#3A5785")
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
+hhist, hedges = np.histogram(GDFUZZ3D_RMSD, bins=20)
+hzeros = np.zeros(len(hedges)-1)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color=colors[2], line_color="#3A5785")
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
+hhist, hedges = np.histogram(GDE_RMSD, bins=20)
+hzeros = np.zeros(len(hedges)-1)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color=colors[3], line_color="#3A5785")
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
 
-x_hist_axes.hist(GDFUZZ3D_RMSD, color=colors[2], bins=20, orientation='vertical')
-y_hist_axes.hist(GDFUZZ3D_TM, color=colors[2], bins=20, orientation='horizontal')
+# Vertical histogram
 
-x_hist_axes.hist(GDE_RMSD, color=colors[3], bins=20, orientation='vertical')
-y_hist_axes.hist(GDE_TM, color=colors[3], bins=20, orientation='horizontal')
+pv = figure(toolbar_location=None, plot_width=200, plot_height=p.plot_height,
+            y_range=p.y_range, min_border=10, y_axis_location='right')
+pv.ygrid.grid_line_color = None
+pv.xaxis.major_label_orientation = np.pi/4
+pv.background_fill_color = '#fafafa'
+pv.yaxis.axis_label = 'TM-score'
+pv.yaxis.axis_label_text_font_size = '15pt'
+pv.yaxis.axis_label_text_font_style = 'normal'
 
-plt.show()
+vhist, vedges = np.histogram(FTCOMAR_TM, bins=20)
+vzeros = np.zeros(len(vedges)-1)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vhist, color=colors[0], line_color="#3A5785")
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
+vhist, vedges = np.histogram(PCONSFOLD_TM, bins=20)
+vzeros = np.zeros(len(vedges)-1)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vhist, color=colors[1], line_color="#3A5785")
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
+vhist, vedges = np.histogram(GDFUZZ3D_TM, bins=20)
+vzeros = np.zeros(len(vedges)-1)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vhist, color=colors[2], line_color="#3A5785")
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
+vhist, vedges = np.histogram(GDE_TM, bins=20)
+vzeros = np.zeros(len(vedges)-1)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vhist, color=colors[3], line_color="#3A5785")
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
 
-import numpy as np
-print(np.mean(FTCOMAR_TM), np.mean(FTCOMAR_RMSD))
-print(np.mean(PCONSFOLD_TM), np.mean(PCONSFOLD_RMSD))
-print(np.mean(GDFUZZ3D_TM), np.mean(GDFUZZ3D_RMSD))
-print(np.mean(GDE_TM), np.mean(GDE_RMSD))
+layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
+
+curdoc().add_root(layout)
+curdoc().title = "Selection Histogram"
+
+
+export_png(layout, filename='../imgs/gde.png')

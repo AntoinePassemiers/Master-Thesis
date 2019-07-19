@@ -25,6 +25,13 @@ cameo = load_results('cameo.full.txt')
 casp11_plmdca = load_results('casp11.plmdca.txt')
 
 
+for name, results in zip(['CASP11', 'CAMEO'], [casp11, cameo]):
+    print('%s PPV: %f | short-range: %f | Medium-range: %f | Long-range: %f' % (name, np.mean(results['PPV']), np.mean(results['PPV-short']), np.mean(results['PPV-medium']), np.mean(results['PPV-long'])))
+    print('%s PPV/2: %f | short-range: %f | Medium-range: %f | Long-range: %f' % (name, np.mean(results['PPV/2']), np.mean(results['PPV/2-short']), np.mean(results['PPV/2-medium']), np.mean(results['PPV/2-long'])))
+    print('%s PPV/5: %f | short-range: %f | Medium-range: %f | Long-range: %f' % (name, np.mean(results['PPV/5']), np.mean(results['PPV/5-short']), np.mean(results['PPV/5-medium']), np.mean(results['PPV/5-long'])))
+    print('%s PPV/10: %f | short-range: %f | Medium-range: %f | Long-range: %f' % (name, np.mean(results['PPV/10']), np.mean(results['PPV/10-short']), np.mean(results['PPV/10-medium']), np.mean(results['PPV/10-long'])))
+    print('')
+
 
 f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 ax2.set_axis_off()

@@ -8,8 +8,8 @@
     Proteins are large macromolecules in the form of chains of building blocks called amino acid residues.
     There are 20 common amino acid types, but certain proteins may contain 2 additional amino acid types, namely pyrrolysine and selenocystein.
     According to Anfinsen's dogma, the three-dimensional structure of a protein is uniquely determined by its underlying amino acid sequence,
-    at least when observed in protein's native environment. When moved from an environment where proper folding conditions are not met
-    to a solvent at neutral pH, a random coil (a sequence of amino acid residues  % proper conditions are not met to a solvent at neutral pH? Weird formulation
+    at least when observed in protein's native environment. When moved from an unfavourable environment (where proper folding conditions are not met)
+    to a solvent at neutral pH, a random coil (a sequence of amino acid residues
     oriented in random directions) will evolve towards the three-dimensional structure that minimizes Gibbs free energy.
     This process is called protein folding and has, however, a few exceptions.
 
@@ -20,22 +20,24 @@
     However, in practice small proteins are able to fold into a stable conformation in a fraction of a millisecond.
     This observation is known as the Levinthal's paradox. There has been a long standing perspective that protein folding
     is guided by heuristics composed of local interactions~\cite{levinthal1969fold}. Heuristic folding leads to misfolded proteins
-    that can potentially cause genetic diseases. Luckily, some proteins are assisted by molecular chaperones during their folding process~\cite{ellis1991molecular}
-    to attain their functional conformation. It must be noted that Anfinsen's observations of polypeptide chains refolding spontaneously in an aqueous medium
-    have been made in the framework of in vitro studies: they do not take into account protein-protein interations and thus cannot generalize the
-    self-assembly process well.
+    that can potentially cause genetic diseases.
+    Luckily, some proteins are assisted by molecular chaperones during their folding process~\cite{ellis1991molecular}
+    to attain their functional conformation. It must be noted that Anfinsen's observations of polypeptide chains refolding
+    spontaneously in an aqueous medium have been made in the framework of in vitro studies:
+    they do not take into account protein-protein interations and thus cannot generalize the self-assembly process well.
 
     Protein Contact Prediction (PCP) can help determining the three-dimensional structure of proteins by limiting the search space to certain conformations
     constrained by predicted contact maps: this methodology is called contact-assisted protein folding.
     The problem of predicting the structure of a protein can be reduced to PCP because the latter is a much simpler problem,
     and only a few correctly predicted contacts are sufficient to reconstruct the whole structure~\cite{kim2014one}.
 
-    Structure-based methods are important in biology, as they help in assigning biochemical or biological functions to proteins. Indeed, the three-dimensional
+    Structure-based methods are important in biology,
+    as they help in assigning biochemical or biological functions to proteins. Indeed, the three-dimensional
     structure of a protein is more conserved than the underlying amino acid sequence across evolution. Prompted by this knowledge, similar functions
     can be assigned to proteins with low structural dissimilarity. Precisely identifying the role played by each protein in an organism is the first step
     towards understanding complex body mechanisms like muscle contraction, digestion or perceiving light.
     Also, determining the static structure of proteins help in detecting misfolded proteins which are possibly involved in diseases like Parkinson's or
-    Alzheimer's, but also in diagnosing those diseases.  % [reference needed]
+    Alzheimer's, but also in diagnosing those diseases~\cite{forloni2002protein}.
     Finally, solving the protein folding (structure prediction) problem will enable to do better protein design, for example to engineer enzymes like PETase
     so they have faster plastic-degrading capabilities.
     There are pipelines designed to predict the structure and then the function of a newly
@@ -43,7 +45,8 @@
 
     Protein structure is organized hierarchically: primary structure, secondary structure, tertiary structure
     and quaternary structure. Primary structure refers to the chemical composition of the protein, hence the sequence of amino acids present in it.
-    Secondary structure indicates the presence of structures that are local to the amino acids themselves: these structures can generally be $\alpha$-helices
+    Secondary structure indicates the presence of structures that are local to the amino acids themselves:
+    these structures can generally be $\alpha$-helices
     or $\beta$-sheets. Tertiary structure contains information about the three-dimensional structure of the protein and results from interactions
     between side chains of some pairs of amino acids, such as hydrogen bonds, ionic bonds or disulfide bridges.
     Quaternary structure is specific to proteins having multiple polypeptide chains and describes the structure due to intermolecular interactions between
@@ -74,7 +77,7 @@
 
 \section{Structure of the thesis}
 
-    Let me describe the global view of the thesis itself.  % Let me? Weird formulation. -> Let's
+    Let's describe the global view of the thesis itself.
     Firstly, common state-of-the-art ECA techniques will be described, such as Direct Coupling Analysis (DCA)
     and Pseudo-Inverse Covariance matrices (PSICOV) (both are statistical methods based on graphical models),
     as well as the basics of deep learning and backpropagation algorithm.
@@ -91,10 +94,9 @@
         number of homologous sequences than DCA methods. The notion of effective number of homologous sequences
         will be introduced in section \ref{meff}.
         \item Finally, a benchmark will be established to assess the performance of the proposed method
-        and other supervised approaches,
-        to the extent possible, state-of-the-art deep learning architectures.  % to the extent possible? Weird formulation
+        in comparison with other supervised approaches, including state-of-the-art deep learning architectures.
     \end{itemize}
 
 \section{Contributions}
 
-    \todo{}
+    

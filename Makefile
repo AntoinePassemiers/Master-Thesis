@@ -1,4 +1,4 @@
-PROJECT = report
+PROJECT = thesis
 COMPILER = xelatex
 BIBTEX = bibtex
 MAKEINDEX = makeindex

@@ -48,21 +48,25 @@
 
         \begin{table}[H]
             \centering
-            \begin{tabular}{|l|c|c|c|c|}
+            \begin{tabular}{|l|c|c|c|}
                 \hline
-                Restraint type & Seq. sep. & Graph Distance (GD) & Mean & Standard deviation \\
+                Restraint type & Seq. sep. & Mean & Standard deviation \\
                 \hline
                 \hline
-                Intra-alpha & 1 & 1 (contact) & 3.82 & 0.35 \\
-                Intra-alpha & 2 & 1 (contact) & 5.50 & 0.52 \\
-                Intra-alpha & 3 & 1 (contact) & 5.33 & 0.93 \\
-                Intra-alpha & 4 & 1 (contact) & 6.42 & 1.04 \\
-                Intra-beta  & 1 & 1 (contact) & 3.80 & 0.28 \\
-                Intra-beta  & 2 & 1 (contact) & 6.66 & 0.30 \\
-                Alpha/beta  & $\ge$ 4 & 1 (contact) & 6.05 & 0.95 \\
-                Helix/coil  & $\ge$ 4 & 1 (contact) & 6.60 & 0.92 \\
-                Seq. sep.   & $\ge$ 4 & 1 (contact) & 3.82 & 0.39 \\
-                All & $\ge$ 4 & any & 5.72 $\times$ GD & 1.34 $\times$ GD \\
+                Repulsion     & $\ge$ 6 & 20.00 & 120.00 \\
+                Interior      & - & 5.00 & 10.00 \\
+                Adjacent      & 1 & 3.81 & 0.1  \\
+                Next adjacent & 2 & 5.20 & 0.55 \\
+                Next adjacent & 3 & 7.00 & 0.71 \\
+                Intra-alpha   & 1 & 3.82 & 0.35 \\
+                Intra-alpha   & 2 & 5.50 & 0.52 \\
+                Intra-alpha   & 3 & 5.33 & 0.93 \\
+                Intra-alpha   & 4 & 6.42 & 1.04 \\
+                Intra-beta    & 1 & 3.80 & 0.28 \\
+                Intra-beta    & 2 & 6.66 & 0.30 \\
+                Alpha/beta    & $\ge$ 4 & 6.05 & 0.95 \\
+                Helix/coil    & $\ge$ 4 & 6.60 & 0.92 \\
+                All & $\ge$ 4 & 5.72 $\times$ GD & 1.34 $\times$ GD \\
                 \hline
             \end{tabular}
             \captionof{table}{Gaussian restraints present in the 3D model}
@@ -78,6 +82,8 @@
 
         where $R$ is the set of parameters of the Gaussian restraints. This notation is used
         because all residue pairs may not be restrained.
+
+        \todo{\cite{reese1996distance}}
 
     \subsection{Evolutionary algorithm}
 
