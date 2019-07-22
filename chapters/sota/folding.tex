@@ -1,7 +1,43 @@
 \section{Contact-assisted protein folding}
 
+Static protein structure can be recovered with a high resolution solely based on a few
+true residue contacts~\cite{kim2014one}. Because predicted contact maps
+are fuzzy by nature and may contain false contacts, only top $\alpha \cdot L$
+contacts (residue pairs associated to highest predicted probabilities)
+are usually considered.
+FT-COMAR~\cite{vassura2008ft}
+GDFuzz3D~\cite{pietal2015gdfuzz3d} and MODELLER~\cite{modeller}
 CONFOLD~\cite{adhikari2015confold}
 CONFOLD2~\cite{adhikari2018confold2}
 CoinFold~\cite{wang2016coinfold}
-combinatorial~\cite{chelvanayagam1998combinatorial}
 distance distributions~\cite{reese1996distance}
+
+In the study of Chelvanayagam et al.~\cite{chelvanayagam1998combinatorial}, protein structure is modelled
+in a distance geometry setting using Gaussian restraints with empirically known mean and variance.
+Let $E(x_i, x_j)$ be the Euclidean distance between residues $i$ and $j$, where residues are being represented
+by the center of their respective $C_{\beta}$ (or $C_{\alpha}$) atoms.
+Let $D_{i, j}$ and $V_{i, j}$ be the average Euclidean distance and variance associated with the
+Gaussian constraint between residues $i$ and $j$. Under the assumption of independence between
+residue pairs, maximizing the log-likelihood reduces to minimizing the following objective function:
+\begin{equation}
+    \sum\limits_{i=1}^{n-1} \sum\limits_{j=i+1}^n \frac{(E(x_i, x_j) - D_{i, j})^2}{V_{i, j}}
+\end{equation}
+where $n$ is the protein size in residues. Constraints are chosen according to predicted secondary
+structure and surface accessibility. By default, all residues are assumed to be separated by an average distance
+of 120 \AA{}, with a high variance (120 \AA{}$^2$) to allow flexibility.
+For each residue pair, these prior parameters are replaced by a more accurate constraint when sufficient
+information is available. For example, residues with low surface accessibility are assumed to be separated
+by a distance of 7.5 \AA{} from the center of mass of the protein, while residues with high surface accessibility
+or assigned a higher average distance of 12 \AA{}. The Euclidean coordinates of the center of mass are additional
+variables to be added to the model. Residues participating in the active site are considered to be near in space.
+Adjacent and almost-adjacent residues are assigned low distances with very small variance since the distance
+between adjacent $C_{\alpha}$ atoms is fixed but with a small variability induced by torsion angles.
+Helices and strands, when predicted secondary structure is available, are modelled as well.
+All residue pairs with a sequence separation $\in [2, 5]$ in alpha helices are being constrained,
+and only residue paurs with a sequence separation $\in [2, 3]$ in 3/10 helices are being constrained.
+Similarly, sequence separation in strands must be in the range $[2, 4]$.
+Disulfide bonds are modelled by an average distance of 5.5 \AA{} and a variance of 0.2 \AA{}$^2$ between cysteine
+residues. In sheets, center residues of adjacent strands are assigned an average distance of 4.54 \AA{} and a
+variance of 0.1 \AA{}$^2$.
+However, sheet topology and disulfide bonds are not always available and the solution suggested in the paper
+is to have recourse to sheet and disulfide combinatorics
