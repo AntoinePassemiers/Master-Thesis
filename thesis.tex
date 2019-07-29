@@ -117,16 +117,18 @@ on a Fully-Convolutional Neural Architecture}
 \todo{}
 
 \begin{quotation}
-\noindent ``\emph{You may also include one or more general quotes related to your topic.}''
-\begin{flushright}\textbf{Name of the author, date}\end{flushright}
+  \noindent ``\emph{You may also include one or more general quotes related to your topic.}''
+  \begin{flushright}\textbf{Name of the author, date}\end{flushright}
 \end{quotation}
 
 \medskip
 
 \begin{quotation}
-\noindent ``\emph{Another quote.}''
-\begin{flushright}\textbf{Name of the author, date}\end{flushright}
+  \noindent ``\emph{Another quote.}''
+  \begin{flushright}\textbf{Name of the author, date}\end{flushright}
 \end{quotation}
+
+
 \chapter*{Acknowledgment}
 \thispagestyle{empty} 
 
@@ -140,21 +142,58 @@ on a Fully-Convolutional Neural Architecture}
 \mainmatter 
 
 
-\include{chapters/introduction}
-\include{chapters/sota/definitions}
-\include{chapters/sota/dca}
-\include{chapters/sota/psicov}
-\include{chapters/sota/dl}
-\include{chapters/sota/dlfeatures}
-\include{chapters/sota/dlinpcp}
-\include{chapters/sota/folding}
-\include{chapters/methods}
-\include{chapters/results}
-\include{chapters/conclusion}
+\chapter{Introduction}
+  \begingroup
+  \let\clearpage\relax
+  \include{chapters/introduction}
+  \endgroup
+
+
+\chapter{Background}
+  \begingroup
+  \let\clearpage\relax
+  \include{chapters/background/cmap}
+  \include{chapters/background/dihedral}
+  \endgroup
+
+
+\chapter{State-of-the-art}
+  \begingroup
+  \let\clearpage\relax
+  \include{chapters/sota/dca}
+  \endgroup
+  \include{chapters/sota/psicov}
+  \include{chapters/sota/dl}
+  \include{chapters/sota/dlfeatures}
+  \include{chapters/sota/dlinpcp}
+  \include{chapters/sota/folding}
+
+
+\chapter{Materials and methods}
+  \begingroup
+  \let\clearpage\relax
+  \include{chapters/methods}
+  \endgroup
+
+
+\chapter{Results}
+  \begingroup
+  \let\clearpage\relax
+  \include{chapters/results}
+  \endgroup
+
+
+\chapter{Conclusion}
+  \begingroup
+  \let\clearpage\relax
+  \include{chapters/conclusion}
+  \endgroup
+
 
 \begin{appendices}
     \include{chapters/appendices}
 \end{appendices}
+
 
 \appendix
 
