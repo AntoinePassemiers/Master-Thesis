@@ -190,12 +190,12 @@
         of the level of action potential sent along its axon. More formally, it is a non-linear scalar function that takes a scalar as input.
         The presence of activation functions in neural networks along with fully-connected layers allows them to increase their representational
         power. Indeed, a stack of fully-connected layers without activation functions would have the same representational power as a single
-        fully-connected layers, since a linear combination of linear combinations is itself a linear combination. Thus, activation functions
-        help to actually build a hierarchical representational of the data by folding the hyperplane containing the data points multiple times  % folding the hyperplane? In order to talk about hyperplanes, you need to be in an affine space and especially you require the projection to lie on a $n-1$ dimensional space which is highly likely not the case. Maybe just say "non-linearly modify the geometry of the projected space". But using "folding" formally would require to talk about manifolds.
+        fully-connected layer, since a linear combination of linear combinations is itself a linear combination. Thus, activation functions
+        help to actually build a hierarchical representation of the data by curving the hyperplane separating data points multiple times  % folding the hyperplane? In order to talk about hyperplanes, you need to be in an affine space and especially you require the projection to lie on a $n-1$ dimensional space which is highly likely not the case. Maybe just say "non-linearly modify the geometry of the projected space". But using "folding" formally would require to talk about manifolds.
         and at each layer.
 
         However, not every activation function is suitable for backpropagation and one of the reasons for the success of deep learning is the low
-        computation requirements for the gradients. Most of the activation functions are non-prametric and element-wise, which makes it easy
+        computational requirements for the gradients. Most of the activation functions are non-parametric and element-wise, which makes it easy
         to compute the signal during backward pass.
 
         The best known activation function is the sigmoid function $\sigma(x)$.
@@ -228,10 +228,12 @@
         Such an activation function is profitable because, has its second derivative maximized at $x = -1$ and $x = 1$, avoiding
         saturation effects.
 
-        The chain rule informs us that the gradient of a given layer is factorized as a product of vectors/matrices computed by previous layers.
-        Because the norm of gradients w.r.t. activation functions is always less than one for both tanh and standard sigmoid,  % norm w.r.t. activation function? norm w.r.t. something? Especially w.r.t. a function?
+        The chain rule informs us that the gradient of a given layer is factorized as a product of vectors/matrices computed by next layers.
+        Because the absolute values of a layer's outputs are always less than one for both tanhand standard
+        sigmoid activation functions, but also the absolute values of the gradient's components,
         deep architectures are often subject to vanishing gradients. Linear rectifier units (ReLU) are piecewise linear functions designed to solve
-        these issues by keeping positive inputs unchanged. Let's note that ReLU is not differentiable at $x = 0$ but inputs are rarely zero in practice.
+        these issues by keeping positive inputs unchanged.
+        Let's note that ReLU is not differentiable at $x = 0$ but inputs can be reasonaly assumed to be rarely equal to zero in practice.
 
         \begin{equation}
             \begin{split}
@@ -264,30 +266,12 @@
         According to Ioffe and Szegedy~\cite{DBLP:journals/corr/IoffeS15}, deep neural networks are subject to a phenomenon
         called \textbf{internal covariate shift}. When the learning rate is too large, the distribution of a layer's output
         is drastically altered, making it difficult to train the next layer since the latter is constantly adapting to the new
-        distribution. Batch normalization helps dealing with this issue and allows us to run the training algorithm with less
-        careful parameter initialization and larger learning rate.
+        distribution. Batch normalization helps dealing with this issue and allows us to run the optimization algorithm with less
+        careful parameter initialization and a larger learning rate.
 
-        When the network is training with batch learning, its parameters are updated at every batch. Therefore, the distribution
+        When the network is trained with batch learning, its parameters are updated at every batch. Therefore, the distribution
         of each layer's output is changed at each batch. This is the reason for using the statistics of each batch individually
         to normalize the data between layers.
-
-        \begin{table}[H]
-            \centering
-            \begin{tabular}{|l|c|c|}
-                \hline
-                Name & Number of samples involved & Formula \\
-                \hline
-                \hline
-                Average (true) gradient & $N$ & $\frac{1}{N} \sum\limits_{i=1}^N \nabla L(f_{\theta}(X_i))$ \\
-                \hline
-                Batch gradient & $\vert B \vert$ & $\frac{1}{\vert B \vert} \sum\limits_{i \in B} \nabla L(f_{\theta}(X_i))$ \\
-                \hline
-                Sample gradient & $1$ & $\nabla L(f_{\theta}(x))$ \\
-                \hline
-            \end{tabular}
-            \captionof{table}{Types of gradients and gradient approximations used in common optimization methods.}
-            \label{gradients}
-        \end{table}
 
         \todo{Backpropagating sample gradients in fully-convolution networks}
 
@@ -303,35 +287,35 @@
 
     \subsection{Regularization}
 
-	From an optimization perspective, regularization is a penalty used to prevent
-	parameters from growing arbitrarily big during training.
-	According to Occam's law of parsimony, simpler hypotheses should be privileged over more complex ones.
-	Therefore, when the neural architecture involves a large number of free parameters
-	in the presence of relatively few data samples,
-	regularization helps reducing parameters importance and converging to less arbitrary parameter values.
-	From a Bayesian perspective, regularization provides a prior distribution over the model parameters.
-	In Bayes formula, the posterior $P(\theta \vert X, \alpha)$ is a function of both the prior
-	$P(\theta \vert \alpha)$ and the likelihood of the data $P(X \vert \theta, \alpha)$ under model $\theta$.
+    	From an optimization perspective, regularization is a penalty used to prevent
+    	parameters from growing arbitrarily big during training.
+    	According to Occam's law of parsimony, simpler hypotheses should be privileged over more complex ones.
+    	Therefore, when the neural architecture involves a large number of free parameters
+    	in the presence of relatively few data samples,
+    	regularization helps reducing parameters importance and converging to less arbitrary parameter values.
+    	From a Bayesian perspective, regularization provides a prior distribution over the model parameters.
+    	In Bayes formula, the posterior $P(\theta \vert X, \alpha)$ is a function of both the prior
+    	$P(\theta \vert \alpha)$ and the likelihood of the data $P(X \vert \theta, \alpha)$ under model $\theta$.
 
-	\begin{equation}
-	    P(\theta \vert X, \alpha) = \frac{P(X \vert \theta, \alpha)\,P(\theta \vert \alpha)}{P(X \vert \alpha)}
-	\end{equation}
+    	\begin{equation}
+    	    P(\theta \vert X, \alpha) = \frac{P(X \vert \theta, \alpha)\,P(\theta \vert \alpha)}{P(X \vert \alpha)}
+    	\end{equation}
 
-	The relation between the loss function of a neural network and Bayes formula can be established
-	by proving the two following points:
+    	The relation between the loss function of a neural network and Bayes formula can be established
+    	by proving the two following points:
 
-	\begin{itemize}
-	    \item The log-likelihood of the data is equal to the negative cross-entropy.
-	    \item The regularization term is proportional to the prior distribution of the parameters.
-	\end{itemize}
+    	\begin{itemize}
+    	    \item The log-likelihood of the data is equal to the negative cross-entropy.
+    	    \item The regularization term is proportional to the prior distribution of the parameters.
+    	\end{itemize}
 
-	The first part is easy to show since negative log-likelihood can be obtained from binary cross-entropy:
-	\begin{align}
-		CE(\hat{y}, y) & = - \log{\prod\limits_{i=0}^n P(\hat{y_i})^{y_i}}  \\
-		& = -\sum\limits_{i=0}^n y_i \log{\hat{y}} + (1 - y_i) \log{1 - \hat{y}}
-	\end{align}
-	This allows us to provide a statistical interpretation of the loss function.
-	Regarding priors, $L_1$ and $L_2$ regularizations are going to be introduced in the following two sections.
+    	The first part is easy to show since negative log-likelihood can be obtained from binary cross-entropy:
+    	\begin{align}
+    		CE(\hat{y}, y) & = - \log{\prod\limits_{i=0}^n P(\hat{y_i})^{y_i}}  \\
+    		& = -\sum\limits_{i=0}^n y_i \log{\hat{y}} + (1 - y_i) \log{1 - \hat{y}}
+    	\end{align}
+    	This allows us to provide a statistical interpretation of the loss function.
+    	Regarding priors, $L_1$ and $L_2$ regularizations are going to be introduced in the following two sections.
 
 	\subsubsection{$L_1$ regularization}
 
@@ -370,15 +354,86 @@
 
     \subsection{Optimization algorithms}
 
-        The gradient vector is obtained by concatenating the gradients w.r.t.
-	each layer's parameter vector. This final gradient vector
+        Gradient descent is a very popular optimization algorithm,
+        but is rarely used as such in practice since state-of-the-art deep learning
+        frameworks offer more advanced gradient-based techniques~\cite{DBLP:journals/corr/Ruder16}.
+        What is meant by gradient is the gradient vector obtained by concatenation of the gradients
+        w.r.t. each layer's parameters. This final gradient vector
         gives an improvement direction, but a decrease of the loss function
-	is guaranteed by moving by a arbitrary small step in the parameter space.
+        is only guaranteed by moving by an arbitrary small step in the parameter space.
 
-        \todo{Overview: \cite{DBLP:journals/corr/Ruder16}}
+        Gradient descent has three variants: batch, mini-batch and stochastic gradient descent.
+        In batch gradient descent, all training examples are used to compute the improvement
+        direction: this is done by computing the gradient for each training example and averaging
+        across all examples. In mini-batch gradient descent, only a subset of training examples
+        are being considered for the computation of the improvement direction
+        (which can thus be seen as an approximation of the actual gradient). Usually, the ordering
+        of training examples is shuffled at the beginning of each iteration (also called epoch)
+        and then examples are sampled in the resulting order repeatedly,
+        to ensure that each of them is seen by the model exactly once per iteration.
+        In the stochastic variant, only the gradient of a single training example is used to
+        approximate the improvement direction. Due to the high variability of gradients from one
+        example to the other, the improvement direction is changing in a chaotic manner during
+        the optimization process, hence the adjective stochastic.
+        The three types of improvement vectors are summarized in table~\ref{tab:gradients}.
+
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|l|c|c|}
+                \hline
+                Name & Number of examples involved & Formula \\
+                \hline
+                \hline
+                Average (true) gradient & $N$ & $g_t = \frac{1}{N} \sum\limits_{i=1}^N \nabla L(f_{x_t}(Z_i))$ \\
+                \hline
+                Mini-batch gradient & $\vert B \vert$ & $g_t = \frac{1}{\vert B \vert} \sum\limits_{i \in B} \nabla L(f_{x_t}(Z_i))$ \\
+                \hline
+                Sample gradient & $1$ & $g_t = \nabla L(f_{x_t}(Z))$ \\
+                \hline
+            \end{tabular}
+            \captionof{table}{Types of gradients and gradient approximations used in common optimization methods.
+                Here the term "sample" refers to a sample of 1 example.}
+            \label{tab:gradients}
+        \end{table}
+
+        In its most simplistic form, gradient descent optimization consists in update the parameter vector $x_t$
+        from step $t$ using the following rule:
+        \begin{align}
+            x_{t+1} & = x_t + \Delta x_t \\
+            & = x_t - \eta g_t
+        \end{align}
+        where update vector $\Delta x_t$ is equal to the negative approximated gradient $-g_t$ multiplied by
+        a learning rate $\eta$. Learning rate controls how much model parameters are being updated
+        in the improvement direction.
+
+        Stochastic gradient descent has been extended with a so-called momentum term that accelerates
+        the update when gradients approximately point in the same direction from one step to another.
+        \todo{Momentum: cite: Learning representations by back-propagating errors}
+        \begin{equation}
+            \Delta x_t = \rho \Delta x_{t-1} - \eta g_t
+        \end{equation}
+        $\rho$ is a decay parameter that controls how much to keep track of past update vectors.
+        In practice, the landscape of the loss function w.r.t. parameters is likely to be composed of many
+        narrow valleys where standard stochastic gradient vector is inefficient due to the small norm of gradients
+        along valleys. The momentum helps optimizing across such valleys in a smaller number of steps
+        due to its additive effect when gradient vectors are similar from one step to the next one.
 
         \todo{Adam: \cite{DBLP:journals/corr/KingmaB14}}
 
-        \todo{Adadelta: \cite{DBLP:journals/corr/abs-1212-5701}}
+        \todo{RMSProp: Introduced by Hinton on Coursera, first used in \cite{graves2013generating}}
+
+        \todo{AdaGrad: \cite{duchi2011adaptive}}
+        \begin{equation}
+            \Delta x_t = - \frac{\eta}{\sum\limits_{\tau=1}^t g_{\tau}^2} g_t
+        \end{equation}
+
+        ADADELTA~\cite{DBLP:journals/corr/abs-1212-5701} is an adaptive extension of stochastic gradient descent
+        that is robust to the noise introduced by the high variability of sample gradients. Also, it dynamically
+        selects the learning rate so that no hyper-parameter tuning is required on it.
+        \begin{equation}
+            \Delta x_t = - \frac{RMS[\Delta x]_{t-1}}{RMS[g]_t} g_t
+        \end{equation}
+        $RMS[g]_t = \sqrt{E[g^2]_t + \epsilon}$
 
         \todo{L-BFGS: \cite{LBFGS}}
+
