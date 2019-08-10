@@ -2,9 +2,12 @@
 
     \subsection{Definition}
 
-        A \textbf{contact} between two residues occurs when two amino acid residues from a same protein are separated by a distance below a given threshold.
-        The distance metric can be either the distance between $C_{\alpha}-C_{\alpha}$ atoms or the distance between $C_{\beta}-C_{\beta}$ atoms.
-        It should be underlined that, in the case where the first residue is Glycine, $C_{\alpha}-C_{\beta}$ is used instead of $C_{\beta}-C_{\beta}$.  % Why? Explanation/reference
+        A \textbf{contact} between two residues occurs when two amino acid residues from
+        a same protein are separated by a distance below a given threshold.
+        The distance metric can be either the distance between $C_{\alpha}-C_{\alpha}$
+        atoms or the distance between $C_{\beta}-C_{\beta}$ atoms.
+        It should be underlined that glycine does not have a $C_{\beta}$ and thus $C_{\alpha} is
+        being used instead.
         $C_{\alpha}$ is the first carbon atom attached to a functional group and $C_{\beta}$ is the first carbon atom attached to $C_{\alpha}$.
         Functional groups of amino acid residues can be either
         amine ($-NH_2$) or carboxyl ($-COOH$). In the first case, the amino acid is called alpha amino acid and has an amine group
@@ -13,8 +16,14 @@
 
         Most common distance thresholds range between 6 and 12 \AA{}. An angstrom (\AA{}) is an unit of length equivalent to $10^{-10}$ m, or $10^{-1}$ nm.
         Therefore the notion of residue contact depends to a large extent on the threshold used.
-        For example, the average percentage of contacts in the 150 proteins reported in the original PSICOV article~\cite{doi:10.1093/bioinformatics/btr638}
+        For example, the average percentage of contacts in the 150 proteins reported in the original PSICOV
+        article~\cite{doi:10.1093/bioinformatics/btr638}
         is equal to 7\%, 14\%, 26\%, 39\% with thresholds 7, 10, 13 and 16 \AA{}, respectively.
+
+        The present thesis complies with the definition of contact maps as given by the
+        Critical Assessment of methods of protein Structure Predition (CASP)~\cite{ezkurdia2009assessment}:
+        two residues are in contact if there $C_{\beta}$ ($C_{\alpha}$ for glycine) are separated by a distance
+        below a threshold of 8 \AA{}.
 
         By extension, a \textbf{protein contact map} can be defined as a symmetric binary matrix $C$ where element $C_{ij}$ 
         is equal to $1$ if residues $i$ and $j$
@@ -57,11 +66,11 @@
 
         where $w_{ij}$ is the weight of edge $(v_i, v_j)$.
 
-        Also, the degree $k_i$ of a vertex $v_i$ is defined as the number of neighbouring vertices, or in other  % Why not write deg(v_i)?
+        Also, the degree $deg(v_i)$ of a vertex $v_i$ is defined as the number of neighbouring vertices, or in other
         words the number of vertices each sharing an edge with $v_i$:
 
         \begin{equation}
-            k_i = \sum\limits_{j=1}^{n} A_{ij}
+            deg(v_i) = \sum\limits_{j=1}^{n} A_{ij}
         \end{equation}
 
         This definition of vertex degree also holds for weighted graphs. However, many authors favor minimal representation of protein structure
@@ -70,7 +79,7 @@
         \begin{equation}
             D_{ij} =
                 \begin{cases}
-                    k_i & \text{if } i = j \\
+                    deg(v_i) & \text{if } i = j \\
                     0 & \text{otherwise}
                 \end{cases}
         \end{equation}
@@ -87,16 +96,6 @@
             \text{diam}(G) = \max \{ sp_{v_1, v_2} | v_1, v_2 \in V \}
         \end{equation}
 
-        \todo{Continue with \cite{doi:10.1021/cr3002356}}
-
-        %% Weird formulation in paragraph:
-        \cite{doi:10.1080/07391102.2015.1077736}  % Cite in beginning of sentence?
-        actual PCNs elaborated from the E. coli proteome  % Capital 'A'?
-        Synthetic networks:  % Why Synthetic with capital 'S'?
-        1) The effect of backbone on the small-world properties of protein contact maps
-        2) Exploring community structure in biological networks with random graphs
-
-        edges are added among two residues if their Euclidean distance is within the [4, 8] \AA{} range  % Capital 'E'? Punctuation mark?
-
-        \todo{Plot}: Density of Euclidean distances among native contacts in PCNs
-
+        This protein contact network formalism has been used in the design of GDFuzz3D~\cite{pietal2015gdfuzz3d}
+        for contact-assisted protein folding, which has shown remarkable performance on the PSICOV
+        dataset~\cite{doi:10.1093/bioinformatics/btr638}.
