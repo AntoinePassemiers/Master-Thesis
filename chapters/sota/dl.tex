@@ -1,21 +1,28 @@
 \section{Deep learning}
 
-    \subsection{A definition of \textit{deep learning}}
+    \subsection{A definition of deep learning}
 
-        Behind the trendy words, it is quite difficult to find a consensus on the definition of \textit{deep learning}.
-        According to many, the process of learning
-        deeply can only be achieved by deep neural networks. A deep artificial neural network is composed of a set of parameters and a large stack
-        (or graph) of mathematical operators designed to minimize an objective function.
-        Each operation may be dependent on a subset of the network parameters.
-        In most cases, the network can be described as a stack of operators.
-        The objective function is then a composition of all mathematical operations. Such a network is usually trained using the
-        backpropagation algorithm. The method consists in minimizing the objective function which is usually an average distance between what the network
-        predicts on the basis of an input and what the human supervisor expects. More specifically, it is an iterative algorithm that evaluates the gradient of the
-        objective at each iteration and performs one step in the direction of the steepest descent in the parameter space. The algorithm is expected to stop
-        once a global minimum has been reached.
+        Beyond the trendy words, it is quite difficult to find a consensus
+        on the definition of deep learning. The concept is often associated to
+        the concept of inferring a high-level representation of the data
+        by alternating many times between parameterized functions and non-linearities.
+        Deep artificial neural networks serve this purpose well since they are composed of many sets of parameters and a large stack
+        (or graph) of mathematical operators linked to an objective function to be optimized.
+        Each parameteric operator may rely on a subset of the network parameters.
+        
+        In most simple cases (e.g. feedforward neural network), the network can be described as a regular stack of operators.
+        As a result, the objective function is a composition of all the underlying mathematical operations.
+        Such a network is usually trained using the backpropagation algorithm.
+        The latter method consists in minimizing the objective function, which usually is a dissimilarity
+        measure between what the network
+        predicts for a given input and what the human supervisor expects for such input.
+        More specifically, backpropagation is an iterative algorithm that evaluates the gradient of the
+        objective at each iteration and performs one step in the direction of the steepest descent in the parameter space.
+        The algorithm is expected to stop once a global minimum has been reached.
+        Formal details about the algorithm are going developped in the next sub-section.
 
-        Deep learning is also often viewed as the capacity of a machine to create a hierarchical modelling of the data.
-        This implies that the model can transform the data to high-level feature maps.
+        Deep learning is also often viewed as the ability of a machine to build
+        a hierarchical representation of the data by mapping input values to high-level features.
         According to Yoshua Bengio and Yann LeCun, neural networks only exemplify the notion of deep
         architectures. They provided a sufficiently good basis for a definition:
 
@@ -31,65 +38,75 @@
             at the next layer, representing higher-level abstractions~\cite{40d5d7fd62cb44ba934a8a75d4b2b076}.
         \end{quotation}
 
-        This definition seems to be suitable for stacked models: one can design a cascade of decision tree modules since decision trees are able to construct
-        non-linear decision boundaries. The problem rather lies in determining if there exists a natural way to make them extract high-level features from data.
-        Apart from that, the backpropagation algorithm for neural networks is going to be introduced in more details.
+        This definition seems to be perfectly appropriate for neural networks since they are precisely
+        made of linear - and consequently parametric - operations followed by activation functions which
+        are non-linear by nature.
 
     \subsection{The backpropagation algorithm} \label{backpropagation}
 
-        A description of backpropagation has to be made in order to understand how modern deep learning works.
+        In this sub-section, the backpropagation algorithm is going to be introduced formally in order
+        to understand the subtleties of deep learning.
         Let's consider a feedforward neural network containing no cycle.
-        Each of its layers can be viewed as a couple $(f_i(\theta_i, X), b_i(\theta_i, dX))$,  % Is dX standard notation? Does not seem adapted formally... dX is meant to be a function (differential)
-        where $f_i$ is the forward pass function (prediction function)
-        of layer $i$, $b_i$ is the backward pass function, $\theta_i$ is the set of parameters,
+        Each of its layers can be viewed as a couple $(f_i(\theta_i, X), b_i(\theta_i, S(X)))$,
+        where $f_i$ is the forward pass function of layer $i$ used for predicting,
+        $b_i$ is the backward pass function, $\theta_i$ is the set of parameters,
         and $X, Y$ are input tensors of shapes compatible with $f_i$ and
-        $g_i$, respectively, and $dX$ is the signal tensor propagated from next layer to current layer.
+        $g_i$, respectively, and $S(X)$ is the signal tensor propagated from next layer back to current layer.
         Let's make the assumption that convolutional layers are two-dimensional and that input instances are image-like data.
+        (one-dimensional and three-dimensional convolutions can be described analogously).
         Also, let's consider a particular case of neural network consisting of a stack of neural layers instead of a graph:
         a feedforward neural network.
-        Also, let $b$ be the number of instances in the input tensor (more commonly referred to as the batch size),
+        Let $b$ be the number of instances in the input tensor (more commonly referred to as the batch size),
         $w$ and $h$ respectively the width and height of the images,
         and $c$ the number of channels. Finally, let $n$ be the number of layers and $m$ be the number of output neurons in the network.
-        Knowing this, we are able to express the output $Y \in \mathbb{R}^{b \times m}$ of the network as such:
+        Knowing this, the output $Y \in \mathbb{R}^{b \times m}$ of the network can now be described as such:
 
         \begin{equation}
             Y = (\bigcirc_{i=1}^{n} f_{\theta_i})(X)
         \end{equation}
 
         where $X \in \mathbb{R}^{b \times w \times h \times c}$ and $f_{\theta_i}(X)$
-        is a more convenient notation for $f_i(\theta_i, X)$. We observe that the prediction
+        is syntactic sugar for denoting $f_i(\theta_i, X)$ in a more convenient way. It can be observed that the prediction
         function of the network is basically a large composition of functions.
 
         Such model is designed to optimize a function reflecting its ability to accurately predict a target value or to abstractly represent the input
-        data in a more general sense. Accordingly, let's introduce a generic loss function $L(Y): \mathbb{R}^{b \times m} \rightarrow \mathbb{R}$ that measures
-        the model's inability to fulfill the given task. Again, the loss function can be rewritten as a composition of the layer forward passes and the loss  % Check formulation: loss is not the composition of the prediction function and the loss.
-        function, and the objective is to find the set of parameters that minimizes the loss function:
+        data in a more general sense. Accordingly, let's introduce a generic loss function
+        $L(Y): \mathbb{R}^{b \times m} \rightarrow \mathbb{R}$ that measures
+        the model's inability to fulfill the given task.
+        The loss takes the output $Y$ of the network as input, and represents the objective function to be minimized.
+        Using the composition rule and by replacing $Y$ in $L(Y)$, we obtain the following expression:
 
         \begin{equation}
-            \hat{\theta} = \argmin_{\theta \in \Theta} \ell((\bigcirc_{i=1}^{n} f_{i, \theta_i})(X))  % Why use $\ell$ if you defined $L$ above?
+            \hat{\theta} = \argmin_{\theta \in \Theta} L((\bigcirc_{i=1}^{n} f_{i, \theta_i})(X))
         \end{equation}
 
         where $\Theta$ is the set of all possible values for the parameter set $\theta = (\theta_1, \ldots, \theta_n)$.
-        Since we are considering a loss function, the latter must be minimized.
         The generic task of minimizing a scalar continuous function can be achieved
-        using numerous continuous optimization techniques  among gradient descent algorithms~\cite{DBLP:journals/corr/Ruder16}
-        or quasi-Newton methods~\cite{LBFGS}. In practice, gradient descent approaches require more iterations to converge to a satisfying solution,  % L-BFGS <3
-        but are much easier to implement. Also, contrary to quasi-Newton methods, they don't require to implicitly compute the hessian matrix of the loss
-        function according to the network parameters, which makes them less computation-intensive. Let's consider the optimization of the loss function
-        in the gradient descent framework. The loss function is minimized by moving in the parameter space in the direction of the loss gradient, with
-        a step proportional to a parameter either determined empirically or adjusted during optimization phase, called learning rate.
-        Luckily, since we are regarding our neural network as a stack of layers (viewed as nested functions), the gradient computation can be decomposed  % nested function? Weird terminology: prefer composition of functions.
-        using the chain rule:
+        using numerous continuous optimization techniques among gradient descent algorithms~\cite{DBLP:journals/corr/Ruder16}
+        or quasi-Newton methods~\cite{LBFGS}, as will be detailed in section~\ref{opti}.
+        In practice, gradient descent approaches require more iterations to converge to a satisfying solution,
+        but are easier to implement. Also, contrary to quasi-Newton methods,
+        they don't require to implicitly compute the hessian matrix of the loss
+        function according to the network parameters, which makes them less computation-intensive.
+        
+        Let's consider the optimization of the loss function in the gradient descent framework.
+        The loss function is minimized by moving in the parameter space in the direction of the loss gradient, with
+        a step proportional to the learning rate (a parameter either determined empirically
+        or adjusted dynamically during optimization phase).
+        Luckily, since we are regarding our neural network as a stack of layers
+        (viewed as a composition of functions), the gradient computation can be decomposed using the chain rule:
 
-        \begin{equation} \label{eq:backprop}  % Formalism? 'prime' notation with vectorial functions... Maybe write expressions for one partial derivative
-            (f \circ g)'(X) = \nabla f(g(X)) \cdot g'(X)
+        \begin{equation} \label{eq:backprop}
+            \frac{\partial (f \circ g)}{\partial w}(X) = \nabla f(g(X)) \cdot \frac{\partial g}{\partial w}(X)
         \end{equation}
 
-        Knowing this, the gradient of $loss(\theta)$ according to the parameters $\theta_j$ of layer $j$ (for any layer $j$ with learnable parameters),  % find notation for loss(\theta). Can't use \ell which is used for loss on prediction, not on the parameter. Plus $m$ is already used for the number of output neurons so use another letter
+        where $w$ can be any parameter of the network.
+        Knowing this, the gradient of the loss function w.r.t. to the parameter set $\theta_p$
+        of layer $j$ (for any layer $j$ with learnable parameters),
         can be decomposed as the following product:
 
-        \begin{equation} \label{eq:loss}  % Again: use of \ell for function of parameters is unclear
-            \nabla \ \ell(\theta_m) = \prod_{k=1}^m f_{\theta_k}'\left((\bigcirc_{i=1}^{k} f_{\theta_i})(X)\right) \cdot L'\left((\bigcirc_{j=1}^{n} f_{\theta_j})(X)\right)
+        \begin{equation} \label{eq:loss}
+            \prod_{k=1}^p f_{\theta_k}'\left((\bigcirc_{i=1}^{k} f_{\theta_i})(X)\right) \cdot L'\left((\bigcirc_{j=1}^{n} f_{\theta_j})(X)\right)
         \end{equation}  % Using $i$ as upper bound of composition is very weird.
 
         Each factor $k$ of the product can be computed using the definition of function $f'_k$, and the current input to layer $k$.
@@ -100,7 +117,7 @@
         The move in the gradient direction with step $\alpha$ (the so-called learning rate) is such that:
 
         \begin{equation}
-            \theta_k \leftarrow \theta_k - \alpha \cdot \nabla \ \ell(\theta_k) \  \ \forall k \in \{1, \ldots, n\}  % Formalism: \nabla \ell(\theta_k) should probably be \nabla_{\theta_k}\ell(...)
+            \theta_k \leftarrow \theta_k - \alpha \cdot \nabla_{\theta_k}L(X) \quad \forall k \in \{1, \ldots, n\}
         \end{equation}
 
         This step is repeated until one of the stop criteria has been met. For example, the algorithm stops when a maximum number of iterations has been
@@ -111,8 +128,8 @@
 
     \subsection{Fully-connected layers}
 
-        A \textit{Multi-layer perceptron} is a neural network composed of multiple layers,
-        where each layer's forward pass consists of a linear combination
+        A Multi-layer perceptron is a neural network composed of multiple layers,
+        where each layer's forward pass consists of a linear combination of the inputs
         followed by an element-wise non-linear activation function.
         Let $X^{(p)} \in \mathbb{R}^{n \times m}$ be the input matrix of layer $p$,  % Watch out: $m$ is already taken for the output dimension.
         $W \in \mathbb{R}^{m \times k}$ the weight matrix,  % Same here
@@ -352,7 +369,7 @@
 	   Again, by setting vector $\eta \in \mathbb{R}^m$ to $0$, the regularization term takes its
 	   final form $\sum\limits_{i=1}^m \theta_i^2$.
 
-    \subsection{Optimization algorithms}
+    \subsection{Optimization algorithms} \label{opti}
 
         Gradient descent is a very popular optimization algorithm,
         but is rarely used as such in practice since state-of-the-art deep learning
