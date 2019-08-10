@@ -2,12 +2,24 @@
 
     \subsection{Potts model} \label{potts}
 
-        It has long been stated that the three-dimensional structure of proteins
-        has an impact regarding the amino acid composition among
-        homologous proteins. Spatial contacts between residues are related to
-        the variability of amino acid types at fixed pairs of positions.
-        The core idea in Direct Coupling Analysis (DCA\index{DCA}) is to disentangle direct
-        correlations and correlations produced at intermediary positions.
+        Experts have long thought that the three-dimensional structure of proteins
+        is related to their amino acid composition. However, homologous proteins
+        are subject to a high variabilility with regards their amino acid composition.
+        Structural conservation across evolution induces stresses on these variability
+        patterns in such a manner that spatially close residues have a restricted set
+        of acceptable amino acid substitutions. Therefore, neighbouring residues
+        are forced to coevolve, which results in correlated mutations~\cite{Morcos2014}.
+
+        Which makes structural prediction complex is that correlated mutations can
+        be caused either by low data quality or availability manifested by the absence
+        of a large number of homologous proteins, a high redundancy among homologous
+        proteins or various phylogenetic effects. In addition to all these sources
+        of error, a correlation between two residue sites may also be mediated by a third
+        residue located at a different site and having direct correlations with the two
+        other ones.
+
+        The core idea of Direct Coupling Analysis (DCA\index{DCA}) is to disentangle direct
+        correlations and indirect correlations related to residues at intermediary positions.
         Potts model allows to perform this disentanglement through inverse
         statistical mechanics~\cite{PhysRevE.87.012707}.
 
