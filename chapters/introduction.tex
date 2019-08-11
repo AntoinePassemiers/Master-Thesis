@@ -3,13 +3,37 @@
     \setcounter{page}{1}
     \vspace*{0.5cm}
 
-    Proteins are large macromolecules in the form of chains of building blocks called amino acid residues.
-    There are 20 common amino acid types, but certain proteins may contain 2 additional amino acid types, namely pyrrolysine and selenocystein.
-    According to Anfinsen's dogma, the three-dimensional structure of a protein is uniquely determined by its underlying amino acid sequence,
+    Proteins are large macromolecules in the form of chains of building blocks called amino acid residues,
+    linked by peptide bonds. There are 20 common amino acid types, but certain proteins may contain 2
+    additional amino acid types, namely pyrrolysine and selenocystein. % TODO: check
+    Proteins are responsible for a wide range of functions within living organisms, including
+    enzyme catalysis, transport of molecules, DNA replication, DNA repair, DNA transcription or cell signaling.
+    Over 5000 types of biochemical reactions have been shown as being catalyzed by enzymes~\cite{schomburg2012brenda},
+    which are mostly proteins. The number a ligands a protein can bind, namely the enzymatic specificity,
+    can be determined by the structure of the protein itself~\cite{pi2004determination}.
+    The region of a protein binding a substrate and containing
+    the residues involved in the catalytic process is called the active site.
+    Enzyme structure is thus of great importance since enzymatic specificity is crucial in novel drug discovery:
+    molecules present in tested drugs are expected to have a structure with as large as possible specificity
+    in order to avoid unwanted effects on the patient.
+
+    According to Anfinsen's dogma, the three-dimensional structure of a protein is uniquely
+    determined by its underlying amino acid sequence,
     at least when observed in protein's native environment. When moved from an unfavourable environment (where proper folding conditions are not met)
     to a solvent at neutral pH, a random coil (a sequence of amino acid residues
     oriented in random directions) will evolve towards the three-dimensional structure that minimizes Gibbs free energy.
     This process is called protein folding and has, however, a few exceptions.
+
+    Protein structure is organized hierarchically: primary structure, secondary structure, tertiary structure
+    and quaternary structure. Primary structure refers to the chemical composition of the protein, hence the sequence of amino acids present in it.
+    Secondary structure indicates the presence of structures that are local to the amino acids themselves:
+    these structures can generally be $\alpha$-helices
+    or $\beta$-sheets. Tertiary structure contains information about the three-dimensional structure of the protein and results from interactions
+    between side chains of some pairs of amino acids, such as hydrogen bonds, ionic bonds or disulfide bridges.
+    Quaternary structure is specific to proteins having multiple polypeptide chains and describes the structure due to intermolecular interactions between
+    these chains. PCP helps predicting the tertiary structure since three-dimensional models can be reconstructed from protein contact maps (PCM).
+    Also, PCM is a more simplistic and robust description of a protein's geometry because it is invariant to rotations and translations.
+    This simplification helps making deep learning methods perform well on structure prediction.
 
     Assuming the protein backbone has no structural restriction and is composed of $n$ residues holded together by $n-1$ peptide bonds,
     then the protein has $2(n-1)$ bond angles that can be each in three different stable states. Therefore, there are at most
@@ -24,33 +48,28 @@
     spontaneously in an aqueous medium have been made in the framework of in vitro studies:
     they do not take into account protein-protein interations and thus cannot generalize the self-assembly process well.
 
-    Protein Contact Prediction (PCP) can help determining the three-dimensional structure of proteins by limiting the search space to certain conformations
+    Computational methods are important in structural biology,
+    as they help in assigning biochemical or biological functions to proteins.
+    Indeed, the three-dimensional structure of a protein is more conserved than the
+    underlying amino acid sequence across evolution.
+    Prompted by this knowledge, similar functions
+    can be assigned to proteins with low structural dissimilarity.
+    Precisely identifying the role played by each protein in an organism is the first step
+    towards understanding complex body mechanisms like muscle contraction, digestion or perceiving light.
+    Also, determining the static structure of proteins help in detecting misfolded proteins
+    which are possibly involved in diseases like Parkinson's or
+    Alzheimer's, but also in diagnosing those diseases~\cite{forloni2002protein}.
+    Finally, solving the protein folding (structure prediction) problem will enable
+    to do better protein design, for example to engineer enzymes like PETase
+    so they have faster plastic-degrading capabilities.
+
+    Protein Contact Prediction (PCP) can help determining the three-dimensional structure of
+    proteins by limiting the search space to certain conformations
     constrained by predicted contact maps: this methodology is called contact-assisted protein folding.
     The problem of predicting the structure of a protein can be reduced to PCP because the latter is a much simpler problem,
     and only a few correctly predicted contacts are sufficient to reconstruct the whole structure~\cite{kim2014one}.
-
-    Structure-based methods are important in biology,
-    as they help in assigning biochemical or biological functions to proteins. Indeed, the three-dimensional
-    structure of a protein is more conserved than the underlying amino acid sequence across evolution. Prompted by this knowledge, similar functions
-    can be assigned to proteins with low structural dissimilarity. Precisely identifying the role played by each protein in an organism is the first step
-    towards understanding complex body mechanisms like muscle contraction, digestion or perceiving light.
-    Also, determining the static structure of proteins help in detecting misfolded proteins which are possibly involved in diseases like Parkinson's or
-    Alzheimer's, but also in diagnosing those diseases~\cite{forloni2002protein}.
-    Finally, solving the protein folding (structure prediction) problem will enable to do better protein design, for example to engineer enzymes like PETase
-    so they have faster plastic-degrading capabilities.
     There are pipelines designed to predict the structure and then the function of a newly
     observed protein, such as RaptorX server~\cite{peng2011raptorx}.
-
-    Protein structure is organized hierarchically: primary structure, secondary structure, tertiary structure
-    and quaternary structure. Primary structure refers to the chemical composition of the protein, hence the sequence of amino acids present in it.
-    Secondary structure indicates the presence of structures that are local to the amino acids themselves:
-    these structures can generally be $\alpha$-helices
-    or $\beta$-sheets. Tertiary structure contains information about the three-dimensional structure of the protein and results from interactions
-    between side chains of some pairs of amino acids, such as hydrogen bonds, ionic bonds or disulfide bridges.
-    Quaternary structure is specific to proteins having multiple polypeptide chains and describes the structure due to intermolecular interactions between
-    these chains. PCP helps predicting the tertiary structure since three-dimensional models can be reconstructed from protein contact maps (PCM).
-    Also, PCM is a more simplistic and robust description of a protein's geometry because it is invariant to rotations and translations.
-    This simplification helps making deep learning methods perform well on structure prediction.
 
     Most PCP methods can be roughly divided into two categories:
     the ones based on Evolutionary Coupling Analysis (ECA) and the ones that infer contacts using
