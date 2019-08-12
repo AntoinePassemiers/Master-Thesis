@@ -7,21 +7,23 @@
         Let $G = (V, E)$ be a graph and let each node $k$ be associated to a random variable $X_k$.
         Conditional independence between variables $X_u$ and $X_v$ is formally defined as follows:
         \begin{equation}
-            X_u \independent X_v \vert X_{V \\ \{u, v\}} \, \, \text{if } \{u, v\} \notin E  % Notation X_{\{u, v\}}?
+            X_u \independent X_v \vert X_{V \\ \{u, v\}} \, \, \text{if } \{u, v\} \notin E
         \end{equation}
         If the graph is not complete, then there exists pairs of conditionally independent variables in the model,
         resulting in sparsity patterns in the underlying precision matrix.
         When the covariance matrix of the multivariate Gaussian model is rank deficient, a solution for the precision
         matrix has to be found with a high prior towards sparse matrices. Such a solution can be achieved through
-        regularization. The solution that follows in the next section relies on pseudo-inverse computation
+        regularization: the solution that follows in the next section relies on pseudo-inverse computation
         with $L_1$ regularization.
 
     \subsection{Evolutionary couplings} \label{graphicalmodels}
 
         The motivation behind PSICOV~\cite{doi:10.1093/bioinformatics/btr638} is that residue contacts produce constraints on the types of residues in the
-        protein at certain pairs of sites: two residues involved in a contact should have complementary physicochemical properties. To capture the covariation
-        of residue types for any pair of sites, the random variable $X_{ia}: \Omega \rightarrow \{0, 1\}$ is defined. $X_{ia}$ takes value one if  % \Omega?
-        amino acid at site $i$ is of type $a$. In particular, value $x_{ia}^{(k)}$ is equal to one if the $k$th sequence in the given MSA has a residue of type $a$
+        protein at certain pairs of sites: two residues involved in a contact should have complementary physicochemical properties.
+        To capture the covariation
+        of residue types for any pair of sites, random variable $X_{ia}: \Omega \rightarrow \{0, 1\}$ is defined,
+        where $\Omega$ is a set of two possible outcomes (either the amino acid at site $i$ is of type $a$ or not).
+        In particular, value $x_{ia}^{(k)}$ is equal to one if the $k$th sequence in the given MSA has a residue of type $a$
         at site $i$. With this knowledge, the sample covariance matrix $S \in \mathbb{R}^{21 L \times 21 L}$ can then be computed by:
 
         \begin{equation} \label{covariance}
@@ -31,11 +33,16 @@
         \end{equation}
 
         where $n$ is the number of
-        homologous sequences and $S_{ij}^{ab}$ is the sequence identity covariance from amino acid $a$ to amino acid $b$ and from site $i$ to site $j$.
-        Each matrix $S_{ab}$ is thus a covariance matrix between sites $i$ and $j$. It is noteworthy that such a covariance matrix is neither positive
-        semidefinite nor symmetric and is, thus, substantially different from regular sample covariance matrices. Precision matrix $\Theta_{ij}$ is defined as
-        the inverse of covariance submatrix $S_{ij}$, but there is no guarantee that such an inverse can be computed directly. Indeed, each submatrix
-        $S_{ij}$ is very likely to be singular due to the absence of correlations for some residue types that are rarely (or never) observed at given sites.
+        homologous sequences and $S_{ij}^{ab}$ is the sequence identity covariance from amino acid
+        $a$ to amino acid $b$ and from site $i$ to site $j$.
+        Each matrix $S_{ab}$ is thus a covariance matrix between sites $i$ and $j$.
+        It is noteworthy that such a covariance matrix is neither positive
+        semidefinite nor symmetric and is, thus, substantially different from regular sample covariance matrices.
+        Precision matrix $\Theta_{ij}$ is defined as
+        the inverse of covariance submatrix $S_{ij}$, but there is no guarantee that such an inverse can be computed directly.
+        Indeed, each submatrix $S_{ij}$ is very likely to be singular due to the absence
+        of correlations for some residue types that are rarely (or never) observed at given sites.
+
 				% Something is unclear about the notation: $S_{ij}$ is a matrix? What is $S_{ab}$? Is it the same as $S_{ij}$? If so, why is there $S_{ij}^{ab}$?
 
         \begin{figure}[H]
