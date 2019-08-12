@@ -1,3 +1,5 @@
+\chapter{Materials and methods}
+
 \section{Datasets}
 
   Five datasets have been used in the framework of this thesis:
@@ -189,9 +191,8 @@
       \text{Best-L/k PPV} = \frac{\sum_{\underset {i-j \geq 6}{(i, j) \in B(L/k)}} C_{i, j}}{L/k}
     \end{equation}
 
-    where $C_{i, j}, N_{i, j} \in \{0, 1\} \ \forall i, j, i-j \ge 6$ are boolean values indicating a contact or a non-contact, respectively.  % N_{i,j} does not appear in the formula.
-    $B(L/k)$ is the set of $L/k$ most confident predicted probabilities (with highest values) and $p_{i, j}$ is the predicted probability  % Neither does p_{i,j}.
-    that residue pair $(i, j)$ forms a contact.
+    where $C_{i, j} \in \{0, 1\} \ \forall i, j, i-j \ge 6$ are boolean values indicating a predicted contact.
+    $B(L/k)$ is the set of $L/k$ residue pairs with most confident (highest) predicted probabilities.
     Contacts under a residue distance of 6 amino acids are not considered during evaludation phase even though they are used during
     training phase.
 
@@ -218,33 +219,39 @@
   on grid search do not suit the problem because they are uninformed methods.
 
   Hyperopt provides an informed search method called Tree-structured Parzen Estimators (TPE)~\cite{bergstra2011algorithms}.
-  In Bayesian hyper-optimization, the posterior probability $P(\alpha \vert L)$ is defined as a function  % $L$ is confusing: it is the length of sequences just above. Maybe use $\mathcal L$ or $\ell$
-  of the hyper-parameter vector $\alpha$ and the loss $L$. Contrary to techniques based on Gaussian processes
-  that approximates $P(\alpha \vert L)$ only, TPE models both posterior $P(\alpha \vert L)$ and $P(L)$.
+  In Bayesian hyper-optimization, the posterior probability $P(\alpha \vert \mathcal L)$ is defined as a function
+  of the hyper-parameter vector $\alpha$ and the loss $\mathcal L$. Contrary to techniques based on Gaussian processes
+  that approximates $P(\alpha \vert \mathcal L)$ only, TPE models both posterior $P(\alpha \vert \mathcal L)$ and $P(L)$.
   The prior is iteratively replaced with non-parametric densities based on generated points $\{ \alpha_1, \alpha_2, \dotsc \}$.
   It this search, TPE is an informed search strategy that refines its prior as new points are observed in the
   hyper-parameter space. The "tree structure" is due to the way the posterior is computed.
 
+  Let $f$ be the prediction function of the model (see section \ref{backpropagation} about backpropagation algorithm),
+  and let $f(\alpha) \triangleq \text{argmin}_{f(\Theta, \alpha)} \ell \big(f(\Theta, \alpha)\big)$ be the prediction function  % Formalism: meh
+  of a trained model that minimizes a given loss function $\ell$ w.r.t. a fixed hyper-parameter vector $\alpha$.
+  Let $l(\alpha)$ be the non-parametric density function defined as a mixture of density functions centered each on an
+  observation $\{ \alpha^{i} \}$ for which $\mathcal L = c(f(\alpha^{i}))$ is below the threshold $\mathcal L^*$.
+  Density function $g(\alpha)$ is defined analogously as a mixture if density functions centered each on one of the
+  remaining observations.
+  As described in the following equation, the density function to be used to approximate the posterior is
+  determined according to whether the threshold $\mathcal L^*$ has been exceeded.
+
   \begin{equation}
-    P(\alpha \vert L) =
+    P(\alpha \vert \mathcal L) =
       \begin{cases}
-        l(\alpha) &  \text{if} \, L < L^* \\
+        l(\alpha) &  \text{if} \, \mathcal L < \mathcal L^* \\
         g(\alpha) &  \text{otherwise}
       \end{cases}
-  \end{equation}  % l, g and L^* have not been defined yet. And are not clearly defined below.
+  \end{equation}
 
-  Let $f$ be the prediction function of the model (see section \ref{backpropagation} about backpropagation algorithm),
-  and let $f(\alpha) \triangleq \text{argmin}_{f(\Theta, \alpha)} c\big(f(\Theta, \alpha)\big)$ be the prediction function  % Formalism: meh
-  of a trained model that minimizes a given loss function $c$ w.r.t. a fixed hyper-parameter vector $\alpha$.  % loss function? If denoted by $c$, maybe "cost" function?
-  $l(\alpha)$ is the non-parametric density function created by the observations $\{ \alpha^{i} \}$ such that
-  $L = c(f(\alpha))$ is below the threshold $L^*$, and $g(\alpha)$ is created with the remaining observations.
-  The threshold $L^*$ is set as a quantile of the observed values of $L$.
-  The value to be optimized in TPE is the Expected Improvement (EI), which is measured as an infinitesimal sum  % infinitesimal sum? Integral?
-  of loss improvements weighted by the posterior. After applying Bayes formule to the posterior, calculus of EI becomes:
+  The threshold $\mathcal L^*$ is set as a quantile of the observed values of $\mathcal L$.
+  The value to be optimized in TPE is the Expected Improvement (EI), measured as an integral
+  of loss improvements weighted by the posterior itself.
+  After applying Bayes formule to the posterior, calculus of EI becomes:
 
   \begin{equation}
-    EI_{L^*}(\alpha) = \int_{-\infty}^{L^*} (L^* - L) P(L \vert \alpha) dL
-    = \int_{-\infty}^{L^*} (L^* - L) \frac{P(\alpha \vert L) P(L)}{P(\alpha)} dL
+    EI_{\mathcal L^*}(\alpha) = \int_{-\infty}^{\mathcal L^*} (\mathcal L^* - \mathcal L) P(\mathcal L \vert \alpha) d\mathcal L
+    = \int_{-\infty}^{\mathcal L^*} (\mathcal L^* - \mathcal L) \frac{P(\alpha \vert \mathcal L) P(\mathcal L)}{P(\alpha)} d\mathcal L
   \end{equation}
 
   In the framework of Adaptive Parzen Estimators, to each hyper-parameter is assigned a prior and a density function,

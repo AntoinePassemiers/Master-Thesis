@@ -98,96 +98,62 @@ on a Fully-Convolutional Neural Architecture}
 \thispagestyle{empty} 
 \null
 
-\newenvironment{vcenterpage}
-{\newpage\thispagestyle{empty} 
-\vspace*{\fill}}
-{\vspace*{\fill}\par\pagebreak}
+
+\include{chapters/misc/quotes}
 
 
-%\begin{vcenterpage}
-%\begin{flushright}
-%    \large\em\null\vskip1in 
-%    \todo{dedication} \vfill
-%  \end{flushright}
-%\end{vcenterpage}
+\begingroup
+\let\clearpage\relax
+\include{chapters/misc/acknowledgment}
+\endgroup
+
 
 \thispagestyle{empty}
-\vspace*{5cm}
-
-\todo{}
-
-\begin{quotation}
-  \noindent ``\emph{You may also include one or more general quotes related to your topic.}''
-  \begin{flushright}\textbf{Name of the author, date}\end{flushright}
-\end{quotation}
-
-\medskip
-
-\begin{quotation}
-  \noindent ``\emph{Another quote.}''
-  \begin{flushright}\textbf{Name of the author, date}\end{flushright}
-\end{quotation}
-
-
-\chapter*{Acknowledgment}
-  \begingroup
-  \let\clearpage\relax
-  \include{chapters/acknowledgment}
-  \endgroup
-
-
-\thispagestyle{empty} 
 \setcounter{page}{0}
 \tableofcontents
 \mainmatter 
 
 
-\chapter{Introduction}
-  \begingroup
-  \let\clearpage\relax
-  \include{chapters/introduction}
-  \endgroup
+\begingroup
+\let\clearpage\relax
+\include{chapters/introduction}
+\endgroup
 
 
-\chapter{Background}
-  \begingroup
-  \let\clearpage\relax
-  \include{chapters/background/cmap}
-  \include{chapters/background/dihedral}
-  \endgroup
+\begingroup
+\let\clearpage\relax
+\include{chapters/background/cmap}
+\include{chapters/background/dihedral}
+\endgroup
 
 
-\chapter{State-of-the-art}
-  \begingroup
-  \let\clearpage\relax
-  \include{chapters/sota/dca}
-  \endgroup
-  \include{chapters/sota/psicov}
-  \include{chapters/sota/dl}
-  \include{chapters/sota/dlfeatures}
-  \include{chapters/sota/dlinpcp}
-  \include{chapters/sota/folding}
+\begingroup
+\let\clearpage\relax
+\include{chapters/sota/dca}
+\endgroup
+\include{chapters/sota/psicov}
+\include{chapters/sota/dl}
+\include{chapters/sota/dlfeatures}
+\include{chapters/sota/dlinpcp}
+\include{chapters/sota/folding}
 
 
-\chapter{Materials and methods}
-  \begingroup
-  \let\clearpage\relax
-  \include{chapters/methods}
-  \endgroup
+\begingroup
+\let\clearpage\relax
+\include{chapters/methods}
+\endgroup
 
 
-\chapter{Results}
-  \begingroup
-  \let\clearpage\relax
-  \include{chapters/results}
-  \endgroup
+\begingroup
+\let\clearpage\relax
+\include{chapters/results}
+\endgroup
 
 
-\chapter{Conclusion}
-  \begingroup
-  \let\clearpage\relax
-  \include{chapters/conclusion}
-  \endgroup
+\begingroup
+\let\clearpage\relax
+\include{chapters/conclusion}
+\endgroup
 
 
 \begin{appendices}
