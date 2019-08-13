@@ -116,7 +116,7 @@ on a Fully-Convolutional Neural Architecture}
 \pagebreak
 \begingroup
 \let\clearpage\relax
-\include{chapters/introduction}
+\include{chapters/introduction/introduction}
 \endgroup
 
 
@@ -143,27 +143,32 @@ on a Fully-Convolutional Neural Architecture}
 \pagebreak
 \begingroup
 \let\clearpage\relax
-\include{chapters/methods}
+\include{chapters/methods/datasets}
+\include{chapters/methods/features}
+\include{chapters/methods/architecture}
+\include{chapters/methods/evaluation}
+\include{chapters/methods/hpo}
+\include{chapters/methods/implementation}
 \endgroup
 
 
 \pagebreak
 \begingroup
 \let\clearpage\relax
-\include{chapters/results}
+\include{chapters/results/results}
 \endgroup
 
 
 \pagebreak
 \begingroup
 \let\clearpage\relax
-\include{chapters/conclusion}
+\include{chapters/conclusion/conclusion}
 \endgroup
 
 
 \pagebreak
 \begin{appendices}
-    \include{chapters/appendices}
+    \include{chapters/appendices/appendices}
 \end{appendices}
 
 
@@ -171,10 +176,10 @@ on a Fully-Convolutional Neural Architecture}
 
 \backmatter
 
-\printindex % use makeindex to generate the index
+% \printindex % use makeindex to generate the index
 
+\nocite{*} % TODO
 \bibliographystyle{plain}
-
 \bibliography{thesis}
 
 \end{document}

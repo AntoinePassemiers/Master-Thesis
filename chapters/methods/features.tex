@@ -1,0 +1,42 @@
+\section{Summary of input features}
+
+  As described in section \ref{inputfeatures}, input features can be split into three categories:
+  global, 1-dimensional and 2-dimensional features.
+  The proposed model takes as input the protein length, the effective number of sequences
+  in the corresponding MSA, position-specific statistics,
+  residue pair-specific statistics, and predictions made by PSICOV, plmDCA and GaussDCA.
+  Additionaly to these features, secondary structure, solvent accessibility and
+  region disorder are predicted by RaptorX-property server and added to the rest of
+  1-dimensional features.
+  \todo{cite RaptorX-property}
+
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|c|}
+      \hline
+      Category & Feature name & Dimensionality \\
+      \hline
+      \hline
+      Global & Protein length $L$ & scalar \\
+             & Effective number of sequences $M_{eff}$ & scalar \\
+      \hline
+      1-dimensional & One-hot-encoded sequence & $L \times \naatypes$ \\
+                    & Self-information & $L \times \naatypes$ \\
+                    & Partial entropy & $L \times 2 \cdot \naatypes$ \\
+                    & Predicted secondary structure & $L \times 3$ \\
+                    & Solvent accessibility & $L \times 3$ \\
+                    & Region disorder & $L$ \\
+      \hline
+      2-dimensional & Mutual information & $L \times L$ \\
+                    & Normalized mutual information & $L \times L$ \\
+                    & Cross-entropy & $L \times L$ \\
+                    & PSICOV predictions & $L \times L$ \\
+                    & GaussDCA predictions & $L \times L$ \\
+                    & plmDCA predictions & $L \times L$ \\
+      \hline
+    \end{tabular}
+    \captionof{table}{Input features of the proposed model.
+      Global features are scalar values, whereas dimensional
+      features are presented in the form of matrices of given shape.}
+    \label{hyperparams}
+  \end{table}

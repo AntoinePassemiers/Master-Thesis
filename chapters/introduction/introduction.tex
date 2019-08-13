@@ -51,8 +51,9 @@
     they do not take into account protein-protein interations and thus cannot generalize the self-assembly process well.
 
     Computational methods are important in structural biology,
-    as they help in assigning biochemical or biological functions to proteins.
-    Indeed, the three-dimensional structure of a protein is more conserved than the
+    as they help in assigning biochemical or biological functions to proteins-
+    in an autonomous manner.
+    The three-dimensional structure of a protein is more conserved than the
     underlying amino acid sequence across evolution.
     Prompted by this knowledge, similar functions
     can be assigned to proteins with low structural dissimilarity.
@@ -66,24 +67,27 @@
     so they have faster plastic-degrading capabilities.
 
     Protein Contact Prediction (PCP) can help determining the three-dimensional structure of
-    proteins by limiting the search space to certain conformations
-    constrained by predicted contact maps: this methodology is called contact-assisted protein folding.
-    The problem of predicting the structure of a protein can be reduced to PCP because the latter is a much simpler problem,
+    proteins by limiting the search space to certain conformations that are
+    constrained by the predicted contact maps: this methodology is called contact-assisted protein folding.
+    The problem of predicting the structure of a protein can start by a PCP stage because the latter is a much simpler problem,
     and only a few correctly predicted contacts are sufficient to reconstruct the whole structure~\cite{kim2014one}.
-    There are pipelines designed to predict the structure and then the function of a newly
+    There are multiple well-established pipelines for the structural prediction of a newly
     observed protein, such as RaptorX server~\cite{peng2011raptorx}.
 
-    Most PCP methods can be roughly divided into two categories:
+    Most state-of-the-art PCP methods can be roughly divided into two categories:
     the ones based on Evolutionary Coupling Analysis (ECA) and the ones that infer contacts using
-    supervised machine learning. In the former case, amino acid pairwise mutations are statistically modelled and the underlying model's parameters
-    are generally optimized through log-likelihood maximization. In the second case, deep neural architectures are used to
+    supervised machine learning. In the former case, amino acid pairwise mutations
+    are statistically modelled and the underlying model's parameters
+    are generally optimized through log-likelihood maximization or the optimization of any other statistical measure.
+    In the second case, deep neural architectures are used to
     refine predictions made by low-level predictors such as ECA, in order to generate high-quality contact maps.
 
     Ultimately, PCP should help making \textit{ab initio} structure prediction.
     However, most recent methods rely on a whole raft of alignment and prediction tools.
     Given a protein encoded in FASTA format, ECA is only possible using a Multiple Sequence Alignment (MSA)
-    of this target protein against homologuous proteins. These homologuous proteins come from the same protein family
-    as the target protein, and therefore the most suitable family must be found.
+    of this target protein against homologuous proteins.
+    These homologous proteins usually come from the same protein family
+    as the target protein.
     This can be done by matching the target sequence to a Hidden Markov Model (HMM) profile representing a family
     like in Pfam database~\cite{Pfam}. Once the homologuous sequences have been retrieved, they have to be aligned to
     the target sequence using an MSA tool like HHblits or HMMER. In the next step, evolutionary couplings are extracted from
@@ -93,6 +97,36 @@
     Therefore, it seems to be a natural choice to set as an objective for this thesis the development of a predictor with
     minimal requirements and performance close to state-of-the-art techniques
     \cite{RaptorX, DeepContact, doi:10.1093/bioinformatics/bty341, Michel383133, DeepMind}.
+
+\section{Contributions}
+
+    During the writing of this thesis, I've been confronted with the need to
+    adopt a full workflow for data retrieval and pre-processing and to develop a supervised
+    model for accurate protein contact prediction. In order to be able to compete
+    with state-of-the-art models, I had recourse to deep residual
+    neural networks~\cite{DBLP:journals/corr/HeZRS15} and implemented them in a
+    fully-convolutional manner.
+    Indeed, the local context of a residue pair can be captured by stacking many
+    convolutional layers and therefore increasing the receptive field~\cite{Hubel1962}
+    of the network. The number of neighbouring words made visible to a same hidden neuron,
+    or receptive field, increases linearly with the depth
+    of the neural network when using standard convolutional filters.
+    Therefore, in order to reach the context size required to capture the long-range information
+    of large proteins, a large number of layers had to be considered.
+    With the aim of overcoming common issues
+    encountered when growing very large architectures,
+    residual connections~\cite{DBLP:journals/corr/HeZRS15}
+    (legitimating the use of a ResNet) as well as batch
+    normalization~\cite{DBLP:journals/corr/IoffeS15} have been introduced.
+    Batch normalization helps preventing internal covariate shift,
+    a shift in the distribution of a layer's output due to the update of the parameters,
+    which causes the inability of the next layers to learn efficiently.
+
+    Finally, in order to promote and facilitate academic research on the topic, I have in all modesty
+    open-sourced all the work I've done during the year of thesis writing.
+    Due to my computer science background, it is my belief that the
+    available code could serve as example for biologists and bioinformaticians
+    with lower capabilities in programming.
 
 \section{Structure of the thesis}
 
@@ -115,7 +149,3 @@
         \item Finally, a benchmark will be established to assess the performance of the proposed method
         in comparison with other supervised approaches, including state-of-the-art deep learning architectures.
     \end{itemize}
-
-\section{Contributions}
-
-    

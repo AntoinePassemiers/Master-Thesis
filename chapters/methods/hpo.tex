@@ -1,0 +1,88 @@
+\section{Hyper-parameter optimization}
+
+  In order to ensure the best hyper-parameters are selected for the model that will be evaluated
+  on the benchmark sets, the Hyperopt Python library~\cite{Bergstra_2015} has been used to explore
+  the hyper-parameter space and fine-tune the model on the validation set.
+  Training and evaluating a deep neural network is very costly and, as a matter of fact,
+  each trial point in the hyper-parameter space should be carefully selected. Techniques based
+  on grid search do not suit the problem because they are uninformed methods.
+
+  Hyperopt provides an informed search method called Tree-structured Parzen Estimators (TPE)~\cite{bergstra2011algorithms}.
+  In Bayesian hyper-optimization, the posterior probability $P(\alpha \vert \mathcal L)$ is defined as a function
+  of the hyper-parameter vector $\alpha$ and the loss $\mathcal L$. Contrary to techniques based on Gaussian processes
+  that approximates $P(\mathcal L \vert \alpha)$ directly, TPE models both posterior $P(\alpha \vert \mathcal L)$ and $P(L)$.
+  The prior is iteratively replaced with non-parametric densities based on generated points $\{ \alpha_1, \alpha_2, \dotsc \}$.
+  It this search, TPE is an informed search strategy that refines its prior as new points are observed in the
+  hyper-parameter space. The "tree structure" is due to the way the posterior is computed.
+
+  Let $f$ be the prediction function of the model (see section \ref{backpropagation} about backpropagation algorithm),
+  and let $f(\alpha) \triangleq \text{argmin}_{f(\Theta, \alpha)} \ell \big(f(\Theta, \alpha)\big)$ be the prediction function  % Formalism: meh
+  of a trained model that minimizes a given loss function $\ell$ w.r.t. a fixed hyper-parameter vector $\alpha$.
+  Let $l(\alpha)$ be the non-parametric density function defined as a mixture of density functions centered each on an
+  observation $\{ \alpha^{i} \}$ for which $\mathcal L = c(f(\alpha^{i}))$ is below the threshold $\mathcal L^*$.
+  Density function $g(\alpha)$ is defined analogously as a mixture if density functions centered each on one of the
+  remaining observations.
+  As described in the following equation, the density function to be used to approximate the posterior is
+  determined according to whether the threshold $\mathcal L^*$ has been exceeded.
+
+  \begin{equation}
+    P(\alpha \vert \mathcal L) =
+      \begin{cases}
+        l(\alpha) &  \text{if} \, \mathcal L < \mathcal L^* \\
+        g(\alpha) &  \text{otherwise}
+      \end{cases}
+  \end{equation}
+
+  The threshold $\mathcal L^*$ is set as a quantile of the observed values of $\mathcal L$.
+  The value to be optimized in TPE is the Expected Improvement (EI), measured as an integral
+  of loss improvements weighted by the posterior itself.
+  After applying Bayes formule to the posterior, calculus of EI becomes:
+
+  \begin{equation}
+    EI_{\mathcal L^*}(\alpha) = \int_{-\infty}^{\mathcal L^*} (\mathcal L^* - \mathcal L) P(\mathcal L \vert \alpha) d\mathcal L
+    = \int_{-\infty}^{\mathcal L^*} (\mathcal L^* - \mathcal L) \frac{P(\alpha \vert \mathcal L) P(\mathcal L)}{P(\alpha)} d\mathcal L
+  \end{equation}
+
+  In the framework of Adaptive Parzen Estimators, to each hyper-parameter is assigned a prior and a density function,
+  and the estimator is built as a weighted mixture of them.
+  For example, a continuous variable can be assigned:
+  \begin{itemize}
+    \item A uniform prior with lower bound $a$ and upper bound $b$.
+    \item A function defined as a mixture of Gaussian distributions, each centered on a point of the hyper-parameter
+    space. The standard deviation of a particular distribution can be set as the maximum between distances to the left and right
+    neighbors.
+  \end{itemize}
+
+  The density function is either $l(\alpha)$ or $g(\alpha)$ depending on whether the loss function associated to current
+  point is below the threshold or not.
+
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|}
+      \hline
+      Module & Hyper-parameter & Set of values \\
+      \hline
+      \hline
+      General & Batch size & $\{ 1, 2, 4, 8, 16, 32 \}$ \\
+              & Batch normalization & $\{ \top, \bot \}$ \\
+              & Track running state & $\{ \top, \bot \}$ \\
+              & Learning rate & \text{TODO} \\
+              & L2 penalty & \text{TODO} \\
+              & Parameter optimization & $\{ \text{ADADELTA}, \text{Adagrad}, \text{Adam} \}$ \\
+              & Activation function & $\{ \text{ReLU}, \text{ELU}, \text{LeakyReLU}, \text{Tanh} \}$ \\
+              & Use global modules & $\{ \top, \bot \}$ \\
+      \hline
+      Global module & Depth & $\{ 2, 3, 4, 5, 6, 7, 8, 9, 10 \}$ \\
+      \hline
+      1-dimensional module & Depth & $\{ 2, 3, 4, 5, 6, 7, 8, 9, 10 \}$ \\
+                           & Filter size & $\{ 3, 5, 7 \}$ \\
+                           & Number of filters & $\{ 8, 16, 32, 64, 128 \}$ \\
+      \hline
+      2-dimensional module & Depth & $\{ 2, 3, 4, 5, 6, 7, 8, 9, 10 \}$ \\
+                           & Filter size & $\{ 3, 5, 7 \}$ \\
+                           & Number of filters & $\{ 8, 16, 32, 64, 128 \}$ \\
+      \hline
+    \end{tabular}
+    \captionof{table}{Hyper-parameter space for the proposed architecture.}
+    \label{hyperparams}
+  \end{table}

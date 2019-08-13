@@ -1,0 +1,31 @@
+\section{Evaluation}
+
+  \subsection{Contact map evaluation}
+
+    Protein contact maps are imbalanced by nature: they contain very few residue contacts compared to their number of residue pairs.
+    $L$ being the number of residues in a protein, the number of residue contacts increases linearly with $L$ while the number of residue pairs
+    increases quadratically~\cite{OLMEA1997S25}. This is important because one can evaluate a model only on the $L$ (or even less than $L$) predicted
+    residue contacts the model is the most confident about. Such evaluation metric is called \textit{best-L/k PPV (Positive Predictive Value)}
+    and can be formulated as follows:
+
+    \begin{equation}
+      \text{Best-L/k PPV} = \frac{\sum_{\underset {i-j \geq 6}{(i, j) \in B(L/k)}} C_{i, j}}{L/k}
+    \end{equation}
+
+    where $C_{i, j} \in \{0, 1\} \ \forall i, j, i-j \ge 6$ are boolean values indicating a predicted contact.
+    $B(L/k)$ is the set of $L/k$ residue pairs with most confident (highest) predicted probabilities.
+    Contacts under a residue distance of 6 amino acids are not considered during evaludation phase even though they are used during
+    training phase.
+
+    Best-L/k PPV can also be split into three separated metrics: short-range, medium-range and long-range contacts.
+    These three types of contacts can be defined by the residue separations used by Skwark et al.~\cite{10.1371/journal.pcbi.1003889}:
+
+      \begin{itemize}
+        \item Short-range contacts: 6 - 12 residue separation
+        \item Medium-range contacts: 12 - 24 residue separation
+        \item Long-range contacts: 24+ residue separation
+      \end{itemize}
+
+    \subsection{3D model evaluation}
+
+      \todo{TM-score and RMSD}
