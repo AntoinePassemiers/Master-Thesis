@@ -25,19 +25,32 @@
         Potts model allows to perform this disentanglement through inverse
         statistical mechanics~\cite{PhysRevE.87.012707}.
 
-        In Potts model for PCP, evolutionary-related sequences are modelled by the distribution
+        DCA takes ideas from the Potts model~\cite{wu1982potts}, a generalization of the
+        problem originally stated by Cyril Domb, called the Ising problem.
+        The Potts model used in DCA involves two types of parameters:
+        \begin{itemize}
+            \item The pairwise \textbf{couplings} $J$ are the values of interest
+                for protein contact prediction since $J_{ij}(s_i, s_j)$ is defined
+                as the predicted distance between residues $i$ and $j$ in the protein structure,
+                knowing that they are in states $s_i$ and $s_j$ respectively~\cite{morcos2011direct}.
+            \item The \textbf{fields} $h$ are local biases of the Boltzmann distribution.
+        \end{itemize}
+
+        Evolutionary-related sequences are modelled by the distribution
         given by the Maximum-Entropy Principle. Among the family of distributions that are suited
         for proteins (which are discrete sequences), the one that maximizes entropy is the
-        Boltzmann distribution, with the following probability mass function:
+        Boltzmann distribution, with the following probability mass functiony~\cite{morcos2011direct}:
 
         \begin{equation}
             P(s \vert J, h) = \frac{1}{Z} \exp{\sum\limits_{i=1}^L \sum\limits_{j=i+1}^L J_{ij}(s_i, s_j) + \sum\limits_{i=1}^L h_i(s_i)}
         \end{equation}
 
-        where $J$ and $h$ are sets of model parameters, $s$ is an amino acid sequence and
+        where couplings $J$ and fields $h$ are the model parameters, $s$ is an amino acid sequence and
         $Z$ is a normalization factor called partition function ensuring
         that the sum $\sum_s P(s \vert J, h)$ over all lexicographically
         possible sequences is equal to one.
+        Let's note that residue $s_i$ at site $i$ is defined over the alphabet $\{ 1, \dotsc, q \}$, where $q$ is the number of possible
+        residue states (namely its amino acid type).
 
     \subsection{Exact inference is hard}
 
@@ -59,18 +72,21 @@
         \begin{equation}
             \begin{split}
                 \frac{\partial}{\partial J_{ij}(a, b)} \log{L}(J, h \vert s^{(1)}, \dotsc, s^{(M)}) & =
-                    -M \frac{\partial \log(Z)}{\partial J_{ij}(a, b)} + \sum\limits_{k=1}^M \delta\Big(s_i^{(k)}, a\Big) \delta\Big(s_j^{(k)}, b\Big) \\
+                    -M \frac{\partial \log(Z)}{\partial J_{ij}(a, b)} + \sum\limits_{k=1}^M \Big[s_i^{(k)} = a\Big] \Big[s_j^{(k)} = b\Big] \\
                  \frac{\partial}{\partial h_{i}(a)} \log{L}(J, h \vert s^{(1)}, \dotsc, s^{(M)}) & =
-                    -M \frac{\partial \log(Z)}{\partial h_{i}(a)} + \sum\limits_{k=1}^M \delta\Big(s_i^{(k)}, a\Big)
+                    -M \frac{\partial \log(Z)}{\partial h_{i}(a)} + \sum\limits_{k=1}^M \Big[s_i^{(k)} = a\Big]
             \end{split}
         \end{equation}
 
-        where $\delta(a, b)$ denotes the Kronecker delta.  % Kronecker symbol is number theory stuff
+        where $[ \cdot ]$ are Iverson brackets.
 
         However, there is no straightforward method to compute the partition function $Z$ or $L$'s gradient for large
-        systems due to the discrete nature of amino acid sequences. Indeed, $Z$ contains $21^L$ terms for systems with 21 possible symbols (amino acid types + gap)
-        and sequences of length $L$. For this aim, several methods like Mean-Field (mfDCA)~\cite{MorcosE1293}, Message Passing (mpDCA)~\cite{Weigt2009},
-        Pseudo-Likelihood Maximization (plmDCA)~\cite{EKEBERG2014341} or Multivariate Gaussian Modeling (GaussDCA)~\cite{10.1371/journal.pone.0092721}
+        systems due to the discrete nature of amino acid sequences.
+        Indeed, $Z$ contains $21^L$ terms for systems with 21 possible symbols (amino acid types + gap)
+        and sequences of length $L$.
+        For this aim, several methods like Mean-Field (mfDCA)~\cite{MorcosE1293}, Message Passing (mpDCA)~\cite{Weigt2009},
+        Pseudo-Likelihood Maximization (plmDCA)~\cite{EKEBERG2014341}
+        or Multivariate Gaussian Modeling (GaussDCA)~\cite{10.1371/journal.pone.0092721}
         have been developed.
 
     \subsection{Pseudo-Likelihood Maximization}
@@ -79,7 +95,8 @@
         the partition function by maximizing the pseudo-loglikelihood instead of the loglikelihood.
         The pseudo-loglikelihood can be expressed as the sum of loglikelihoods $\log{L}(J_r, h_r)$,
         where each $\log{L}(J_r, h_r)$ is computed
-        at a single site $r$. The method thus assumes the conditional independence between variables belonging to different sites.
+        at a single site $r$. The method thus assumes the conditional
+        independence between variables belonging to different sites.
         However, the partition function at a given site can be easily computed as a sum of
         21 terms since a state can take 21 possible values at a given position.
         More formally, the penalized loglikelihood at site $r$ is given by:
@@ -93,19 +110,19 @@
             \end{split}
         \end{equation}
 
-        It can be observed that the formula contains a $L_2$ penalty term for both fields and couplings,  % Field and coupling have not been defined yet.
+        It can be observed that the formula contains a $L_2$ penalty term for both fields and couplings,
         and that each log-probability is weighted by a protein weight $w_k$.
         The latter is computed as the protein contribution to set the set of effective sequences,
-        as described in the section of $M_{eff}$~\ref{meff}.  % Problem of citation. Shouldn't it be \ref{meff}?
+        as described in the section of $M_{eff}$~\ref{meff}.
         It must be observed that the optimization procedure is called asymmetric pseudolikelihood maximization because
-        each matrix $J(a, b)$ is supposed to be symmetric but is in practice  % $J_{ij}(a, b)$ instead of $J(a, b)$? Also why "but"?
-        independently estimated. This allows plmDCA to run in parallel by optimizing $\log{L^{(reg)}}(J_r, h_r)$ each on a different core.
+        each matrix $J(i, j)$ is supposed to be symmetric and in practice estimated independently.
+        This allows plmDCA to run in parallel by optimizing $\log{L^{(reg)}}(J_r, h_r)$ each on a different core.
 
         After maximizing the pseudo-loglikehood in parallel, all remaining information
         that can be explained by the fields are removed from the couplings by applying
         an average sum correction w.r.t. the states:
 
-        \begin{equation}  % What is $q$?
+        \begin{equation}
             \hat{J}_{ij}(a, b) = J_{ij}(a, b) - \frac{1}{q} \sum\limits_{a=1}^q J_{ij}(a, b) - \frac{1}{q} \sum\limits_{b=1}^q J_{ij}(a, b)
             + \frac{1}{q^2} \sum\limits_{a=1}^q \sum\limits_{b=1}^q J_{ij}(a, b)
         \end{equation}
@@ -116,7 +133,7 @@
             \hat{J}(a, b) \leftarrow \frac{1}{2} \big( \hat{J}(a, b) + \hat{J}(a, b)^T \big) \ \ \ \forall a, b
         \end{equation}
 
-        Finally, a contact map is predicted by norming $\hat{J}$ over the states and applying an average product correction w.r.t. the sites.  % Norming?
+        Finally, a contact map is obtained by normalizing $\hat{J}$ over the states and applying an average product correction w.r.t. the sites.
         plmDCA shows remarkable performance on diverse sets of proteins with running times competitive with mean-field DCA.
 
 
@@ -159,10 +176,10 @@
             incorporated to the model through the likelihood $P(X, \theta \vert \alpha)$. The likelihood measures how strongly
             the data is explained by the model, given a set of parameter values. $P(X \vert \alpha)$ is called evidence or
             marginal likelihood because it is equal to the data likelihood marginalized over the parameters $\theta$.
-            $P(\theta \vert X, \alpha)$ is the posterior distribution, giving the probability of some parameters given  % A posterior which is not dependent on the data? :D
+            $P(\theta \vert X, \alpha)$ is the posterior distribution, a probability of some parameters given
             the observed data.
 
-            The marginal likelihood is a constant term w.r.t. the hyper-parameters $\alpha$. Therefore, the maximum  % w.r.t. \alpha or \theta?
+            The marginal likelihood is a constant term that varies only with the hyper-parameters $\alpha$. Therefore, the maximum
             a posteriori estimation (MAP) is simply the maximum product between the likelihood and the prior.
 
         \subsubsection{Prior distribution}
