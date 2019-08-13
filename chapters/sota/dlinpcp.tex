@@ -1,8 +1,19 @@
 \section{Deep learning and Protein Contact Prediction} \label{dlpredictors}
 
+    \subsection{Recurrent networks}
+
+        Recurrent neural networks~\cite{cleeremans1989finite}, and more specifically their
+        extension called long short term-memories (LSTMs)~\cite{hochreiter1997long} have been considered
+        for designing contact predictors due to their ability to accumulate long-range information
+        along proteins. LSTM training is very different from the standard backpropagation algorithm
+        introduced in section \ref{backpropagation} due to the presence of feedback connections.
+        SPOT-Contact~\cite{hanson2018accurate} uses both residual convolutional networks
+        and LSTMs to predict contact maps, and has shown to outperform many state-of-the-art
+        models on CASP12 targets~\cite{moult2018critical}.
+
     \subsection{Fully-convolutional networks}
 
-        As a reminder, a fully-convolutional network is a neural network capable
+        As a reminder, fully-convolutional networks are neural networks capable
         of handling variable sized input. Therefore, the dynamic input dimensions
         cannot be processed by a fully-connected neural layer.
         An example of such an architecture is DeepCov~\cite{doi:10.1093/bioinformatics/bty341},
@@ -10,8 +21,8 @@
         maxout input layer. A maxout layer is made of a convolutional layer, followed
         by a max-pooling operation. Dimensions of intermediate feature maps are preserved
         by convolutions using a stride of one and a "same-padding". In most deep learning
-        libraries, padding of type "same" refers to the padding applied by convolutional layers
-        to maintain the sizes of spatial (convoluted) dimensions.
+        libraries, padding of type "same"
+        maintains the sizes of spatial (convoluted) dimensions.
         In DeepCov, the only features are the covariance matrices as computed
         in equation \ref{covariance}. Couplings matrices predicted by DCA methods can be fed as
         input to the model instead of covariance matrices, as shown in plmConv study~\cite{golkov2016protein}.
