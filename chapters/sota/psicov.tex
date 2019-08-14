@@ -33,17 +33,15 @@
         \end{equation}
 
         where $n$ is the number of
-        homologous sequences and $S_{ij}^{ab}$ is the sequence identity covariance from amino acid
-        $a$ to amino acid $b$ and from site $i$ to site $j$.
-        Each matrix $S_{ab}$ is thus a covariance matrix between sites $i$ and $j$.
-        It is noteworthy that such a covariance matrix is neither positive
+        homologous sequences, $S_{ij}$ is a covariance matrix and $S_{ij}^{ab}$ is the sequence
+        identity covariance from amino acid
+        at site $i$ (being in state $a$) to amino acid at site $j$ (being in state $b$).
+        It is noteworthy that such a covariance matrix $S_{ij}$ is neither positive
         semidefinite nor symmetric and is, thus, substantially different from regular sample covariance matrices.
         Precision matrix $\Theta_{ij}$ is defined as
-        the inverse of covariance submatrix $S_{ij}$, but there is no guarantee that such an inverse can be computed directly.
+        the inverse of covariance matrix $S_{ij}$, but there is no guarantee that such an inverse can be computed directly.
         Indeed, each submatrix $S_{ij}$ is very likely to be singular due to the absence
         of correlations for some residue types that are rarely (or never) observed at given sites.
-
-				% Something is unclear about the notation: $S_{ij}$ is a matrix? What is $S_{ab}$? Is it the same as $S_{ij}$? If so, why is there $S_{ij}^{ab}$?
 
         \begin{figure}[H]
             \begin{center}
@@ -77,32 +75,48 @@
                 & = \sum\limits_{k=1}^{n} \Bigg( -\frac{1}{2} (x^{(k)} - \mu)^T \Theta (x^{(k)} - \mu) - \log{\sqrt{(2\pi)^d \frac{1}{\vert\Theta\vert}}} \Bigg) \\
                 & = -\frac{1}{2} \sum\limits_{k=1}^{n} (x^{(k)} - \mu)^T \Theta (x^{(k)} - \mu)
                     - \frac{1}{2} \sum\limits_{k=1}^{n} \log{\Big((2\pi)^d \frac{1}{\vert\Theta\vert}\Big)} \\
-                & = -\frac{1}{2} \trace\big(S \Theta\big) - \frac{1}{2} \sum\limits_{k=1}^{n} \log{(2\pi)^d} + \frac{1}{2} \log{\vert\Theta\vert} \\
-            \end{split}  % Last equality: shouldn't there be a factor $n$ coming out of the trace?
+                & = -\frac{n}{2} \trace\big(S \Theta\big) + \frac{n}{2} \log{\vert\Theta\vert} - \frac{1}{2} \sum\limits_{k=1}^{n} \log{(2\pi)^d} \\
+            \end{split}
         \end{equation}
 
         The latter expression holds because the empirical mean $\bar{x}$ is equal to $\mu$ for any $\Sigma$.
-        The objective function of Graphical Lasso is simply the log-likelihood penalized with $L_1$ norm. $L_1$ regularization is used instead of $L_2$ because
+        The objective function of Graphical Lasso is simply the log-likelihood penalized with $L_1$ norm.
+        $L_1$ regularization is used instead of $L_2$ because
         of its non-asymptotic behaviour and therefore its ability to produce more zeroes among the parameter values.
         The solution to the optimization problem is described as:
 
-        \begin{equation}
+        \begin{equation} \label{psicovobj}
             \begin{split}
-                \hat{\Theta} & = \argmax_{\Theta} \ \ \log{L}(\Theta) - \rho \norm{\Theta}_1 \\
-                & = \argmax_{\Theta} \ \ -\frac{1}{2} \trace\big(S \Theta\big) - \frac{1}{2} \sum\limits_{k=1}^{n}
-                    \log{(2\pi)^d} + \frac{1}{2} \log{\vert\Theta\vert} - \rho \norm{\Theta}_1 \\
+                \hat{\Theta} & = \argmax_{\Theta} \ \ \log{L}(\Theta) - \rho' \norm{\Theta}_1 \\
+                & = \argmax_{\Theta} \ \ -\frac{n}{2} \trace\big(S \Theta\big) + \frac{n}{2} \log{\vert\Theta\vert}
+                    - \frac{1}{2} \sum\limits_{k=1}^{n} \log{(2\pi)^d} - \rho' \norm{\Theta}_1 \\
                 & = \argmax_{\Theta} \ \ -\trace\big(S \Theta\big) + \log{\vert\Theta\vert} - \rho \norm{\Theta}_1 \\
             \end{split}
         \end{equation}
 
         The $L_1$ norm $\norm{\Theta}_1$ is the sum of absolute values of the elements in $\Theta$.
-        \todo{}
+        $\rho$ is the regularization parameter and $\rho'$ is syntactic sugar for denoting the same
+        parameter before division.
 
-        \todo{Optimizer, GLassoFast, etc.}
+        In the second version of PSICOV, the objective function present in equation~\ref{psicovobj} is being
+        optimized with the GLassoFast algorithm~\cite{sustik2012glassofast}, making the predictor more efficient
+        than in its first version.
 
-        \todo{APC}
+        The predicted contact map is finally obtained after applying the two following processing steps:
+        \begin{itemize}
+            \item The score $S_{ij}^{contact} between residues $i$ and $j$ is calculated as
+                the $L_1$ norm of submatrix $\Theta_{ij}:
+            \item The average product correction introduced by Dunn et al.~\cite{dunn2007mutual}
+                is applied to the resulting scores in order to better approximate the background
+                mutual information between sites $i$ and $j$:
+                \begin{equation}
+                    PC_{ij} = S_{ij}^{contact} - \frac{\bar{S}_{i-}^{contact} \bar{S}_{-j}^{contact}}{\bar{S}^{contact}}
+                \end{equation}
+                Based on the formalism of the PSICOV study, $\bar{S}_{i-}^{contact}$ is the norm of $S^{contact}$ for row $i$
+                over all columns except $i$, and $\bar{S}_{-j}^{contact}$ is the norm for column $j$ over all rows except $j$.
+        \end{itemize}
 
-        According to Sun et al.~\cite{doi:10.1093/nar/gky995}, the solutions found by PSICOV may not be suitable for some proteins.
+        According to Sun et al.~\cite{sun2015predicting}, the solutions found by PSICOV may not be suitable for some proteins.
         Furthermore, the best solution could be far from the global optimum found by Graphical Lasso since the search space is huge.
         The suggested solution is to predict multiple contact maps and promote diversity among them by adding a new penalty term.
 
@@ -121,7 +135,9 @@
         \end{equation}
 
         where $\delta_0: \mathbb{R}^{21L \times 21L} \rightarrow \mathbb{R}^{L \times L}$ is such that
-        $d(\Theta_{i, j})$ takes value $1$ if submatrix $\Theta_{i, j}$ is $0$, and $-1$ otherwise.  % d(\Theta_{i,j}) or \delta_0(\Theta_{ij})? Also if \delta_0 is the (-1) \cdot Dirac measure at 0, why take values in \{-1, 0\} and then negate the result instead of defining \delta_0 to take values in \{0, 2\} which is way more natural?
+        $\delta_0(\Theta_{i, j})$ takes value $1$ if submatrix $\Theta_{i, j}$ is $0$, and $-1$ otherwise.
         The objective function is optimized using a second-order method and updating the solution in the Newton direction at each iteration.
         Finally, a contact map is obtained by selecting the submatrices among the solutions according to their sparsity.
-        More specifically, submatrices are selected according to their nuclear norm, hence the sum of their singular values.  % Why nuclear norm instead of L^p norm? Explanation/reference?
+        More specifically, submatrices are selected according to their nuclear norm, hence the sum of their singular values.
+        The authors claim that nuclear norm is better than $L_1$ norm at taking into account the sparsity patterns of the
+        different submatrices.

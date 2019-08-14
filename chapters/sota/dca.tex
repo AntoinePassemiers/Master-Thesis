@@ -148,9 +148,9 @@
         $x \in \{0, 1\}^{\naatypes\,L}$. The key assumption at the core of the method is to approximate each binary variable $x_i$
         by a continuous Gaussian variable. Let $m$ be the number of sequences in a MSA, $X \in \{0, 1\}^{m \times \naatypes\,L}$
         be the matrix representation of the MSA, and $\mu, \bar{x}$ be respectively, the theoretical and empirical mean vectors associated to $X$.
-        The empirical covariance matrix of $X$ is given by:  % Empirical covariance matrix defined w.r.t $\mu$ and not $\bat x$?
+        The empirical covariance matrix of $X$ is given by:
         \begin{equation}
-            \bar{C}_{ij}(X, \mu) \triangleq C_{ij}(X, \mu) = C_{ij}(X, \bar{x}) = \frac{1}{m} \sum\limits_{k=1}^m (x_i^k - \mu_i) (x_j^k - \mu_j)
+            \bar{C}_{ij}(X, \mu) = C_{ij}(X, \mu) = \frac{1}{m} \sum\limits_{k=1}^m (x_i^k - \mu_i) (x_j^k - \mu_j)
         \end{equation}
 
         Similarly to PSICOV\index{PSICOV}~\cite{doi:10.1093/bioinformatics/btr638}, evolutionary couplings are detected by keeping track of direct interactions
@@ -191,18 +191,19 @@
             $P(\mu, \Sigma) = P(\mu \vert \Sigma)\,P(\Sigma)$, where the prior of the mean vector is defined as a multivariate
             Gaussian distribution:
 
-            \begin{equation}  % What is \kappa? And \eta?
+            \begin{equation}
                 P(\mu \vert \Sigma) = \Big(\frac{2 \pi}{\kappa}\Big)^{-\frac{m}{2}} \vert\Sigma\vert^{-\frac{1}{2}}
                 \exp{\frac{\kappa}{2} (\mu - \eta)^T \Sigma^{-1} (\mu - \eta)}
             \end{equation}
+            where $\kappa$ is the number of prior measurements and $\eta$ the prior mean.
 
             Let's note that the Gaussian distribution is conjugate to itself. The prior over positive-definite matrices
             (we are interested in invertible covariance matrices exclusively) is defined by the NIW distribution:
 
-            \begin{equation}  % Is \Lambda a standard notation for this matrix? If so, alright; if not, it feels weird: \Lambda is usually the eigenvalues diagonal matrix
-                \begin{split}  % Also you should double-check my correction...
+            \begin{equation}
+                \begin{split}
                     P(\Sigma) & = \frac{1}{Z} \vert\Sigma\vert^{-\frac{\nu + m + 1}{2}} \exp{-\frac{1}{2} \trace{\Lambda \Sigma^{-1}}} \\
-                    \text{where } & \ \ \ \ \ \ \ \ Z = 2^{\frac {\nu m}{2}} \pi^{\frac{m (m - 1)}{4}} \vert\Lambda\vert^{-\frac \nu2}
+                    \text{where } & \quad Z = 2^{\frac {\nu m}{2}} \pi^{\frac{m (m - 1)}{4}} \vert\Lambda\vert^{-\frac \nu2}
                     \prod\limits_{k=1}^{m} \Gamma\Big(\frac{\nu + 1 - k}{2}\Big)
                 \end{split}
             \end{equation}
@@ -211,9 +212,10 @@
 
         \subsubsection{Computing the MAP covariance matrix}
 
-            The mean values for the NIW prior are known and equal to $\eta$ and $\Lambda / (\nu - m - 1)$, respectively.  % The notation <matrix> / <scalar> is unusual. Prefer $\frac 1{<scalar>}<matrix>$
+            The mean values for the NIW prior are known and equal to $\eta$ and $\frac{1}{\nu - m - 1} \Lambda$, respectively.
             Assuming $\eta'$, $\nu'$ and $\Lambda'$ are the corresponding parameters in the NIW posterior, the mean values are given by
-            $\eta'$ and $\Lambda / (\nu' - m - 1)$, respectively. In particular, the matrix $\Lambda'$ that allows the posterior to be conjugate
+            $\eta'$ and $(1 / (\nu' - m - 1)) \Lambda$, respectively.
+            In particular, the matrix $\Lambda'$ that allows the posterior to be conjugate
             with the prior is given by the following relation:
             \begin{equation}
                 \Lambda' = \Lambda + n \bar{C} + \frac{\kappa m}{\kappa + m} (\bar{x} - \eta) (\bar{x} - \eta)^T
@@ -221,9 +223,9 @@
             Finally, the average covariance matrix is computed as:
             \begin{align*}
                 \Sigma & = \frac{\Lambda'}{\nu' - m - 1} \\
-                & = \frac{\Lambda + n \hat{C} + \frac{\kappa n}{\kappa + n} (\hat{x} - \eta)^T (\bar{x} - \eta)}{\nu + n - m -1} \\  % $\hat x$? Isn't it $\bat x$?
+                & = \frac{\Lambda + n \bar{C} + \frac{\kappa n}{\kappa + n} (\hat{x} - \eta)^T (\bar{x} - \eta)}{\nu + n - m -1} \\
                 & = \lambda \Lambda + (1 - \lambda) \bar{C} + \lambda (1 - \lambda) (\bar{x} - \eta)^T (\bar{x} - \eta)
             \end{align*}
-            As a viable choice for the hyper-parameter matrix $\Lambda$, one could choose the less arbitrary one. To this aim, the covariance
-            matrix corresponding to a uniform multivariate distribution has been selected.
-						% The less arbitrary one? Which one is it? Should be explicit. #Oriana
+            As a viable choice for the hyper-parameter matrix $\Lambda$, one could choose the most trivial one to avoid
+            arbitrary choices. To this aim, the covariance
+            matrix corresponding to a uniform multivariate distribution is used.
