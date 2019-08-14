@@ -19,7 +19,7 @@
     	    in the pipeline.
 
             \begin{equation}
-                M_{eff} = \sum_{i=1}^m w_i = \sum_{i=1}^m \frac{1}{|\{r(s_i, s_j) \ge \tau \, \, \, \forall j \in \{1, \dotsc, m\}\}|}
+                M_{eff} = \sum_{i=1}^m w_i = \sum_{i=1}^m \frac{1}{|\{r(s_i, s_j) \ge \tau \quad \forall j \in \{1, \dotsc, m\}\}|}
             \end{equation}
 
             $w_i$ is the weight associated to homologous sequence $i$.
@@ -32,13 +32,21 @@
         \paragraph{One-hot encoded sequence}
 
             Given an amino acid sequence $\{s_1, s_2, \ldots,
-            s_L\}$ of size L, its one-hot encoded version
+            s_L\}$ of size L, the one-hot encoded sequence
             is a matrix $X \in \{0, 1\}^{L \times 21}$
-            where $x_{ia}$ is one if $s_i = a$.
+            where $x_{ia}$ is one if $s_i = a$ and zero otherwise.
 
         \paragraph{Solvent accessibility prediction}
 
-            \todo{}
+            Solvent accessibility or solvent-accessible surface is the surface of
+            a molecule that is accessible to a solvent. Such feature contains indirect
+            information about the protein structure since residues with low accessibility
+            are more likely to be internal to the protein and vice versa.
+            When atomic coordinates are available, solvent accessibility can be computed exactly
+            using the rolling ball algorithm from Shrake and Rupley~\cite{shrake1973environment},
+            as illustrated by figure~\ref{rollingball}.
+            Since protein structure is not available for target proteins of the test set,
+            supervised models rely on predicted solvent accessibility instead.
 
             \begin{figure}[H]
                 \begin{center}
@@ -46,13 +54,15 @@
                     \caption{Accessible surface, obtained by "rolling" a probe sphere (a molecule
                         of solvent, colored in orange) on the Van der Waals surface of a biomolecule
                         (colored in blue).}
-                    \label{architecture}
+                    \label{rollingball}
                 \end{center}
             \end{figure}
 
-            \todo{define Relative Solvent Accessibility}
-            \todo{cite RaptorX-property}
-            RSA prediction is 3-state. A residue is either:
+            The RaptorX-Property server~\cite{wang2016raptorx} is publicly available and provides
+            predictions for relative solvent accessibility (RSA). The latter is defined as the predicted
+            accessible surface of a residue divided by the maximum possible solvent accessibility
+            for that amino acid, which is more convenient more machine learning since it does not a
+            normalization step. RSA prediction is 3-state. A residue can be either:
             \begin{itemize}
                 \item Buried (B), when RSA is below 10\%.
                 \item Intermediate (I), when RSA is between 10\% and 40\%.
@@ -94,6 +104,8 @@
             where $D_i$ is the probability of residue $i$ being in a region
             of missing residues in the X-ray 3D structure. Residues with high
             probability are said to be disordered.
+            Such features are also made publicly available by the 
+            RaptorX-Property server~\cite{wang2016raptorx}.
 
         \paragraph{Amino acid frequencies}
 

@@ -7,6 +7,9 @@
   \begin{itemize}
     \item \textbf{Global module} is made of a succession of multiple fully-connected layers.
         Its output is repeated in order to match the dimensionality of the 1D module's input.
+        It must be highlighted that the fully-convolutional property of the whole network
+        is preserved since the dimensionalities of the global module's input and output
+        are invariant to the protein length, despite the presence of fully-connected layers.
     \item \textbf{1D module} is a one-dimensional residual network.
         Each layer is composed of 1D convolution, 1D batch normalization and activation function.
         Its input is a concatenation of one-dimensional features and global module's output.

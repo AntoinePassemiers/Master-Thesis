@@ -1,0 +1,59 @@
+\chapter{Evaluation metrics for structure prediction} \label{metrics3d}
+
+  \section{Metrics}
+
+    \subsection{Root mean square deviation (RMSD)}
+
+      \todo{}
+
+    \subsection{Template modeling score (TM-score)}
+
+      \todo{}
+
+  \section{Protein 3D alignment}
+
+    \begin{align}
+        \text{TM-score}(X^{(target)}, X^{(aligned)}) = \max_P \Bigg[ \frac{1}{L} \sum\limits_{i=1}^L
+            \frac{1}{1 + \Big(\frac{\delta(x_i^{(target)}, P(x_i^{(aligned)}))}{\delta_0}\Big)^2} \Bigg]
+    \end{align}
+
+    where $\delta_0 = 1.24 \sqrt[3]{L - 15} - 1.8$, $\delta(x_i, y_i)$ is the euclidean distance
+    between residue coordinates $x_i$ and $y_i$, and $P$ is a projection that preserves
+
+    The best alignment in 3D is found by determining the projection of $X^{(aligned)}$ that
+    either maximizes the TM-score or minimizes the RMSD.
+    Such a projection has 9 parameters:
+    \begin{itemize}
+        \item 3 boolean parameters that indicate whether to swap coordinates along
+        the X, Y and Z dimensions, respectively.
+        \item 3 real-valued parameters for translating coordinates along the X, Y and Z
+        dimensions, respectively.
+        \item 3 angles that parametrize the rotation matrices around the X, Y and Z axes,
+        respectively.
+    \end{itemize}
+
+    \begin{align*}
+        P(x) & = R^X_{\phi} R^Y_{\psi} R^Z_{\theta} x + b \\
+        & =
+        \begin{pmatrix}
+        1 & 0 & 0 \\
+        0 & \cos{\phi} & -\sin{\phi} \\
+        0 & \sin{\phi} & \cos{\phi}
+        \end{pmatrix}
+        \begin{pmatrix}
+        \cos{\psi} & 0 & \sin{\psi} \\
+        0 & 1 & 0 \\
+        -\sin{\psi} & 0 & \cos{\psi}
+        \end{pmatrix}
+        \begin{pmatrix}
+        \cos{\theta} & -\sin{\theta} & 0 \\
+        \sin{\theta} & \cos{\theta} & 0 \\
+        0 & 0 & 1
+        \end{pmatrix}
+        x +
+        \begin{pmatrix}
+        b^X \\
+        b^Y \\
+        b^Z
+        \end{pmatrix}
+    \end{align*}

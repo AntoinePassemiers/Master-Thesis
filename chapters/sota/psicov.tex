@@ -104,16 +104,16 @@
 
         The predicted contact map is finally obtained after applying the two following processing steps:
         \begin{itemize}
-            \item The score $S_{ij}^{contact} between residues $i$ and $j$ is calculated as
-                the $L_1$ norm of submatrix $\Theta_{ij}:
+            \item The score $S_{ij}^{contact}$ between residues $i$ and $j$ is calculated as
+                the $L_1$ norm of submatrix $\Theta_{ij}$:
             \item The average product correction introduced by Dunn et al.~\cite{dunn2007mutual}
                 is applied to the resulting scores in order to better approximate the background
                 mutual information between sites $i$ and $j$:
                 \begin{equation}
                     PC_{ij} = S_{ij}^{contact} - \frac{\bar{S}_{i-}^{contact} \bar{S}_{-j}^{contact}}{\bar{S}^{contact}}
                 \end{equation}
-                Based on the formalism of the PSICOV study, $\bar{S}_{i-}^{contact}$ is the norm of $S^{contact}$ for row $i$
-                over all columns except $i$, and $\bar{S}_{-j}^{contact}$ is the norm for column $j$ over all rows except $j$.
+                Based on the formalism of the PSICOV study, $\bar{S}_{i-}^{contact}$ is the norm of row $i$ of $S^{contact}$
+                for all columns except $i$, and $\bar{S}_{-j}^{contact}$ is the norm of column $j$ for all rows except $j$.
         \end{itemize}
 
         According to Sun et al.~\cite{sun2015predicting}, the solutions found by PSICOV may not be suitable for some proteins.
