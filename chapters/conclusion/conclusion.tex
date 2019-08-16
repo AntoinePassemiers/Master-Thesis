@@ -1,1 +1,29 @@
 \chapter{Conclusion}
+
+The objective of this thesis has been the design of a deep neural architecture for protein
+contact prediction. Proposed architecture takes ideas from both RaptorX-Contact and PConsC4:
+it relies on a deep residual convolutional network, while still being able to predict multiple
+contact maps at different distance thresholds. Input features are based on target
+sequences, sequence homology and evolutionary couplings, in a very similar way to PConsC4.
+This enables the simplification of the prediction pipeline since GaussDCA (the only
+ECA-related predictor used in PConsC4) provides accurate DCA features in a pleasingly
+short amount of time.
+
+\todo{Speak about performance}
+\todo{Compare performance with other models}
+\todo{Indicate whether performance is good for all evaluation metrics}
+\todo{State-of-the-art not improved (because very competitive), but enables expermimentation}
+\todo{GAN approach}
+
+Immediate future work would focus on training the model on a larger
+dataset with improved preprocessing. Indeed, despite the marginal
+robustness of the model to the number of effective sequences in comparison
+with DCA methods, there is still room for additional performance that can
+be gained by computing statistics on much larger multiple sequence alignments.
+\todo{RaptorX-Property}
+Also, now that a lot of new tertiary structure have been released after CASP12,
+it becomes conceivable to create a complete dataset of more than 16 000 structures.
+
+\todo{Potential improvements due to new DL techniques}
+
+\todo{As of drawing this conclusion, ... TODO: current work}
