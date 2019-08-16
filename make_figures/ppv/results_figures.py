@@ -13,19 +13,22 @@ def load_results(filepath):
     data = { col_name: list() for col_name in col_names }
     for line in lines[1:]:
         el = line.replace('\n', '').replace(' ', '').split(',')
-        for i in range(len(el)):
-            if i > 0:
-                el[i] = float(el[i])
-            data[col_names[i]].append(el[i])
+        if len(el) > 2:
+            for i in range(len(el)):
+                if i > 0:
+                    el[i] = float(el[i])
+                print(len(col_names), len(el))
+                data[col_names[i]].append(el[i])
     return data
 
 
 casp11 = load_results('casp11.full.txt')
 cameo = load_results('cameo.full.txt')
 casp11_plmdca = load_results('casp11.plmdca.txt')
+casp11_new = load_results('casp11.new.txt')
 
 
-for name, results in zip(['CASP11', 'CAMEO'], [casp11, cameo]):
+for name, results in zip(['CASP11', 'CAMEO'], [casp11, casp11_new]):
     print('%s PPV: %f | short-range: %f | Medium-range: %f | Long-range: %f' % (name, np.mean(results['PPV']), np.mean(results['PPV-short']), np.mean(results['PPV-medium']), np.mean(results['PPV-long'])))
     print('%s PPV/2: %f | short-range: %f | Medium-range: %f | Long-range: %f' % (name, np.mean(results['PPV/2']), np.mean(results['PPV/2-short']), np.mean(results['PPV/2-medium']), np.mean(results['PPV/2-long'])))
     print('%s PPV/5: %f | short-range: %f | Medium-range: %f | Long-range: %f' % (name, np.mean(results['PPV/5']), np.mean(results['PPV/5-short']), np.mean(results['PPV/5-medium']), np.mean(results['PPV/5-long'])))
