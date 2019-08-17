@@ -214,9 +214,6 @@
 
         Just as in the case of fully-connected layers, the computations for the signal propagation
         are not shown because this report is intended to remain brief.
-        Contrary to neural networks, it must be noted that random forest implementations
-        are rarely equipped with convolutional filters or even multivariate splits.
-        Even in computer vision applications, univariate decision trees are the most frequently used trees in ensemble learners.
 
     \subsection{Activation functions}\label{activationfunctions}
 
@@ -308,17 +305,36 @@
         of each layer's output is changed at each batch. This is the reason for using the statistics of each batch individually
         to normalize the data between layers.
 
-        \todo{Backpropagating sample gradients in fully-convolution networks}
+        Let $\mathcal{B} = \{ x_1, x_2, \dotsc \}$ be the input batch, $x_i$ one of the input example and $\hat{x}_i$ the same
+        input example after normalization. Batch statistics are the element-wise mean vector $\mu_{\mathcal{B}}$ and
+        element-wise standard deviation vector $\sigma_{\mathcal{B}}$ given in equations~\ref{batchstatistics}.
 
-        \begin{equation}
+        \begin{equation}\label{batchstatistics}
             \begin{split}
                 \mu_{\mathcal{B}} & = \frac{1}{\vert\mathcal{B}\vert} \sum\limits_{i=1}^{\vert\mathcal{B}\vert} x_i \\
-                \sigma_{\mathcal{B}}^2 & = \frac{1}{\vert\mathcal{B}\vert} \sum\limits_{i=1}^{\vert\mathcal{B}\vert} (x_i - \mu_{\mathcal{B}}^2) \\
+                \sigma_{\mathcal{B}}^2 & = \frac{1}{\vert\mathcal{B}\vert} \sum\limits_{i=1}^{\vert\mathcal{B}\vert} (x_i - \mu_{\mathcal{B}}^2)
+            \end{split}
+        \end{equation}
+
+        These statistics are used for normalizing all the examples present in current batch $\mathcal{B}$:
+
+        \begin{equation}\label{batchnormupdate}
+            \begin{split}
                 \hat{x}_i & \leftarrow \gamma \frac{x_i - \mu_{\mathcal{B}}}{\sqrt{\sigma_{\mathcal{B}}^2 + \epsilon}} + \beta
             \end{split}
         \end{equation}
 
-        Optimize $\beta, \gamma$ with backpropagation. \todo{}
+        Variables $\gamma$ and $\beta$ in equation~\ref{batchnormupdate} are the scaling and location parameters
+        used to re-scale and re-center the output distribution after normalization. The optimal values for these
+        parameters is also find by gradient descent, in order to empirically determine the ideal mean and variance
+        of the distribution expected by the next layer of the network.
+        Let's note that mean $\gamma$ and variance $\beta$ slightly vary from one iteration to the other due to
+        parameter update but are not directly related to batch statistics, which ensures some semblance of
+        stationarity in the output distribution.
+
+        Partial derivatives of $\gamma$ and $\beta$ can be easily be found by applying the methodology used in
+        section~\label{backpropagation} and using equations~\ref{batchstatistics} and \ref{batchnormupdate},
+        or by refering to the original paper~\cite{DBLP:journals/corr/IoffeS15}.
 
     \subsection{Regularization}
 
@@ -392,7 +408,7 @@
         Gradient descent is a very popular optimization algorithm,
         but is rarely used as such in practice since state-of-the-art deep learning
         frameworks offer more advanced gradient-based techniques~\cite{DBLP:journals/corr/Ruder16}.
-        What is meant by gradient is the gradient vector obtained by concatenation of the gradients
+        What is meant by gradient is the vector obtained by concatenation of the gradients
         w.r.t. each layer's parameters. This final gradient vector
         gives an improvement direction, but a decrease of the loss function
         is only guaranteed by moving by an arbitrary small step in the parameter space.
@@ -431,7 +447,7 @@
             \label{tab:gradients}
         \end{table}
 
-        In its most simplistic form, gradient descent optimization consists in update the parameter vector $x_t$
+        In its most simplistic form, gradient descent optimization consists in updating the parameter vector $x_t$
         from step $t$ using the following rule:
         \begin{align}
             x_{t+1} & = x_t + \Delta x_t \\
@@ -441,34 +457,34 @@
         a learning rate $\eta$. Learning rate controls how much model parameters are being updated
         in the improvement direction.
 
-        Stochastic gradient descent has been extended with a so-called momentum term that accelerates
+        Stochastic gradient descent has been extended with a so-called momentum~\cite{rumelhart1988learning}
+        term that accelerates
         the update when gradients approximately point in the same direction from one step to another.
-        \todo{Momentum: cite: Learning representations by back-propagating errors}
         \begin{equation}
             \Delta x_t = \rho \Delta x_{t-1} - \eta g_t
         \end{equation}
         $\rho$ is a decay parameter that controls how much to keep track of past update vectors.
         In practice, the landscape of the loss function w.r.t. parameters is likely to be composed of many
-        narrow valleys where standard stochastic gradient vector is inefficient due to the small norm of gradients
-        along valleys. The momentum helps optimizing across such valleys in a smaller number of steps
+        narrow valleys, where standard stochastic gradient vector is most likely to be inefficient
+        due to the small norm of gradients along valleys.
+        The momentum helps optimizing across such valleys in a smaller number of steps
         due to its additive effect when gradient vectors are similar from one step to the next one.
-
-        \todo{Adam: \cite{DBLP:journals/corr/KingmaB14}}
-
-        \todo{RMSProp: Introduced by Hinton on Coursera, first used in \cite{graves2013generating}}
-
-        \todo{AdaGrad: \cite{duchi2011adaptive}}
-        \begin{equation}
-            \Delta x_t = - \frac{\eta}{\sum\limits_{\tau=1}^t g_{\tau}^2} g_t
-        \end{equation}
 
         ADADELTA~\cite{DBLP:journals/corr/abs-1212-5701} is an adaptive extension of stochastic gradient descent
         that is robust to the noise introduced by the high variability of sample gradients. Also, it dynamically
         selects the learning rate so that no hyper-parameter tuning is required on it.
         \begin{equation}
-            \Delta x_t = - \frac{RMS[\Delta x]_{t-1}}{RMS[g]_t} g_t
+            \Delta x_t = - \lambda g_t = - \frac{RMS[\Delta x]_{t-1}}{RMS[g]_t} g_t
         \end{equation}
-        $RMS[g]_t = \sqrt{E[g^2]_t + \epsilon}$
+        where $\lambda$ is a dynamic learning rate that globally decays throughout the learning process.
+        The root mean square of previously seen examples $RMS[g]_t = \sqrt{E[g^2]_t + \epsilon}$ is computed 
+        as an exponentially decaying average for memory efficiency:
+        \begin{equation}
+            E[g^2]_t = \rho E[g^2]_{t+1} + (1 - \rho) g^2_t
+        \end{equation}
+        where $\rho$ is a decay parameter similar to the momentum.
 
-        \todo{L-BFGS: \cite{LBFGS}}
-
+        Other optimization methods, like RMSProp~\cite{graves2013generating},
+        AdaGrad~\cite{duchi2011adaptive}, Adam~\cite{DBLP:journals/corr/KingmaB14}
+        or L-BFGS~\cite{LBFGS} are also efficiently implemented in most deep learning 
+        frameworks.
