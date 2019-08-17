@@ -7,6 +7,8 @@
   each trial point in the hyper-parameter space should be carefully selected. Techniques based
   on grid search do not suit the problem because they are uninformed methods.
 
+\subsection{Tree-structured Parzen estimators}
+
   Hyperopt provides an informed search method called Tree-structured Parzen Estimators (TPE)~\cite{bergstra2011algorithms}.
   In Bayesian hyper-optimization, the posterior probability $P(\alpha \vert \mathcal L)$ is defined as a function
   of the hyper-parameter vector $\alpha$ and the loss $\mathcal L$. Contrary to techniques based on Gaussian processes
@@ -16,7 +18,7 @@
   hyper-parameter space. The "tree structure" is due to the way the posterior is computed.
 
   Let $f$ be the prediction function of the model (see section \ref{backpropagation} about backpropagation algorithm),
-  and let $f(\alpha) \triangleq \text{argmin}_{f(\Theta, \alpha)} \ell \big(f(\Theta, \alpha)\big)$ be the prediction function  % Formalism: meh
+  and let $f(\alpha) = \text{argmin}_{f(\Theta, \alpha)} \ell \big(f(\Theta, \alpha)\big)$ be the prediction function
   of a trained model that minimizes a given loss function $\ell$ w.r.t. a fixed hyper-parameter vector $\alpha$.
   Let $l(\alpha)$ be the non-parametric density function defined as a mixture of density functions centered each on an
   observation $\{ \alpha^{i} \}$ for which $\mathcal L = c(f(\alpha^{i}))$ is below the threshold $\mathcal L^*$.
@@ -56,6 +58,42 @@
   The density function is either $l(\alpha)$ or $g(\alpha)$ depending on whether the loss function associated to current
   point is below the threshold or not.
 
+\subsection{Search space}
+
+  Table~\ref{hyperparams} summarizes the hyper-parameters to be optimized with Hyperopt.
+  Each hyper-parameter follows a uniform prior distribution of categorical values.
+  \begin{itemize}
+    \item \textbf{Batch size}: Number of proteins to evaluate before updating the network
+        parameters. An upper bound of 32 proteins has been chosen in order to restrain
+        memory consumption to reasonable values. Indeed a large batch size, coupled
+        with a high number of layers per module and large number of convolutional
+        filters per layer can lead to huge computation graphs of size that easily exceed
+        available memory.
+    \item \textbf{Batch normalization}: Whether to normalize values in current batch
+        (see section~\ref{batchnorm}). Can be either true or false.
+    \item \textbf{Track running stats}: Whether to normalize values in current batch
+        using running means and variances. If set to false, statistics of current batch
+        are used instead. Can be either true or false.
+    \item \textbf{Learning rate}: Parameter that is proportional to the step length
+        to perform in the improvement direction returned by the optimization algorithm.
+        The domain is defined by a set of very small values to ensure local convergence.
+        However, the smallest value does not fall below $10^-6$ to prevent the model
+        from training for days.
+    \item \textbf{L2 penalty}: L2 regularization parameter (see section~\ref{l2regularization}).
+    \item \textbf{Optimization algorithm}: Which optimization method to use for updating
+        network parameters (see section~\ref{opti}).
+    \item \textbf{Activation function}: Which non-linearity to use to produce the output
+        of each layer (see section~\ref{activationfunctions}), except the final layer of
+        the whole network where it is automatically replaced by a sigmoid function.
+    \item \textbf{Use global module}: Whether to incorporate global features.
+    \item \textbf{Depth}: Number of layers (either fully-connected or convolutional) in
+        current module.
+    \item \textbf{Filter size}: Number of adjacent residues being observed at once in
+        a convolutional layer.
+    \item \textbf{Number of filters}: Number of convolutional filters, hence the number
+        of output channels in a convolutional layer.
+  \end{itemize}
+
   \begin{table}[H]
     \centering
     \begin{tabular}{|l|c|c|}
@@ -65,12 +103,12 @@
       \hline
       General & Batch size & $\{ 1, 2, 4, 8, 16, 32 \}$ \\
               & Batch normalization & $\{ \top, \bot \}$ \\
-              & Track running state & $\{ \top, \bot \}$ \\
-              & Learning rate & \text{TODO} \\
-              & L2 penalty & \text{TODO} \\
-              & Parameter optimization & $\{ \text{ADADELTA}, \text{Adagrad}, \text{Adam} \}$ \\
+              & Track running stats & $\{ \top, \bot \}$ \\
+              & Learning rate & $\{ 10^{-3}, 10^{-4}, 10^{-5}, 10^{-6} \}$ \\
+              & L2 penalty & $\{ 10^{-3}, 10^{-4}, 10^{-5}, 10^{-6} \}$ \\
+              & Optimization algorithm & $\{ \text{ADADELTA}, \text{Adagrad}, \text{Adam} \}$ \\
               & Activation function & $\{ \text{ReLU}, \text{ELU}, \text{LeakyReLU}, \text{Tanh} \}$ \\
-              & Use global modules & $\{ \top, \bot \}$ \\
+              & Use global module & $\{ \top, \bot \}$ \\
       \hline
       Global module & Depth & $\{ 2, 3, 4, 5, 6, 7, 8, 9, 10 \}$ \\
       \hline

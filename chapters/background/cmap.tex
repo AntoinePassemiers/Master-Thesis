@@ -32,9 +32,22 @@
         are separated by a distance below the given threshold, and $0$ otherwise. Contact maps are invariant to rotations and easier to predict
         with machine learning methods, contrary to matrices of pairwise distances. Furthermore, the original 3D residue coordinates can be recovered from
         contact maps~\cite{10.1007/978-3-540-72031-7_53}. Anfinsen's Dogma postulates that the secondary and tertiary structures
-        of a protein can be inferred from its primary structure: even after disrupting the hydrophobic bonds of a protein, experiments have shown
+        of a protein can be inferred from its primary structure: even after disrupting the hydrophobic bonds of a protein, experiments suggest
         that the latter can recover its original structure with some assisted folding,
         highlighting the idea that tertiary structure is encoded in the sequence of amino acids itself.
+        The task of predicting contact maps is illustrated in figure \ref{cmaps}:
+
+        \begin{figure}[H]
+            \begin{center}
+                \includegraphics[width=\textwidth, keepaspectratio]{imgs/1CXYA.png}
+                \caption{(Left) Ground-truth contact map of PDB:1CXYA defined at a contact threshold of 8 \AA{}.
+                    (Center) PConsC2~\cite{10.1371/journal.pcbi.1003889}'s
+                    predicted contact map for the same protein. (Right) Evaluation of the predicted contact map.
+                    True positives are colored in green and false positives are colored in red. Only top $L$ residue pairs
+                    are considered in the evaluation, where $L$ is the protein length.}
+                \label{cmaps}
+            \end{center}
+        \end{figure}
 
 
     \subsection{An alternative representation: protein contact networks} \label{pcn}
@@ -87,7 +100,8 @@
         \end{equation}
 
         A \textbf{protein contact network} is a graph where the set of vertices is ordered by the primary structure, each vertex is an amino acid itself,
-        and the presence of an edge between two vertices indicates that the two corresponding residues are in contact. Such a network is useful to make a compact
+        and the presence of an edge between two vertices indicates that the two corresponding residues are in contact.
+        Such a network is useful to make a compact
         representation of a protein structure and metrics such as path length or graph diameter are important for the analysis of long-range residue
         interactions~\cite{doi:10.1021/cr3002356}.
 

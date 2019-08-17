@@ -45,8 +45,12 @@
     \subsection{The backpropagation algorithm} \label{backpropagation}
 
         In this sub-section, the backpropagation algorithm is going to be introduced formally in order
-        to understand the subtleties of deep learning.
-        Let's consider a feedforward neural network containing no cycle.
+        to understand the subtleties of deep learning. Explanations will focus w.l.o.g. on feedforward networks
+        and be accompanied by my own formalism. For more details on the backpropagation algorithm,
+        the reader can refer to a more general and theoretical description from Yann LeCun~\cite{lecun1988theoretical}
+        or a more pictorial version~\cite{lecun2015deep}.
+
+        Let's consider a neural network containing no cycle.
         Each of its layers can be viewed as a couple $(f_i(\theta_i, X), b_i(\theta_i, S(X)))$,
         where $f_i$ is the forward pass function of layer $i$ used for predicting,
         $b_i$ is the backward pass function, $\theta_i$ is the set of parameters,
@@ -54,9 +58,10 @@
         $g_i$, respectively, and $S(X)$ is the signal tensor propagated from next layer back to current layer.
         Let's make the assumption that convolutional layers are two-dimensional and that input instances are image-like data.
         (one-dimensional and three-dimensional convolutions can be described analogously).
-        Also, let's consider a particular case of neural network consisting of a stack of neural layers instead of a graph:
-        a feedforward neural network.
-        Let $b$ be the number of instances in the input tensor (more commonly referred to as the batch size),
+        Also, let's consider a particular case of neural network (called feedforward)
+        consisting of a stack of neural layers with no feedback connections: let's note that the framework
+        can still be easily extended to the recurrent case.
+        Let $b$ be the number of examples in the input tensor (more commonly referred to as the batch size),
         $w$ and $h$ respectively the width and height of the images,
         and $c$ the number of channels. Finally, let $n$ be the number of layers and $m$ be the number of output neurons in the network.
         Knowing this, the output $Y \in \mathbb{R}^{b \times m}$ of the network can now be described as such:
@@ -133,22 +138,22 @@
         followed by an element-wise non-linear activation function.
         Let $X^{(p)} \in \mathbb{R}^{n \times m}$ be the input matrix of layer $p$,  % Watch out: $m$ is already taken for the output dimension.
         $W \in \mathbb{R}^{m \times k}$ the weight matrix,  % Same here
-        $b \in \mathbb{R}^{k}$ the bias vector, $n^{(p)}$ the number of inputs to layer $p$  % Also dimensions for layer $p$ should be indexed by parameter $p$.
+        $b \in \mathbb{R}^{k}$ the bias vector, $n^{(p)}$ the number of examples fed as input to layer $p$  % Also dimensions for layer $p$ should be indexed by parameter $p$.
         and $\sigma$ the non-linear activation function of layer $p$.
         Each layer can than be formalized as follows:
 
         \begin{equation}
-            X_{i, k}^{(p+1)} = \sigma \Big( \sum\limits_{j=1}^{n^{(p)}} X^{(p)}_{i, j} W_{j, k} + b_{k} \Big)  % Matrix notation?
+            X_{i, k}^{(p+1)} = \sigma \Big( \sum\limits_{j=1}^{n^{(p)}} X^{(p)}_{i, j} W_{j, k} + b_{k} \Big)
         \end{equation}
 
         Backpropagation requires to compute the partial derivatives of layer outputs with respect to current layer parameters:
 
         \begin{align}
-            \frac{\partial X_{i, k}^{(p+1)}}{\partial W_{j, k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(p)}} X_{i, j} W_{j, k} + b_{k} \Big) \ X_{i, j}^{(p)} \\
-            \frac{\partial X_{i, k}^{(p+1)}}{\partial b_{k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(p)}} X_{i, j} W_{j, k} + b_{k} \Big)
+            \frac{\partial X_{i, k}^{(p+1)}}{\partial W_{j, k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(p)}} X_{i, j}^{(p)} W_{j, k} + b_{k} \Big) \ X_{i, j}^{(p)} \\
+            \frac{\partial X_{i, k}^{(p+1)}}{\partial b_{k}} & = \sigma' \Big( \sum\limits_{j=1}^{n^{(p)}} X_{i, j}^{(p)} W_{j, k} + b_{k} \Big)
         \end{align}
 
-        where $Y \in \mathbb{R}^2$ is the output matrix and $\sigma'(x)$ is the derivative of $\sigma(x)$,  % Why mention $Y$ here? Also $Y \in \mathbb R^2$?
+        where $\sigma'(x)$ is the derivative of $\sigma(x)$,
         typically $\sigma(x) (1 - \sigma(x))$ for the sigmoid function.
 
         Multi-layer perceptrons have been proved to be Universal Approximators~\cite{hornik1991approximation},
@@ -164,52 +169,63 @@
         One of the major advances in semantic segmentation
         is due to Convolutional Neural Networks (CNNs)~\cite{DBLP:journals/corr/Garcia-GarciaOO17}.
         A CNN is an artificial neural network made of a stack of neural layers~\cite{lecun1998gradient}. One characteristic of CNNs is the
-        presence of convolutional filters that map raw data to more abstract features. Each filter (or kernel) is locally connected to its output unit, which
-        allows the convolutional layer to capture some local information about the inputs, as opposed to fully-connected layers that don't take any spatial
-        information into account when passing data forward. This procedure is inspired by the notion of receptive field introduced
-        by Hubel and Wiesel~\cite{Hubel1962}.
+        presence of convolutional filters that map raw data to more abstract features.
+        Each filter (or kernel) is locally connected to its output unit, which
+        allows the convolutional layer to capture some local information about the inputs,
+        as opposed to fully-connected layers that don't take any spatial
+        information into account when passing data forward. This procedure is inspired by the notion of \textbf{receptive field} introduced
+        by Hubel and Wiesel~\cite{Hubel1962}: by stacking multiple convolutional layers, the number of values
+        (e.g. residue pair features) made visible to a same hidden neuron, namely the receptive field, increases with the number of layers.
+        The property of being able to increase the receptive field with the depth of the network is convenient
+        when a high representational power is required, which is the case for the task of protein
+        contact prediction. Indeed, a receptive field equal to the protein size is needed in order for the model to take into account
+        the global protein structure.
 
         Weights are no longer stored in a bidimensional matrix since all inputs are no longer connected to each neuron of the current layer.
         Instead, each neuron is connected to a certain neighborhood of inputs. In this way, the network drastically reduces its number of parameters
-        but still takes the spatial dependence of the data into account. If the convolutional layer is designed for processing multi-channel images for example,
-        the parameters will be stored in a 4-dimensional tensor. Let $W \in \mathbb{R}^{b \times h \times w \times n_c}$ be the weights of the convolutional filters,
-        $X^{(p)} \in \mathbb{R}^{b \times h_b \times w_b \times n_c}$ the input images of layer $p$, $b \in \mathbb{R}$ the bias vector
-        and $X^{(p+1)} \in \mathbb{R}^{b \times (\floor{(h_b - h) / \beta_1} + 1) \times (\floor{(w_b - w) / \beta_2} + 1) \times n_f}$  % \beta_1 and \beta_2 should defined here, not after the formula.
-        the output feature maps. Let's consider the relation between the input images and the output feature maps:
+        but still takes the spatial dependence of the data into account.
+        If the convolutional layer is designed for processing multi-channel images for example,
+        the parameters will be stored in a 4-dimensional tensor.
+        Let $W \in \mathbb{R}^{b \times h \times w \times n_c}$ be the weights of the convolutional filters,
+        $X^{(p)} \in \mathbb{R}^{b \times h_b \times w_b \times n_c}$ the input images of layer $p$, $b \in \mathbb{R}$ the bias vector,
+        and $X^{(p+1)} \in \mathbb{R}^{b \times (\floor{(h_b - h) / \beta_1} + 1) \times (\floor{(w_b - w) / \beta_2} + 1) \times n_f}$
+        the output feature maps.
+        $n_c$ is the number of channels, $h$ is the filter height, $w$ is the filter width
+        and $(\beta_1, \beta_2)$ are the strides
+        (vertical and horizontal distances between neighboring pixels in the neighborhood connected to a same neuron).
+        Let's consider the relation between the input images and the output feature maps:
 
         \begin{equation} \label{eq:conv2D}
             X_{i, j, k, l}^{(p+1)} = \sigma \Big( \sum\limits_{\alpha=1}^h \sum\limits_{\delta=1}^w
                 \sum\limits_{c=1}^{n_c} W_{j, \alpha, \delta, c} X_{i, k+\beta_1 \alpha, l+\beta_2 \delta, c}^{(p)} + b_{j} \Big)
         \end{equation}
 
-            where $i$ is the image identifier, $j$ is the filter index, $n_c$ is the number of channels, $h$ is the filter height, $w$ is the filter width
-            and $(\beta_1, \beta_2)$ are the strides (vertical and horizontal distances between neighboring pixels in the neighborhood connected to a same neuron).
-            Partial derivatives are simply given by:  % simply? Not sure it's necessary.
+        where $i$ is the image identifier and $j$ is the filter index.
+        Partial derivatives are given by:
 
-        \begin{align}  % /!\ \alpha is an index of the parameter for the partial derivative while also being an index of summation in the RHS.
-            \frac{\partial X_{i, j, k, l}^{(p+1)}}{\partial W_{j, \alpha, \delta, c}} & =  % Maybe use commands \pd or \dpd from package commath for partial derivatives
-                \sigma' \Big( \sum\limits_{\alpha=1}^h \sum\limits_{\delta=1}^w \sum\limits_{c=1}^{n_c} W_{j, \alpha, \delta, c}
-                X_{i, k+\beta_1 \alpha, l+\beta_2 \delta, c}^{(p)} + b_{j} \Big) X_{i, k+\beta_1 \alpha, l+\beta_2 \delta, c} \\
-            \frac{\partial Y_{i, j, k, l}}{\partial b_{j}} & =  % Why partial derivative of Y and not X?
-                \sigma' \Big( \sum\limits_{\alpha=1}^h \sum\limits_{\delta=1}^w \sum\limits_{c=1}^{n_c} W_{j, \alpha, \delta, c}
-                X_{i, k+\beta_1 \alpha, l+\beta_2 \delta, c}^{(p)} + b_{j} \Big)
+        \begin{align}
+            \frac{\partial X_{i, j, k, l}^{(p+1)}}{\partial W_{j, \alpha, \delta, c}} & =
+                \sigma' \Big( \sum\limits_{\alpha'=1}^h \sum\limits_{\delta=1}^w \sum\limits_{c=1}^{n_c} W_{j, \alpha', \delta, c}
+                X_{i, k+\beta_1 \alpha', l+\beta_2 \delta, c}^{(p)} + b_{j} \Big) X_{i, k+\beta_1 \alpha', l+\beta_2 \delta, c}^{(p)} \\
+            \frac{\partial X_{i, j, k, l}^{(p+1)}}{\partial b_{j}} & =
+                \sigma' \Big( \sum\limits_{\alpha'=1}^h \sum\limits_{\delta=1}^w \sum\limits_{c=1}^{n_c} W_{j, \alpha', \delta, c}
+                X_{i, k+\beta_1 \alpha', l+\beta_2 \delta, c}^{(p)} + b_{j} \Big)
         \end{align}
 
-        Just as in the case of fully-connected layers, the computations for the signal propagation are not shown because this report is intended to remain brief.
-        Contrary to neural networks, it must be noted that random forest implementations are rarely equipped with convolutional filters or even multivariate
-        splits. Even in computer vision applications, univariate decision trees are the most frequently used trees in ensemble learners.
+        Just as in the case of fully-connected layers, the computations for the signal propagation
+        are not shown because this report is intended to remain brief.
+        Contrary to neural networks, it must be noted that random forest implementations
+        are rarely equipped with convolutional filters or even multivariate splits.
+        Even in computer vision applications, univariate decision trees are the most frequently used trees in ensemble learners.
 
-        \todo{Double check indices and whether symbols have been correctly defined}
-
-    \subsection{Activation functions}
+    \subsection{Activation functions}\label{activationfunctions}
 
         An activation function describes the output value of a neuron and is biologically inspired. It is a mathematical representation
         of the level of action potential sent along its axon. More formally, it is a non-linear scalar function that takes a scalar as input.
         The presence of activation functions in neural networks along with fully-connected layers allows them to increase their representational
         power. Indeed, a stack of fully-connected layers without activation functions would have the same representational power as a single
         fully-connected layer, since a linear combination of linear combinations is itself a linear combination. Thus, activation functions
-        help to actually build a hierarchical representation of the data by curving the hyperplane separating data points multiple times  % folding the hyperplane? In order to talk about hyperplanes, you need to be in an affine space and especially you require the projection to lie on a $n-1$ dimensional space which is highly likely not the case. Maybe just say "non-linearly modify the geometry of the projected space". But using "folding" formally would require to talk about manifolds.
-        and at each layer.
+        help to actually build a hierarchical representation of the data by curving the projected space multiple times and at each layer.
 
         However, not every activation function is suitable for backpropagation and one of the reasons for the success of deep learning is the low
         computational requirements for the gradients. Most of the activation functions are non-parametric and element-wise, which makes it easy
@@ -263,18 +279,20 @@
             \end{split}
         \end{equation}
 
-        The outputs of a neural network are often desired to sum to one, especially when the classification task is to assign each class to a probability
-        conditionally to the network's input. In the case where there are $m$ classes, the output layer is composed of $m$ neurons where the activation
+        The outputs of a neural network are often desired to sum to one,
+        especially when the classification task is to assign each class to a probability
+        conditionally to the network's input.
+        In the case where there are $m$ classes, the output layer is composed of $m$ neurons where the activation
         function associated to neuron $i$ is given by:
 
         \begin{equation}
             \begin{split}
-                \sigma(x^{(i)}) & = \frac{\smallexp{x^{(i)}}}{\sum\limits_{k=1}^m \smallexp{x^{(k)}}} \\
-                \sigma'(x^{(i)}) & = \sigma(x^{(i)}) (1 - \sigma(x^{(i)}))
+                \sigma(x_i) & = \frac{\smallexp{x_i}}{\sum\limits_{k=1}^m \smallexp{x_k}} \\
+                \sigma'(x_i) & = \sigma(x_i) (1 - \sigma(x^{(i)}))
             \end{split}
         \end{equation}
 
-        where $x^{(i)}$ is the component $i$ of the output vector.  % Why write components as supscript and not subscript here?
+        where $x_i$ is the component $i$ of the output vector.
         This function is identical to the Boltzmann distribution introduced in section \ref{potts}.
 
 
@@ -350,7 +368,7 @@
 	   By setting vector $\eta \in \mathbb{R}^m$ to $0$, the resulting regularization term
 	   takes its final well-known form $\sum\limits_{i=1}^m \abs{\theta_i}$.
 
-	\subsubsection{$L_2$ regularization}
+	\subsubsection{$L_2$ regularization}\label{l2regularization}
 
 	   $L_2$ regularization acts as a Gaussian prior on model parameters.
 	   This can be highlighted by setting the probability density function of the Gaussian
