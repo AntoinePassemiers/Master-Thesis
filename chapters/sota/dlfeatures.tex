@@ -78,17 +78,8 @@
             T (beta-turn), S (high curvature loop) and L (irregular loop).
             In practice, secondary structure prediction is either 3-state
             or 8-state~\cite{wang2016raptorx}.
-            \begin{itemize}
-                \item \textbf{Alpha-helix} is the most common pattern among
-                    secondary structures.
-                \item \textbf{310 helix}:  TODO
-                \item \textbf{Pi-helix}: TODO
-                \item \textbf{Beta-strand}: TODO
-                \item \textbf{Beta-bridge}: TODO
-                \item \textbf{Beta-turn}: TODO
-                \item \textbf{High curvature loop}: TODO
-                \item \textbf{Irregular loop}: TODO
-            \end{itemize}
+            The eight states are: Alpha-helix, 310 helix, Pi-helix, Beta-strand,
+            Beta-bridge, Beta-turn, High curvature loop, Irregular loop.
 
             When the number of labels is limited to three,
             the predictor only focuses on beta-strands (E), alpha-helices (H)
@@ -111,7 +102,7 @@
 
             Amino acid frequencies are position-specific features that can be efficiently computed.
             Let $S \in \{0, \ldots, \naatypes\}^{M \times L}$ be a
-            MSA matrix containing $M$ sequences aligned to a target
+            Multiple sequence alignment matrix containing $M$ sequences aligned to a target
             sequence of length $L$. Then amino acid frequencies can be arranged
             in a matrix $F \in \mathbb{R}^{L \times \naatypes}$
             where element $F_{ia}$ is computed as follows:
@@ -122,11 +113,25 @@
 
         \paragraph{Position-Specific Scoring Matrix}
 
-            \todo{PSI-PRED: \cite{jones1999protein}}
+            The position-specific scoring matrix~\cite{jones1999protein} is 
+            computed on the whole multiple sequence alignment as well.
+            It is of shape $F \in \mathbb{R}^{L \times \naatypes}$ like the amino acid frequency matrix
+            but is more informative as it summarizes common patterns present in the alignment.
 
         \paragraph{Atchley factors}
 
-            \todo{Atchley: \cite{Atchley2005}}
+            Atchley factors are residue-specific constant values resulting from the factor analysis
+            of Atchley~\cite{Atchley2005}. There are 5 factors:
+            \begin{itemize}
+                \item Factor I is a polarity index but incorporates many variables like polarity, hydrophobicity,
+                    the covariance of the proportion of exposed residues (with low surface accessibility), the
+                    number of hydrogen bond donors, etc.
+                \item Factor II is a secondary structure factor that is inversely related to the propensity of the
+                    amino acid to be in a specific structural state.
+                \item Factor III is related to the residue size: residue volume, average volume when buried, residue weight, etc.
+                \item Factor IV is related to the amino acid composition: number of codons, etc.
+                \item Factor V is an electrostatic charge index.
+            \end{itemize}
 
         \paragraph{Self-information}
 
@@ -188,7 +193,7 @@
 
         \paragraph{Covariance}
 
-            Covariance matrices are computed as in equation \ref{covariance} of the section
+            Covariance matrices are computed as in equation \ref{covariance} from the section
             about Gaussian graphical models (see section \ref{graphicalmodels}).
             In PSICOV~\cite{doi:10.1093/bioinformatics/btr638}, the inferred covariance
             matrix is averaged across the dimension of amino acid types.

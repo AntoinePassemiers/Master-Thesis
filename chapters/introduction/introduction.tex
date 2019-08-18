@@ -5,36 +5,48 @@
     \setcounter{page}{1}
     \vspace*{0.5cm}
 
-    Proteins are large macromolecules in the form of chains of building blocks called amino acid residues,
-    linked by peptide bonds. There are 20 common amino acid types, but certain proteins may contain 2
-    additional amino acid types, namely pyrrolysine and selenocystein. % TODO: check
+    Proteins are large macromolecules in the form of chains of building blocks called amino acids,
+    linked by peptide bonds. Because peptide bonds are formed through a dehydration reaction between
+    the carboxyle group of an amino acid and the amino group of another amino acid,
+    the resulting amino acids have no free group left (except the side chain) and are
+    called residues. Because this thesis focuses on proteins and not amino acids alone,
+    the terms "amino acid" and "residue" will be used interchangeably.
+
+    There are 20 common amino acid types, but certain proteins may contain 2
+    additional amino acid types, namely pyrrolysine and selenocystein.
     Proteins are responsible for a wide range of functions within living organisms, including
     enzyme catalysis, transport of molecules, DNA replication, DNA repair, DNA transcription or cell signaling.
     Over 5000 types of biochemical reactions have been shown as being catalyzed by enzymes~\cite{schomburg2012brenda},
     which are mostly proteins. The number a ligands a protein can bind, namely the enzymatic specificity,
     can be determined by the structure of the protein itself~\cite{pi2004determination}.
-    The region of a protein binding a substrate and containing
+    The protein region binding a substrate and containing
     the residues involved in the catalytic process is called the active site.
     Enzyme structure is thus of great importance since enzymatic specificity is crucial in novel drug discovery:
     molecules present in tested drugs are expected to have a structure with as large as possible specificity
     in order to avoid unwanted effects on the patient.
 
-    According to Anfinsen's dogma, the three-dimensional structure of a protein is uniquely
+    According to Anfinsen's dogma~\cite{anfinsen1973principles}, the structure of a protein is uniquely
     determined by its underlying amino acid sequence,
-    at least when observed in protein's native environment. When moved from an unfavourable environment (where proper folding conditions are not met)
+    at least when observed in protein's native environment.
+    When moved from an unfavourable environment (where proper folding conditions are not met)
     to a solvent at neutral pH, a random coil (a sequence of amino acid residues
     oriented in random directions) will evolve towards the three-dimensional structure that minimizes Gibbs free energy.
     This process is called protein folding and has, however, a few exceptions.
 
     Protein structure is organized hierarchically: primary structure, secondary structure, tertiary structure
     and quaternary structure. Primary structure refers to the chemical composition of the protein, hence the sequence of amino acids present in it.
-    Secondary structure indicates the presence of structures that are local to the amino acids themselves:
-    these structures can generally be $\alpha$-helices
-    or $\beta$-sheets. Tertiary structure contains information about the three-dimensional structure of the protein and results from interactions
+    Secondary structure relates to the presence of structures that are local to the amino acids themselves:
+    these structures are mostly $\alpha$-helices
+    and $\beta$-sheets, but multiple other structural classes exist.
+    Tertiary structure contains information about the three-dimensional
+    structure of the protein and results from interactions
     between side chains of some pairs of amino acids, such as hydrogen bonds, ionic bonds or disulfide bridges.
-    Quaternary structure is specific to proteins having multiple polypeptide chains and describes the structure due to intermolecular interactions between
-    these chains. PCP helps predicting the tertiary structure since three-dimensional models can be reconstructed from protein contact maps (PCM).
-    Also, PCM is a more simplistic and robust description of a protein's geometry because it is invariant to rotations and translations.
+    Quaternary structure is specific to proteins having multiple polypeptide
+    chains and relates to the structure due to intermolecular interactions between
+    these chains. Protein contact prediction (PCP) helps predicting the tertiary structure as three-dimensional
+    models can be reconstructed from protein contact maps (see section \ref{contactfold}).
+    Protein contact maps are a more simplistic and robust description of a protein's geometry
+    because they are invariant to rotations and translations.
     This simplification helps making deep learning methods perform well on structure prediction.
 
     Assuming the protein backbone has no structural restriction and is composed of $n$ residues holded together by $n-1$ peptide bonds,
@@ -51,10 +63,11 @@
     they do not take into account protein-protein interations and thus cannot generalize the self-assembly process well.
 
     Computational methods are important in structural biology,
-    as they help in assigning biochemical or biological functions to proteins-
-    in an autonomous manner.
+    as they help in assigning biochemical or biological functions to proteins
+    in an autonomated manner.
     The three-dimensional structure of a protein is more conserved than the
-    underlying amino acid sequence across evolution.
+    underlying amino acid sequence across evolution, partly due to the fact that
+    mutations between amino acids having the same physico-chemical properties are frequent.
     Prompted by this knowledge, similar functions
     can be assigned to proteins with low structural dissimilarity.
     Precisely identifying the role played by each protein in an organism is the first step
@@ -62,15 +75,16 @@
     Also, determining the static structure of proteins help in detecting misfolded proteins
     which are possibly involved in diseases like Parkinson's or
     Alzheimer's, but also in diagnosing those diseases~\cite{forloni2002protein}.
-    Finally, solving the protein folding (structure prediction) problem will enable
-    to do better protein design, for example to engineer enzymes like PETase
-    so they have faster plastic-degrading capabilities.
+    Finally, solving the protein folding problem will enable
+    better protein design, for example to engineer enzymes like PETase
+    so they have faster plastic-degrading capabilities~\cite{DeepMind}.
 
-    Protein Contact Prediction (PCP) can help determining the three-dimensional structure of
+    Protein Contact Prediction can help determining the three-dimensional structure of
     proteins by limiting the search space to certain conformations that are
     constrained by the predicted contact maps: this methodology is called contact-assisted protein folding.
-    The problem of predicting the structure of a protein can start by a PCP stage because the latter is a much simpler problem,
-    and only a few correctly predicted contacts are sufficient to reconstruct the whole structure~\cite{kim2014one}.
+    The problem of predicting the structure of a protein can start by a PCP stage because the latter is a much simpler problem
+    (despite in itself being very hard), and only a few correctly predicted contacts
+    are sufficient to reconstruct the whole structure~\cite{kim2014one}.
     There are multiple well-established pipelines for the structural prediction of a newly
     observed protein, such as RaptorX server~\cite{peng2011raptorx}.
 
@@ -78,12 +92,12 @@
     the ones based on Evolutionary Coupling Analysis (ECA) and the ones that infer contacts using
     supervised machine learning. In the former case, amino acid pairwise mutations
     are statistically modelled and the underlying model's parameters
-    are generally optimized through log-likelihood maximization or the optimization of any other statistical measure.
+    are optimized through log-likelihood maximization or the optimization of any similar metric.
     In the second case, deep neural architectures are used to
     refine predictions made by low-level predictors such as ECA, in order to generate high-quality contact maps.
 
-    Ultimately, PCP should help making \textit{ab initio} structure prediction.
-    However, most recent methods rely on a whole raft of alignment and prediction tools.
+    Ultimately, PCP should help making \textit{ab initio} structure prediction in a single pass.
+    However, most recent methods rely on a whole raft of database search, alignment, prediction and folding tools.
     Given a protein encoded in FASTA format, ECA is only possible using a Multiple Sequence Alignment (MSA)
     of this target protein against homologuous proteins.
     These homologous proteins usually come from the same protein family
@@ -95,8 +109,7 @@
     Eventually, predictions are gathered and refined using a deep neural architecture, necessitating the use
     of a deep learning framework. These successive layers of dependencies are not making PCP a straightforward process.
     Therefore, it seems to be a natural choice to set as an objective for this thesis the development of a predictor with
-    minimal requirements and performance close to state-of-the-art techniques
-    \cite{RaptorX, DeepContact, doi:10.1093/bioinformatics/bty341, Michel383133, DeepMind}.
+    minimal requirements and performance close to state-of-the-art techniques.
 
 \section{Contributions}
 
@@ -108,7 +121,8 @@
     fully-convolutional manner.
     Indeed, the local context of a residue pair can be captured by stacking many
     convolutional layers and therefore increasing the receptive field~\cite{Hubel1962}
-    of the network. The number of neighbouring input values made visible to a same hidden neuron,
+    of the output layers of the network.
+    The number of neighbouring input values made visible to a same hidden neuron,
     or receptive field, increases linearly with the depth
     of the neural network when using standard convolutional filters.
     Therefore, in order to reach the context size required to capture the long-range information
@@ -133,7 +147,8 @@
     Let's describe the global view of the thesis itself.
     Firstly, common state-of-the-art ECA techniques will be described, such as Direct Coupling Analysis (DCA)
     and Pseudo-Inverse Covariance matrices (PSICOV) (both are statistical methods based on graphical models),
-    as well as the basics of deep learning and backpropagation algorithm.
+    as well as the backpropagation algorithm and deep learning concepts involved in the design
+    of the model developped during the thesis.
     In order to gain a deeper insight on best-performing methods, more details will be given for
     some specific deep learning methods, such as their architecture, input features and preprocessing.
     The generic architecture in use for this thesis will be detailed, as well as the hyper-parameter

@@ -92,8 +92,8 @@
         \begin{center}
             \includegraphics[width=\textwidth, keepaspectratio]{imgs/loss.png}
             \caption{Binary Cross-Entropy loss and best-L PPV computed on
-              a rolling window of batches during training phase of the model
-              with the best hyper-parameters.}
+              a rolling window of batches, related to the training phase of the model
+              with best hyper-parameters.}
             \label{lossandppv}
         \end{center}
     \end{figure}
@@ -235,7 +235,7 @@
             \includegraphics[width=\textwidth, keepaspectratio]{imgs/Meff.png}
             \caption{Performance as a function of the logarithm of the effective
             number of homologous sequences. Top figure shows the results on
-            CASP11 targets for all contacts. Bottom left and bottom right figures
+            CASP11 targets for different types of contacts. Bottom left and bottom right figures
             focus on medium-range and long-range contacts, respectively.}
             \label{sensitivity}
         \end{center}
@@ -246,7 +246,18 @@
             \includegraphics[width=\textwidth, keepaspectratio]{imgs/Meff_cameo.png}
             \caption{Performance as a function of the logarithm of the effective
             number of homologous sequences. Top figure shows the results on
-            CAMEO targets for all contacts. Bottom left and bottom right figures
+            CAMEO targets for different types of contacts. Bottom left and bottom right figures
+            focus on medium-range and long-range contacts, respectively.}
+            \label{sensitivity}
+        \end{center}
+    \end{figure}
+
+    \begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=\textwidth, keepaspectratio]{imgs/Meff_membrane.png}
+            \caption{Performance as a function of the logarithm of the effective
+            number of homologous sequences. Top figure shows the results on
+            membrane proteins for different types of contacts. Bottom left and bottom right figures
             focus on medium-range and long-range contacts, respectively.}
             \label{sensitivity}
         \end{center}

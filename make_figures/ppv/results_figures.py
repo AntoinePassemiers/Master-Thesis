@@ -38,34 +38,34 @@ for name, results in zip(['CASP11', 'CAMEO', 'Membrane'], [casp11, cameo, membra
     print('')
 
 
-results = membrane
-results_dca = membrane_plmdca
+results = casp11
+results_dca = casp11_plmdca
 
 f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 options = { 'marker': 'o', 's': 25 }
 for ax, metric, name in zip(
         [ax1,ax2,ax3,ax4],
-        ['PPV/5','PPV/5-long', 'PPV/5-medium','PPV/5-short'],
+        ['PPV','PPV-long', 'PPV-medium','PPV-short'],
         ['All contacts','Long-range contacts','Medium-range contacts','Short-range contacts']):
-    xs, ys = np.log(results_dca['Meff']), results_dca[metric]
+    xs, ys = np.log10(results_dca['Meff']), results_dca[metric]
     b, m = polyfit(xs, ys, 1)
     ax.scatter(xs, ys, label='plmDCA', color=colors[0], **options)
     xs = np.asarray([np.min(xs), np.max(xs)])
     ax.plot(xs, b + m * xs, '--', color=colors[0])
-    xs, ys = np.log(results['Meff']), results[metric]
+    xs, ys = np.log10(results['Meff']), results[metric]
     b, m = polyfit(xs, ys, 1)
     ax.scatter(xs, ys, label='Proposed method', color=colors[5], **options)
     xs = np.asarray([np.min(xs), np.max(xs)])
     ax.plot(xs, b + m * xs, '--', color=colors[5])
-    ax.set_ylabel('Best-L/5 PPV', fontsize=12)
+    ax.set_ylabel('Best-L PPV', fontsize=12)
     if ax in [ax3, ax4]:
-        ax.set_xlabel('ln(Meff)', fontsize=12)
+        ax.set_xlabel(r'$log_{10}(Meff)$', fontsize=12)
     ax.set_ylim(-.05, np.max(ys) + .05)
     ax.set_title(name, fontsize=12)
     ax.legend(prop={ 'size': 12 })
 plt.show()
 
-
+"""
 cath = dict()
 with open('cath-domain-list.txt', 'r') as f:
     for line in f.readlines():
@@ -85,6 +85,7 @@ for i in range(len(results['Name'])):
         print(results['Name'][i])
 plt.scatter(xs, ys, c=colors)
 plt.show()
+"""
 
 
 """
