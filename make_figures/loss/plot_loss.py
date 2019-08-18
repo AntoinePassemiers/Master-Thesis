@@ -5,7 +5,7 @@ from bokeh.plotting import figure
 from bokeh.models import LinearAxis, Range1d, FixedTicker
 
 
-with open('hyperopt/29.result', 'r') as f:
+with open('../hpo/hyperopt/29.result', 'r') as f:
     data = json.load(f)
     loss = data['training_loss']
     ppv = data['training_ppv']
@@ -18,14 +18,8 @@ def moving_average(signal, wsize, wmin=10, alpha=0.9):
     diff = means[wsize:] - means[:-wsize]
     means[offset:offset+len(diff)] = diff[:] / wsize
 
-    weights = np.arange(offset)
-    weights = weights / weights.max()
-
-    extra = np.flip(np.cumsum(np.flip(signal[:offset])))
-
-    for i in range(offset):
-        means[i] = alpha * np.mean(signal[:max(wmin, 2*i+1)]) + (1. - alpha) * signal[i]
-        means[-i-1] = alpha * np.mean(signal[-max(2*i-1, wmin-1):]) + (1. - alpha) * signal[i]
+    means[:offset] = np.nan
+    means[offset+len(diff):] = np.nan
     return means
 
 
