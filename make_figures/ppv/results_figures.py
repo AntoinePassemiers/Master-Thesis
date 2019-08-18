@@ -66,6 +66,27 @@ for ax, metric, name in zip(
 plt.show()
 
 
+cath = dict()
+with open('cath-domain-list.txt', 'r') as f:
+    for line in f.readlines():
+        if len(line) > 3 and line[0] != '#':
+            cath[line[:5].upper()] = int(line.split()[1])
+
+
+results = membrane
+xs, ys, colors = list(), list(), list()
+for i in range(len(results['Name'])):
+    try:
+        cc = cath[results['Name'][i]]
+        xs.append(results['PPV-long'][i])
+        ys.append(results['PPV-short'][i])
+        colors.append(['red', 'blue', 'green', 'orange'][cc - 1])
+    except:
+        print(results['Name'][i])
+plt.scatter(xs, ys, c=colors)
+plt.show()
+
+
 """
 options = { 'marker': 'o', 's': 18 }
 scatter_axes = plt.subplot2grid(

@@ -2,19 +2,64 @@
 
 \section{Datasets}
 
-  Five datasets have been used in the framework of this thesis:
-  one for training the model, one for optimizing the hyper-parameters, and three for benchmarking.
-  The training set is a set of 354 proteins including the 150 families reported in the original PSICOV
-  paper~\cite{doi:10.1093/bioinformatics/btr638}, plus a subset of the first benchmark set used by
-  Michel et al. to evaluate PConsC3~\cite{Skwark079673}.
-  The validation set is composed of the 30 protein families from the validation set of PConsC3,
-  which itself is a subset of the test set of PConsC2~\cite{10.1371/journal.pcbi.1003889}.
+  Seven datasets have been used in the framework of this thesis:
+  three for training the model, one for optimizing the hyper-parameters and validating the model,
+  and three for benchmarking. Training set is composed of the
+  PSICOV150 dataset~\cite{doi:10.1093/bioinformatics/btr638}, 
+  PConsC4's training set and PConsC3's benchmark set. Validation set is composed of the 30 additional
+  training proteins introduced by PConsC3~\cite{Skwark079673}.
+  Three test sets have also been considered in order to make a direct comparison
+  with the state-of-the-art RaptorX-Contact predictor.
+  The first test set embodies the 105 protein domains from the CASP11 experiment,
+  the second test set 76 proteins from the CAMEO
+  project, and the third one 398 membrane proteins.
 
-  Three test sets have also been considered in order to make a direct comparison with the state-of-the-art RaptorX-Contact predictor.
-  The first test set embodies the 105 protein domains from the CASP11 experiment, the second test set 76 proteins from the CAMEO
-  project, and the fourth test set 398 membrane proteins.
+  \todo{Second motivation for choosing these datasets: availability}
 
-  \subsection{Homology reduction}
+  Protein duplicates between training sets have been removed. Also, because PConsC4's training set
+  has been created after the CASP11 targets have been released, and mostly because the study
+  has been conducted after the publication of the RaptorX-Contact paper, an homology reduction
+  step had to be introduced, as explained in section~\ref{homologyreduction}.
+
+  \subsection{PSICOV Dataset}
+
+    The PSICOV~\cite{doi:10.1093/bioinformatics/btr638} dataset is composed of 150 families
+    and associated multiple sequence alignments
+    taken from the Pfam database, each containing more than 1000 homologous sequences
+    and a target sequence with high-resolution ($\le$ 1.9 \AA{}) X-ray crystallographic structure.
+    Each target sequence contains exactly one copy of the Pfam domain, has a length lower than
+    275 and greater than 50 residues. The number of unique sequences in each multiple sequence
+    alignment strongly varies from one family to another.
+    AraC-like ligand binding domain (implied in DNA-binding transcription and
+    sequence-specific DNA binding) accounts for 511 unique sequences, compared to 74 836 sequences
+    for the response regulator receiver domain.
+
+  \subsection{Validation set}
+
+    The validation set is composed of the 30 protein families used by PConsC3 as additional
+    training proteins, which themselves are a subset of the test set of
+    PConsC2~\cite{10.1371/journal.pcbi.1003889}. This dataset has no homology with 
+
+  
+
+  \subsection{CASP11}
+
+    CASP10~\cite{doi:10.1002/prot.24452, doi:10.1002/prot.25064}
+
+
+    \todo{}
+
+  \subsection{CAMEO}
+
+    CAMEO~\cite{haas2013protein}
+
+    \todo{}
+
+  \subsection{Membrane proteins}
+
+    \todo{}
+
+  \subsection{Homology reduction} \label{homologyreduction}
 
     A straightforward method for reducing homology between two set of proteins is to
     remove proteins that have a sequence identity rate above a given threshold.
@@ -31,11 +76,9 @@
         Identity rate & Minimum & Average & Maximum \\
         \hline
         \hline
-        Training set - CASP11 & 5.4 & 22.4 & 32.5 \\
-        PSICOV150 - CASP11 & 7.3 & 22.9 & 39.7 \\
-        PSICOV150 - CAMEO & 6.2 & 21.7 & 34.4 \\
-        Training set - CAMEO & 4.0 & 21.3 & 32.5 \\
-        PSICOV150 - Membrane & 7.6 & 22.2 & 74.0 \\
+        Training set - CASP11   & 5.0 \% & 22.7 \% & 39.7 \% \\
+        Training set - CAMEO    & 3.2 \% & 21.5 \% & 35.5 \% \\
+        Training set - Membrane & 4.7 \% & 22.5 \% & 39.5 \% \\
         \hline
       \end{tabular}
       \captionof{table}{Identity rates between training and benchmark sets, expressed as percentages.}
@@ -51,8 +94,6 @@
     Therefore, proteins belonging to different datasets and sharing the same
     ECOD H-class have been rejected.
 
-    \todo{Computation of identity rates, Common ECOD H-classes}
-
     \begin{figure}[H]
       \begin{center}
         \includegraphics[width=\textwidth, keepaspectratio]{imgs/datasets.png}
@@ -60,37 +101,6 @@
         \label{homology_reduction}
       \end{center}
     \end{figure}
-
-  \subsection{PSICOV Dataset}
-
-    The PSICOV~\cite{doi:10.1093/bioinformatics/btr638} dataset is composed of 150 families
-    and associated multiple sequence alignments
-    taken from the Pfam database, each containing more than 1000 homologous sequences
-    and a target sequence with high-resolution ($\le$ 1.9 \AA{}) X-ray crystallographic structure.
-    Each target sequence contains exactly one copy of the Pfam domain, has a length lower than
-    275 and greater than 50 residues. The number of unique sequences in each multiple sequence
-    alignment strongly varies from one family to another.
-    AraC-like ligand binding domain (implied in DNA-binding transcription and
-    sequence-specific DNA binding) accounts for 511 unique sequences, compared to 74 836 sequences
-    for the response regulator receiver domain.
-
-  \subsection{CASP11}
-
-    CASP10~\cite{doi:10.1002/prot.24452}
-    CASP11~\cite{doi:10.1002/prot.25064}
-
-
-    \todo{}
-
-  \subsection{CAMEO}
-
-    CAMEO~\cite{haas2013protein}
-
-    \todo{}
-
-  \subsection{Membrane proteins}
-
-    \todo{}
 
   \subsection{Feature extraction}
 
