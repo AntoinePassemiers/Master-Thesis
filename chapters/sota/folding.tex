@@ -5,12 +5,6 @@ true residue contacts~\cite{kim2014one}. Because predicted contact maps
 are fuzzy by nature and may contain false contacts, only top $\alpha \cdot L$
 contacts (residue pairs associated to highest predicted probabilities)
 are usually considered.
-FT-COMAR~\cite{vassura2008ft}
-GDFuzz3D~\cite{pietal2015gdfuzz3d} and MODELLER~\cite{modeller}
-CONFOLD~\cite{adhikari2015confold}
-CONFOLD2~\cite{adhikari2018confold2}
-CoinFold~\cite{wang2016coinfold}
-distance distributions~\cite{reese1996distance}
 
 In the study of Chelvanayagam et al.~\cite{chelvanayagam1998combinatorial}, protein structure is modelled
 in a distance geometry setting using Gaussian restraints with empirically known mean and variance.
@@ -40,4 +34,11 @@ Disulfide bonds are modelled by an average distance of 5.5 \AA{} and a variance 
 residues. In sheets, center residues of adjacent strands are assigned an average distance of 4.54 \AA{} and a
 variance of 0.1 \AA{}$^2$.
 However, sheet topology and disulfide bonds are not always available and the solution suggested in the paper
-is to have recourse to sheet and disulfide combinatorics
+is to have recourse to sheet and disulfide combinatorics.
+
+GDFuzz3D~\cite{pietal2015gdfuzz3d} extends these ideas without having recourse to combinatorics but introducing
+the idea of graph distance (length of the shortest path between two residues). It is two-stage: first residue
+positions are optimized by minimizing the objective function previously introduced, and then atom coordinates
+are being refined with MODELLER~\cite{modeller} in order to obtain an all-atom model.
+Current state-of-the-art contact-assisted methods are CONFOLD~\cite{adhikari2015confold, adhikari2018confold2}
+and the very similar predictor CoinFold~\cite{wang2016coinfold}.

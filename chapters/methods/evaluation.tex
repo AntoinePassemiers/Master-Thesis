@@ -1,6 +1,4 @@
-\section{Evaluation}
-
-  \subsection{Contact map evaluation}
+\section{Evaluation} \label{evaluationmetrics}
 
     Protein contact maps are imbalanced by nature: they contain very few residue contacts compared to their number of residue pairs.
     $L$ being the number of residues in a protein, the number of residue contacts increases linearly with $L$ while the number of residue pairs
@@ -18,14 +16,10 @@
     training phase.
 
     Best-L/k PPV can also be split into three separated metrics: short-range, medium-range and long-range contacts.
-    These three types of contacts can be defined by the residue separations used by Skwark et al.~\cite{10.1371/journal.pcbi.1003889}:
+    These three types of contacts can be defined with the following sequence separations:
 
       \begin{itemize}
         \item Short-range contacts: 6 - 12 residue separation
         \item Medium-range contacts: 12 - 24 residue separation
         \item Long-range contacts: 24+ residue separation
       \end{itemize}
-
-  \subsection{3D model evaluation}
-
-    \todo{TM-score and RMSD}

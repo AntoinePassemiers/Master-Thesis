@@ -9,21 +9,29 @@ This enables the simplification of the prediction pipeline since GaussDCA (the o
 ECA-related predictor used in PConsC4) provides accurate DCA features in a pleasingly
 short amount of time.
 
-\todo{Speak about performance}
-\todo{Compare performance with other models}
-\todo{Indicate whether performance is good for all evaluation metrics}
-\todo{State-of-the-art not improved (because very competitive), but enables expermimentation}
-\todo{GAN approach}
+Performance has been shown to be similar to PConsC3, while being still significantly far
+from the state-of-the-art RaptorX-Contact. Protein contact prediction is a very competitive
+area of research, and despite the fact that state of the art is not outperformed in the present
+work, the latter enables experimentation for future work and can be reused building
+more innovative approaches.
 
 Immediate future work would focus on training the model on a larger
 dataset with improved preprocessing. Indeed, despite the marginal
 robustness of the model to the number of effective sequences in comparison
 with DCA methods, there is still room for additional performance that can
 be gained by computing statistics on much larger multiple sequence alignments.
-\todo{RaptorX-Property}
+It must be noted that most of the multiple sequence alignments of training proteins
+come from the RaptorX-Property server, which provides a limited number of sequence
+homologs per target (typically < 1000).
 Also, now that a lot of new tertiary structure have been released after CASP12,
 it becomes conceivable to create a complete dataset of more than 16 000 structures.
 
-\todo{Potential improvements due to new DL techniques}
-
-\todo{As of drawing this conclusion, ... TODO: current work}
+Finally, there is still room for research now that new deep learning techniques have
+been developped. For example, a new unsupervised approach based on generative adversarial
+networks would solve the bottleneck issues related to the quality of the evolutionary
+coupling analysis. Generative adversarial networks have already been considered in
+the framework of dihedral angle prediction~\cite{kim2018dihedral}
+for example. Also, the design of new end-to-end models~\cite{alquraishi2019end} for direct
+structure prediction would help bypassing the two-stage prediction methods that are currently in 
+use on all structure prediction servers, and enable the evolution of structure prediction
+methodology towards much simpler workflows.

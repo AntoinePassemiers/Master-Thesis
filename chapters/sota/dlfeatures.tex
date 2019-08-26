@@ -1,3 +1,5 @@
+\section{Deep learning in Protein Contact Prediction} \label{dlpredictors}
+
 \subsection{Input features} \label{inputfeatures}
 
     \subsubsection{Global features}
@@ -151,11 +153,13 @@
 
         \paragraph{Partial entropies}
 
-            \todo{ \cite{Michel383133}}
+            Partial entropies are computed in \cite{Michel383133} with the following formula:
 
             \begin{equation}
                 S_i = p_i \log_2 (p_i / \langle p_i \rangle)
             \end{equation}
+
+            where $p_i$ is the probability of finding a particular amino acid or a gap.
 
     \subsubsection{2-dimensional features}
 
@@ -167,10 +171,14 @@
                 MI(x, y) = \sum\limits_{x, y} P(x, y) \log \Big( \frac{P(x, y)}{P(x) \cdot P(y)} \Big)
             \end{equation}
 
+            where $P(x)$ is the probability associated to variable $x$.
+            Normalized mutual information (NMI) is then defined as:
+
             \begin{equation}
                 NMI(x, y) = \frac{MI(x, y)}{\sqrt{S(x) \cdot S(y)}}
             \end{equation}
 
+            where $S(x)$ is teh entropy of variable $x$.
             Average product correction is applied to both MI and NMI.
 
         \paragraph{Cross-entropy}
@@ -180,10 +188,6 @@
             \begin{equation}
                 H(x, y) = S(x) + S(y) - MI(x, y)
             \end{equation}
-
-        \paragraph{Contact potential}
-
-            \todo{}
 
         \paragraph{Evolutionary couplings}
 

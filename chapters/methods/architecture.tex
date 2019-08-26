@@ -32,3 +32,8 @@
       \label{architecture}
     \end{center}
   \end{figure}
+
+  The loss function used to train this architecture is the binary cross-entropy, a well-established
+  metric for the training of binary classifiers. However, it has been customized in such a manner
+  that the loss for residue contacts with a sequence separation below 6 is not backpropagated,
+  as well as for residue pairs where the euclidean distance is not present in the native structure.

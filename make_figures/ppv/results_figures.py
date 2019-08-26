@@ -65,7 +65,7 @@ for ax, metric, name in zip(
     ax.legend(prop={ 'size': 12 })
 plt.show()
 
-"""
+
 cath = dict()
 with open('cath-domain-list.txt', 'r') as f:
     for line in f.readlines():
@@ -75,17 +75,30 @@ with open('cath-domain-list.txt', 'r') as f:
 
 results = membrane
 xs, ys, colors = list(), list(), list()
+ppv = [[] for _ in range(4)]
+ppv_short = [[] for _ in range(4)]
+ppv_medium = [[] for _ in range(4)]
+ppv_long = [[] for _ in range(4)]
 for i in range(len(results['Name'])):
     try:
         cc = cath[results['Name'][i]]
         xs.append(results['PPV-long'][i])
         ys.append(results['PPV-short'][i])
         colors.append(['red', 'blue', 'green', 'orange'][cc - 1])
+        ppv[cc - 1].append(results['PPV'][i])
+        ppv_short[cc - 1].append(results['PPV-short'][i])
+        ppv_medium[cc - 1].append(results['PPV-medium'][i])
+        ppv_long[cc - 1].append(results['PPV-long'][i])
     except:
         print(results['Name'][i])
 plt.scatter(xs, ys, c=colors)
 plt.show()
-"""
+
+for c in [ppv, ppv_short, ppv_medium, ppv_long]:
+    for i in range(4):
+        c[i] = np.mean(c[i])
+    print(c)
+
 
 
 """
